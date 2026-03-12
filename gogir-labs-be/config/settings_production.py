@@ -1,9 +1,9 @@
 """
 Production-specific Django settings.
-Import this in settings.py when DEBUG=False
+Imported from settings.py when DEBUG=False to apply overrides.
 """
 
-from .settings import *
+from decouple import config
 import os
 
 # Security settings for production
@@ -19,19 +19,13 @@ SECURE_HSTS_SECONDS = 31536000  # 1 year
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 
-# Database connection pooling
-if 'default' in DATABASES:
-    DATABASES['default']['CONN_MAX_AGE'] = 600
-
 # Static files (served by nginx in production)
 STATIC_ROOT = '/app/staticfiles'
 MEDIA_ROOT = '/app/media'
 
-# Create logs directory
-LOGS_DIR = '/app/logs'
-os.makedirs(LOGS_DIR, exist_ok=True)
-
 # Logging configuration for production
+LOGS_DIR = os.environ.get('DJANGO_LOG_DIR', '/app/logs')
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
