@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: gogir-labs-db-staging
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_staging_data:/var/lib/postgresql/data
+    networks:
+      - gogir-network-staging
+
+  backend:
+    build:
+      context: ./gogir-labs-be
+      dockerfile: Dockerfile
+    container_name: gogir-labs-backend-staging
+    restart: unless-stopped
+    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 2 --threads 2 --timeout 120 --reload
+    environment:
+      - DEBUG=True
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
+      - SECRET_KEY=${SECRET_KEY}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
+    volumes:
+      - static_volume_staging:/app/staticfiles
+      - media_volume_staging:/app/media
+    depends_on:
+      - db
+    networks:
+      - gogir-network-staging
+
+  frontend:
+    build:
+      context: ./gogir-labs-fe
+      dockerfile: Dockerfile
+    container_name: gogir-labs-frontend-staging
+    restart: unless-stopped
+    environment:
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+      - NODE_ENV=production
+    depends_on:
+      - backend
+    networks:
+      - gogir-network-staging
+
+volumes:
+  postgres_staging_data:
+  static_volume_staging:
+  media_volume_staging:
+
+networks:
+  gogir-network-staging:
+    driver: bridge
+

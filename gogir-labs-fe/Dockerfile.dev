@@ -1,0 +1,24 @@
+# Use Node 20 Alpine and refresh apk to get latest security patches (e.g. OpenSSL)
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Update Alpine packages for security (e.g. CVE-2025-15467 openssl)
+RUN apk update && apk upgrade --no-cache
+
+# Upgrade npm to get patched bundled deps (tar, minimatch, etc.); some CVEs may remain until npm releases newer bundled deps
+RUN npm install -g npm@latest
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy source code
+COPY . .
+
+EXPOSE 3000
+
+CMD ["npm", "run", "dev"]
+

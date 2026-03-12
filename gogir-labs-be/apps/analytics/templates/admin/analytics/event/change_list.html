@@ -1,0 +1,39 @@
+{% extends "admin/change_list.html" %}
+{% load static %}
+
+{% block content %}
+  {% if show_info %}
+    <div class="module" style="margin-bottom: 20px; padding: 15px; background-color: #fff3cd; border: 1px solid #ffc107; border-radius: 4px;">
+      <h3 style="margin-top: 0; color: #856404;">📊 Analytics Tracking Information</h3>
+      <p style="margin-bottom: 10px; color: #856404;">
+        <strong>No events have been tracked yet.</strong> Events are automatically tracked when users interact with your website.
+      </p>
+      <div style="margin-top: 15px;">
+        <h4 style="color: #856404; margin-bottom: 10px;">To start tracking events:</h4>
+        <ol style="color: #856404; margin-left: 20px;">
+          <li>Visit your website frontend (not the admin panel)</li>
+          <li>Accept the analytics consent banner if it appears</li>
+          <li>Navigate between pages (page views are tracked automatically)</li>
+          <li>Click on links, buttons, or submit forms (events are tracked automatically)</li>
+        </ol>
+        <p style="margin-top: 15px; color: #856404;">
+          <strong>Note:</strong> Analytics tracking requires user consent. Users must accept the consent banner before any tracking occurs.
+        </p>
+        <p style="margin-top: 10px; color: #856404;">
+          <strong>API Endpoint:</strong> <code>POST /api/v1/analytics/events/</code><br>
+          <strong>Page Views Endpoint:</strong> <code>POST /api/v1/analytics/pageviews/</code>
+        </p>
+        <div style="margin-top: 15px;">
+          <a href="{{ test_data_url }}" class="button" style="background-color: #0c5460; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block;">
+            Create Test Data
+          </a>
+          <p style="margin-top: 10px; color: #856404; font-size: 12px;">
+            Click this button to create sample events for testing purposes.
+          </p>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+  {{ block.super }}
+{% endblock %}
+
