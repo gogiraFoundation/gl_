@@ -1,0 +1,66 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  backend-lint:
+    name: Backend Linting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install linting tools
+        working-directory: ./gogir-labs-be
+        run: |
+          pip install flake8 black isort pylint
+
+      - name: Run Black (code formatter check)
+        working-directory: ./gogir-labs-be
+        run: black --check .
+
+      - name: Run isort (import sorting check)
+        working-directory: ./gogir-labs-be
+        run: isort --check-only .
+
+      - name: Run Flake8 (linting)
+        working-directory: ./gogir-labs-be
+        run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+
+  frontend-lint:
+    name: Frontend Linting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: gogir-labs-fe/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./gogir-labs-fe
+        run: npm ci
+
+      - name: Run ESLint
+        working-directory: ./gogir-labs-fe
+        run: npm run lint
+
+      - name: Run Prettier check
+        working-directory: ./gogir-labs-fe
+        run: npx prettier --check .
+
