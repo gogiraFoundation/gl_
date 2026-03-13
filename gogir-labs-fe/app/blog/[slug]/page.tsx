@@ -1,5 +1,7 @@
 'use client'
 
+export const runtime = 'edge'
+
 import { useQuery } from '@tanstack/react-query'
 import { notFound, useParams } from 'next/navigation'
 import { Header } from '@/components/layout/Header'
