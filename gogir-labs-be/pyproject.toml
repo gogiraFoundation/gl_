@@ -1,0 +1,26 @@
+[project]
+name = "gogir-labs-be"
+version = "0.1.0"
+description = "Gogir Labs backend API"
+requires-python = ">=3.11"
+
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+    | \.venv
+    | venv
+    | __pycache__
+    | migrations
+    | \.eggs
+    | \.tox
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 88
+skip = [".venv", "venv", "migrations"]

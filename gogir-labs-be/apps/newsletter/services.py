@@ -1,6 +1,7 @@
 """
 Newsletter service for sending newsletters and managing subscriptions.
 """
+
 from django.conf import settings
 from django.template import Template, Context
 from typing import Optional, List
@@ -20,7 +21,7 @@ class NewsletterService:
         """Send verification email to subscriber."""
         try:
             verification_url = f"{settings.FRONTEND_URL or 'http://localhost:3000'}/newsletter/verify/{subscriber.verification_token}"
-            
+
             subject = "Verify your newsletter subscription"
             plain_body = f"""
 Hello {subscriber.name or 'there'},
@@ -60,15 +61,17 @@ Emmanuel Ugbaije
 </body>
 </html>
 """
-            
+
             return EmailService.send_email(
                 recipient=subscriber.email,
                 subject=subject,
                 body=plain_body,
-                html_body=html_body
+                html_body=html_body,
             )
         except Exception as e:
-            logger.error(f"Failed to send verification email to {subscriber.email}: {e}")
+            logger.error(
+                f"Failed to send verification email to {subscriber.email}: {e}"
+            )
             return False
 
     @staticmethod
@@ -76,7 +79,7 @@ Emmanuel Ugbaije
         """Send welcome email to verified subscriber."""
         try:
             unsubscribe_url = f"{settings.FRONTEND_URL or 'http://localhost:3000'}/newsletter/unsubscribe?token={subscriber.unsubscribe_token}"
-            
+
             subject = "Welcome to our newsletter!"
             plain_body = f"""
 Hello {subscriber.name or 'there'},
@@ -125,12 +128,12 @@ Emmanuel Ugbaije
 </body>
 </html>
 """
-            
+
             return EmailService.send_email(
                 recipient=subscriber.email,
                 subject=subject,
                 body=plain_body,
-                html_body=html_body
+                html_body=html_body,
             )
         except Exception as e:
             logger.error(f"Failed to send welcome email to {subscriber.email}: {e}")
@@ -142,62 +145,66 @@ Emmanuel Ugbaije
         message: str,
         html_message: Optional[str] = None,
         send_to_verified_only: bool = True,
-        test_email: Optional[str] = None
+        test_email: Optional[str] = None,
     ) -> dict:
         """Send newsletter to all active subscribers."""
         try:
             queryset = NewsletterSubscriber.objects.filter(is_active=True)
             if send_to_verified_only:
                 queryset = queryset.filter(is_verified=True)
-            
-            subscribers = list(queryset.values_list('email', flat=True))
-            
+
+            subscribers = list(queryset.values_list("email", flat=True))
+
             if test_email:
                 # Send test email to single recipient
                 success = EmailService.send_email(
                     recipient=test_email,
                     subject=f"[TEST] {subject}",
                     body=message,
-                    html_body=html_message
+                    html_body=html_message,
                 )
                 return {
-                    'success': success,
-                    'sent_count': 1 if success else 0,
-                    'total_count': 1,
-                    'message': 'Test email sent' if success else 'Failed to send test email'
+                    "success": success,
+                    "sent_count": 1 if success else 0,
+                    "total_count": 1,
+                    "message": (
+                        "Test email sent" if success else "Failed to send test email"
+                    ),
                 }
-            
+
             # Send to all subscribers
             success_count = 0
             for email in subscribers:
-                unsubscribe_token = NewsletterSubscriber.objects.get(email=email).unsubscribe_token
+                unsubscribe_token = NewsletterSubscriber.objects.get(
+                    email=email
+                ).unsubscribe_token
                 unsubscribe_url = f"{settings.FRONTEND_URL or 'http://localhost:3000'}/newsletter/unsubscribe?token={unsubscribe_token}"
-                
+
                 # Add unsubscribe link to message
                 plain_message = f"{message}\n\n---\nUnsubscribe: {unsubscribe_url}"
                 html_with_unsubscribe = f"{html_message or message}<hr><p><a href='{unsubscribe_url}'>Unsubscribe</a></p>"
-                
+
                 if EmailService.send_email(
                     recipient=email,
                     subject=subject,
                     body=plain_message,
-                    html_body=html_with_unsubscribe
+                    html_body=html_with_unsubscribe,
                 ):
                     success_count += 1
-            
+
             return {
-                'success': True,
-                'sent_count': success_count,
-                'total_count': len(subscribers),
-                'message': f'Newsletter sent to {success_count} of {len(subscribers)} subscribers'
+                "success": True,
+                "sent_count": success_count,
+                "total_count": len(subscribers),
+                "message": f"Newsletter sent to {success_count} of {len(subscribers)} subscribers",
             }
         except Exception as e:
             logger.error(f"Failed to send newsletter: {e}")
             return {
-                'success': False,
-                'sent_count': 0,
-                'total_count': 0,
-                'message': f'Error sending newsletter: {str(e)}'
+                "success": False,
+                "sent_count": 0,
+                "total_count": 0,
+                "message": f"Error sending newsletter: {str(e)}",
             }
 
     @staticmethod
@@ -239,14 +246,15 @@ Emmanuel Ugbaije
 </body>
 </html>
 """
-            
+
             return EmailService.send_email(
                 recipient=subscriber.email,
                 subject=subject,
                 body=plain_body,
-                html_body=html_body
+                html_body=html_body,
             )
         except Exception as e:
-            logger.error(f"Failed to send unsubscribe confirmation to {subscriber.email}: {e}")
+            logger.error(
+                f"Failed to send unsubscribe confirmation to {subscriber.email}: {e}"
+            )
             return False
-

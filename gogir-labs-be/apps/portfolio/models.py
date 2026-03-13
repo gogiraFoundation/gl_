@@ -6,14 +6,15 @@ from django.core.validators import FileExtensionValidator
 
 class Category(models.Model):
     """Category for organizing projects."""
+
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(max_length=100, unique=True, blank=True)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        verbose_name_plural = 'Categories'
-        ordering = ['name']
+        verbose_name_plural = "Categories"
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
@@ -26,14 +27,15 @@ class Category(models.Model):
 
 class Technology(models.Model):
     """Technology stack used in projects."""
+
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(max_length=100, unique=True, blank=True)
     icon = models.CharField(max_length=100, blank=True, help_text="Icon class or name")
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        verbose_name_plural = 'Technologies'
-        ordering = ['name']
+        verbose_name_plural = "Technologies"
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
@@ -58,35 +60,42 @@ def validate_video_file_size(value):
 
 class Project(models.Model):
     """Portfolio project model."""
+
     title = models.CharField(max_length=200)
     slug = models.SlugField(max_length=200, unique=True, blank=True)
     description = models.TextField()
-    long_description = models.TextField(blank=True, help_text="Detailed project description")
+    long_description = models.TextField(
+        blank=True, help_text="Detailed project description"
+    )
     featured_image = models.ImageField(
-        upload_to='projects/',
+        upload_to="projects/",
         blank=True,
         null=True,
         help_text="Main project image",
         validators=[
-            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp']),
+            FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png", "webp"]),
             validate_image_file_size,
         ],
     )
     video = models.FileField(
-        upload_to='projects/videos/',
+        upload_to="projects/videos/",
         blank=True,
         null=True,
         help_text="Project video (MP4, WebM, etc.)",
         validators=[
-            FileExtensionValidator(allowed_extensions=['mp4', 'webm', 'mov']),
+            FileExtensionValidator(allowed_extensions=["mp4", "webm", "mov"]),
             validate_video_file_size,
         ],
     )
-    video_url = models.URLField(blank=True, help_text="External video URL (YouTube, Vimeo, etc.)")
+    video_url = models.URLField(
+        blank=True, help_text="External video URL (YouTube, Vimeo, etc.)"
+    )
     github_url = models.URLField(blank=True, help_text="GitHub repository URL")
     live_url = models.URLField(blank=True, help_text="Live demo URL")
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
-    technologies = models.ManyToManyField(Technology, related_name='projects')
+    category = models.ForeignKey(
+        Category, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    technologies = models.ManyToManyField(Technology, related_name="projects")
     featured = models.BooleanField(default=False, help_text="Show on homepage")
     published = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -94,7 +103,7 @@ class Project(models.Model):
     order = models.IntegerField(default=0, help_text="Display order")
 
     class Meta:
-        ordering = ['-order', '-created_at']
+        ordering = ["-order", "-created_at"]
 
     def __str__(self):
         return self.title
@@ -107,38 +116,42 @@ class Project(models.Model):
                 was_published = old_instance.published
             except Project.DoesNotExist:
                 pass
-        
+
         if not self.slug:
             self.slug = slugify(self.title)
-        
+
         super().save(*args, **kwargs)
-        
+
         # Send notification when project is published
         if self.published and not was_published:
             from apps.notifications.services import NotificationService
             from apps.notifications.models import NotificationType
+
             NotificationService.notify_admins(
                 notification_type=NotificationType.CONTENT_PUBLISHED,
                 title=f"New Project Published: {self.title}",
                 message=f"A new project has been published:\n\n{self.title}\n\n{self.description}",
                 data={
-                    'content_type': 'Project',
-                    'content_title': self.title,
-                    'content_slug': self.slug,
-                    'description': self.description,
-                    'content_url': f"/portfolio/",
+                    "content_type": "Project",
+                    "content_title": self.title,
+                    "content_slug": self.slug,
+                    "description": self.description,
+                    "content_url": f"/portfolio/",
                 },
-                related_object=self
+                related_object=self,
             )
 
 
 class ProjectImage(models.Model):
     """Additional images for projects."""
-    project = models.ForeignKey(Project, related_name='images', on_delete=models.CASCADE)
+
+    project = models.ForeignKey(
+        Project, related_name="images", on_delete=models.CASCADE
+    )
     image = models.ImageField(
-        upload_to='projects/gallery/',
+        upload_to="projects/gallery/",
         validators=[
-            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp']),
+            FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png", "webp"]),
             validate_image_file_size,
         ],
     )
@@ -146,8 +159,7 @@ class ProjectImage(models.Model):
     order = models.IntegerField(default=0)
 
     class Meta:
-        ordering = ['order']
+        ordering = ["order"]
 
     def __str__(self):
         return f"{self.project.title} - Image {self.order}"
-

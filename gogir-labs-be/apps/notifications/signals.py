@@ -1,6 +1,7 @@
 """
 Django signals for system-wide notifications.
 """
+
 from django.contrib.auth.signals import user_logged_in
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
@@ -20,9 +21,8 @@ def notify_on_login(sender, request, user, **kwargs):
             title="Successful Login",
             message=f"You have successfully logged in to the admin panel.",
             data={
-                'ip_address': request.META.get('REMOTE_ADDR', 'Unknown'),
-                'user_agent': request.META.get('HTTP_USER_AGENT', 'Unknown'),
+                "ip_address": request.META.get("REMOTE_ADDR", "Unknown"),
+                "user_agent": request.META.get("HTTP_USER_AGENT", "Unknown"),
             },
-            send_email=False  # Don't email on every login
+            send_email=False,  # Don't email on every login
         )
-

@@ -11,12 +11,13 @@ def validate_image_file_size(value):
 
 class Testimonial(models.Model):
     """Client testimonial model."""
+
     RATING_CHOICES = [
-        (1, '1 Star'),
-        (2, '2 Stars'),
-        (3, '3 Stars'),
-        (4, '4 Stars'),
-        (5, '5 Stars'),
+        (1, "1 Star"),
+        (2, "2 Stars"),
+        (3, "3 Stars"),
+        (4, "4 Stars"),
+        (5, "5 Stars"),
     ]
 
     client_name = models.CharField(max_length=100)
@@ -25,20 +26,20 @@ class Testimonial(models.Model):
     content = models.TextField()
     rating = models.IntegerField(choices=RATING_CHOICES, default=5)
     client_image = models.ImageField(
-        upload_to='testimonials/',
+        upload_to="testimonials/",
         blank=True,
         null=True,
         validators=[
-            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp']),
+            FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png", "webp"]),
             validate_image_file_size,
         ],
     )
     company_logo = models.ImageField(
-        upload_to='testimonials/logos/',
+        upload_to="testimonials/logos/",
         blank=True,
         null=True,
         validators=[
-            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp']),
+            FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png", "webp"]),
             validate_image_file_size,
         ],
     )
@@ -49,8 +50,7 @@ class Testimonial(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-order', '-created_at']
+        ordering = ["-order", "-created_at"]
 
     def __str__(self):
         return f"Testimonial from {self.client_name}"
-

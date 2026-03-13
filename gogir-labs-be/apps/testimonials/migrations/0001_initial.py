@@ -7,29 +7,62 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Testimonial',
+            name="Testimonial",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('client_name', models.CharField(max_length=100)),
-                ('client_role', models.CharField(help_text='Job title or role', max_length=100)),
-                ('company', models.CharField(blank=True, max_length=100)),
-                ('content', models.TextField()),
-                ('rating', models.IntegerField(choices=[(1, '1 Star'), (2, '2 Stars'), (3, '3 Stars'), (4, '4 Stars'), (5, '5 Stars')], default=5)),
-                ('client_image', models.ImageField(blank=True, null=True, upload_to='testimonials/')),
-                ('company_logo', models.ImageField(blank=True, null=True, upload_to='testimonials/logos/')),
-                ('featured', models.BooleanField(default=False, help_text='Show on homepage')),
-                ('published', models.BooleanField(default=True)),
-                ('order', models.IntegerField(default=0, help_text='Display order')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("client_name", models.CharField(max_length=100)),
+                (
+                    "client_role",
+                    models.CharField(help_text="Job title or role", max_length=100),
+                ),
+                ("company", models.CharField(blank=True, max_length=100)),
+                ("content", models.TextField()),
+                (
+                    "rating",
+                    models.IntegerField(
+                        choices=[
+                            (1, "1 Star"),
+                            (2, "2 Stars"),
+                            (3, "3 Stars"),
+                            (4, "4 Stars"),
+                            (5, "5 Stars"),
+                        ],
+                        default=5,
+                    ),
+                ),
+                (
+                    "client_image",
+                    models.ImageField(blank=True, null=True, upload_to="testimonials/"),
+                ),
+                (
+                    "company_logo",
+                    models.ImageField(
+                        blank=True, null=True, upload_to="testimonials/logos/"
+                    ),
+                ),
+                (
+                    "featured",
+                    models.BooleanField(default=False, help_text="Show on homepage"),
+                ),
+                ("published", models.BooleanField(default=True)),
+                ("order", models.IntegerField(default=0, help_text="Display order")),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
             ],
             options={
-                'ordering': ['-order', '-created_at'],
+                "ordering": ["-order", "-created_at"],
             },
         ),
     ]

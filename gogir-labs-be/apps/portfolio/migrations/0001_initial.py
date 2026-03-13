@@ -8,78 +8,164 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Category',
+            name="Category",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100, unique=True)),
-                ('slug', models.SlugField(blank=True, max_length=100, unique=True)),
-                ('description', models.TextField(blank=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100, unique=True)),
+                ("slug", models.SlugField(blank=True, max_length=100, unique=True)),
+                ("description", models.TextField(blank=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
             ],
             options={
-                'verbose_name_plural': 'Categories',
-                'ordering': ['name'],
+                "verbose_name_plural": "Categories",
+                "ordering": ["name"],
             },
         ),
         migrations.CreateModel(
-            name='Project',
+            name="Project",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=200)),
-                ('slug', models.SlugField(blank=True, max_length=200, unique=True)),
-                ('description', models.TextField()),
-                ('long_description', models.TextField(blank=True, help_text='Detailed project description')),
-                ('featured_image', models.ImageField(blank=True, help_text='Main project image', null=True, upload_to='projects/')),
-                ('video', models.FileField(blank=True, help_text='Project video (MP4, WebM, etc.)', null=True, upload_to='projects/videos/')),
-                ('video_url', models.URLField(blank=True, help_text='External video URL (YouTube, Vimeo, etc.)')),
-                ('github_url', models.URLField(blank=True, help_text='GitHub repository URL')),
-                ('live_url', models.URLField(blank=True, help_text='Live demo URL')),
-                ('featured', models.BooleanField(default=False, help_text='Show on homepage')),
-                ('published', models.BooleanField(default=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('order', models.IntegerField(default=0, help_text='Display order')),
-                ('category', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='portfolio.category')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=200)),
+                ("slug", models.SlugField(blank=True, max_length=200, unique=True)),
+                ("description", models.TextField()),
+                (
+                    "long_description",
+                    models.TextField(
+                        blank=True, help_text="Detailed project description"
+                    ),
+                ),
+                (
+                    "featured_image",
+                    models.ImageField(
+                        blank=True,
+                        help_text="Main project image",
+                        null=True,
+                        upload_to="projects/",
+                    ),
+                ),
+                (
+                    "video",
+                    models.FileField(
+                        blank=True,
+                        help_text="Project video (MP4, WebM, etc.)",
+                        null=True,
+                        upload_to="projects/videos/",
+                    ),
+                ),
+                (
+                    "video_url",
+                    models.URLField(
+                        blank=True,
+                        help_text="External video URL (YouTube, Vimeo, etc.)",
+                    ),
+                ),
+                (
+                    "github_url",
+                    models.URLField(blank=True, help_text="GitHub repository URL"),
+                ),
+                ("live_url", models.URLField(blank=True, help_text="Live demo URL")),
+                (
+                    "featured",
+                    models.BooleanField(default=False, help_text="Show on homepage"),
+                ),
+                ("published", models.BooleanField(default=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("order", models.IntegerField(default=0, help_text="Display order")),
+                (
+                    "category",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="portfolio.category",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-order', '-created_at'],
+                "ordering": ["-order", "-created_at"],
             },
         ),
         migrations.CreateModel(
-            name='Technology',
+            name="Technology",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100, unique=True)),
-                ('slug', models.SlugField(blank=True, max_length=100, unique=True)),
-                ('icon', models.CharField(blank=True, help_text='Icon class or name', max_length=100)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100, unique=True)),
+                ("slug", models.SlugField(blank=True, max_length=100, unique=True)),
+                (
+                    "icon",
+                    models.CharField(
+                        blank=True, help_text="Icon class or name", max_length=100
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
             ],
             options={
-                'verbose_name_plural': 'Technologies',
-                'ordering': ['name'],
+                "verbose_name_plural": "Technologies",
+                "ordering": ["name"],
             },
         ),
         migrations.CreateModel(
-            name='ProjectImage',
+            name="ProjectImage",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('image', models.ImageField(upload_to='projects/gallery/')),
-                ('caption', models.CharField(blank=True, max_length=200)),
-                ('order', models.IntegerField(default=0)),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='images', to='portfolio.project')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("image", models.ImageField(upload_to="projects/gallery/")),
+                ("caption", models.CharField(blank=True, max_length=200)),
+                ("order", models.IntegerField(default=0)),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="images",
+                        to="portfolio.project",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['order'],
+                "ordering": ["order"],
             },
         ),
         migrations.AddField(
-            model_name='project',
-            name='technologies',
-            field=models.ManyToManyField(related_name='projects', to='portfolio.technology'),
+            model_name="project",
+            name="technologies",
+            field=models.ManyToManyField(
+                related_name="projects", to="portfolio.technology"
+            ),
         ),
     ]
