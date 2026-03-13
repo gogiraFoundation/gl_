@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ContactForm } from '../ContactForm'
 import api from '@/lib/api'
+import { AnalyticsProvider } from '@/contexts/AnalyticsContext'
 
 // Mock the API
 jest.mock('@/lib/api', () => ({
@@ -29,7 +30,11 @@ describe('ContactForm', () => {
   })
 
   const renderWithProviders = (ui: React.ReactElement) => {
-    return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>)
+    return render(
+      <AnalyticsProvider>
+        <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
+      </AnalyticsProvider>
+    )
   }
 
   it('renders form fields', () => {

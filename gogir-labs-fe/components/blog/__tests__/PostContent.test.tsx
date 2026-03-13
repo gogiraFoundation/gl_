@@ -1,6 +1,8 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { PostContent } from '../PostContent'
+import { AnalyticsProvider } from '@/contexts/AnalyticsContext'
 
 const mockPost = {
   id: 1,
@@ -21,20 +23,37 @@ const mockPost = {
   meta_description: 'Test meta description',
 }
 
+let queryClient: QueryClient
+
+const renderWithProviders = (ui: React.ReactElement) =>
+  render(
+    <AnalyticsProvider>
+      <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
+    </AnalyticsProvider>
+  )
+
 // Mock DOMPurify
 jest.mock('dompurify', () => ({
   sanitize: (html: string) => html,
 }))
 
 describe('PostContent', () => {
+  beforeEach(() => {
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false },
+        mutations: { retry: false },
+      },
+    })
+  })
   it('renders HTML content', () => {
-    render(<PostContent post={mockPost} />)
+    renderWithProviders(<PostContent post={mockPost} />)
     expect(screen.getByText('This is HTML content')).toBeInTheDocument()
   })
 
   it('handles empty content', () => {
     const postWithoutContent = { ...mockPost, content: '' }
-    render(<PostContent post={postWithoutContent} />)
+    renderWithProviders(<PostContent post={postWithoutContent} />)
     expect(screen.getByText(/no content available/i)).toBeInTheDocument()
   })
 
@@ -43,7 +62,7 @@ describe('PostContent', () => {
       ...mockPost,
       content: '<script>alert("XSS")</script><p>Safe content</p>',
     }
-    render(<PostContent post={maliciousPost} />)
+    renderWithProviders(<PostContent post={maliciousPost} />)
     // DOMPurify should sanitize the script tag
     expect(screen.getByText('Safe content')).toBeInTheDocument()
   })
@@ -53,13 +72,13 @@ describe('PostContent', () => {
       ...mockPost,
       content: '<p>' + 'A'.repeat(10000) + '</p>',
     }
-    render(<PostContent post={longContentPost} />)
+    renderWithProviders(<PostContent post={longContentPost} />)
     expect(screen.getByText('A'.repeat(10000))).toBeInTheDocument()
   })
 
   it('renders featured post with special styling', () => {
     const featuredPost = { ...mockPost, featured: true }
-    render(<PostContent post={featuredPost} />)
-    expect(screen.getByText('Test Post')).toBeInTheDocument()
+    renderWithProviders(<PostContent post={featuredPost} />)
+    expect(screen.getByRole('heading', { name: 'Test Post' })).toBeInTheDocument()
   })
 })
