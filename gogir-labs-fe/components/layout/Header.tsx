@@ -21,15 +21,9 @@ const navigation = [
 export function Header() {
   const { trackClick } = useAnalyticsEvent()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  let pathname = ''
-  try {
-    pathname = usePathname() || ''
-  } catch (error) {
-    // Fallback if usePathname fails
-    if (typeof window !== 'undefined') {
-      pathname = window.location.pathname
-    }
-  }
+  const pathnameFromHook = usePathname()
+  const pathname =
+    pathnameFromHook ?? (typeof window !== 'undefined' ? window.location.pathname : '')
 
   return (
     <header className="sticky top-0 z-50 glass border-b border-purple-500/20">

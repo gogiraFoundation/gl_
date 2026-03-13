@@ -59,6 +59,7 @@ jobs:
           DATABASE_URL: postgresql://testuser:testpass@localhost:5432/testdb
           SECRET_KEY: 'test-secret-key-for-ci-min-50-chars-long-random-value'
           DEBUG: 'False'
+          SECURE_SSL_REDIRECT: 'False'
         run: |
           python manage.py migrate --noinput
 
@@ -68,6 +69,7 @@ jobs:
           DATABASE_URL: postgresql://testuser:testpass@localhost:5432/testdb
           SECRET_KEY: 'test-secret-key-for-ci-min-50-chars-long-random-value'
           DEBUG: 'False'
+          SECURE_SSL_REDIRECT: 'False'
         run: |
           pytest -v --cov=apps --cov-report=xml --cov-report=term
 
