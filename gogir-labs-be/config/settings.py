@@ -23,6 +23,10 @@ DEBUG = config("DEBUG", default=True, cast=bool)
 
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1", cast=Csv())
 
+# On Heroku, allow *.herokuapp.com (DYNO is set by Heroku)
+if os.environ.get("DYNO"):
+    ALLOWED_HOSTS = list(ALLOWED_HOSTS) + [".herokuapp.com"]
+
 # Import production settings if not in debug mode
 if not DEBUG:
     try:
