@@ -84,8 +84,8 @@ export default function PortfolioPage() {
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false,
-    keepPreviousData: true,
   })
+  const typedProjects = (projects ?? []) as Project[]
 
   const { data: categories } = useQuery<Category[]>({
     queryKey: ['categories'],
@@ -131,7 +131,7 @@ export default function PortfolioPage() {
             onSearchChange={setSearchQuery}
           />
           
-          {(isLoading || isFetching) && !projects ? (
+          {(isLoading || isFetching) && !typedProjects.length ? (
             <div className="text-center py-12 text-gray-400">Loading projects...</div>
           ) : error ? (
             <div className="text-center py-12 text-red-400">
@@ -139,11 +139,11 @@ export default function PortfolioPage() {
               <p className="text-sm text-gray-400">{error instanceof Error ? error.message : 'Unknown error'}</p>
             </div>
           ) : (
-            <ProjectGrid projects={projects || []} />
+            <ProjectGrid projects={typedProjects} />
           )}
 
           {/* Optional CTA */}
-          {projects && projects.length > 0 && (
+          {typedProjects.length > 0 && (
             <div className="mt-16 text-center">
               <p className="text-gray-300">
                 Interested in a custom solution or want to discuss a project? <Link href="/contact" className="text-purple-400 hover:text-purple-300 underline">Get in touch</Link>.
