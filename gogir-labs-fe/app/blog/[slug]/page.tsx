@@ -30,7 +30,7 @@ export default function BlogPostPage() {
   const params = useParams() as { slug?: string | string[] }
   const rawSlug = params.slug
   if (!rawSlug) notFound()
-  const slug: string = Array.isArray(rawSlug) ? rawSlug[0] : rawSlug
+  const slug = (Array.isArray(rawSlug) ? rawSlug[0] : rawSlug) as string
 
   const {
     data: post,
