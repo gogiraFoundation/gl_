@@ -28,7 +28,13 @@ interface Post {
 
 export default function BlogPostPage() {
   const params = useParams()
-  const slug = params.slug as string
+  const rawSlug = (params as { slug?: string | string[] }).slug
+  const slug =
+    typeof rawSlug === 'string'
+      ? rawSlug
+      : Array.isArray(rawSlug)
+      ? rawSlug[0]
+      : ''
 
   const { data: post, isLoading, error } = useQuery<Post>({
     queryKey: ['post', slug],

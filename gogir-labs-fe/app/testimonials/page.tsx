@@ -8,8 +8,21 @@ import api from '@/lib/api'
 import { useEffect } from 'react'
 import { Quote } from 'lucide-react'
 
+interface Testimonial {
+  id: number
+  client_name: string
+  client_role: string
+  company: string
+  content: string
+  rating: number
+  client_image: string | null
+  company_logo: string | null
+  featured: boolean
+  created_at: string
+}
+
 export default function TestimonialsPage() {
-  const { data: testimonials = [], isLoading } = useQuery({
+  const { data: testimonials = [], isLoading } = useQuery<Testimonial[]>({
     queryKey: ['testimonials'],
     queryFn: async () => {
       const response = await api.get('/testimonials/', { params: { published: true } })
@@ -46,7 +59,7 @@ export default function TestimonialsPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {testimonials.map((testimonial) => (
+              {testimonials.map((testimonial: Testimonial) => (
                 <TestimonialCard key={testimonial.id} testimonial={testimonial} />
               ))}
             </div>

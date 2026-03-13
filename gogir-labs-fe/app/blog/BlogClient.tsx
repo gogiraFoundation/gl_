@@ -112,16 +112,16 @@ export default function BlogClient() {
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: false,
-    keepPreviousData: true,
   })
-  
+
+  const typedPosts = (posts ?? []) as Post[]
   // Debug logging (only in development)
   if (process.env.NODE_ENV === 'development') {
-    console.log('🔍 BlogClient: Posts data:', posts)
+    console.log('🔍 BlogClient: Posts data:', typedPosts)
     console.log('🔍 BlogClient: Is loading:', isLoading)
     console.log('🔍 BlogClient: Is fetching:', isFetching)
     console.log('🔍 BlogClient: Error:', error)
-    console.log('🔍 BlogClient: Posts count:', posts?.length ?? 0)
+    console.log('🔍 BlogClient: Posts count:', typedPosts.length)
   }
 
   const { data: categories } = useQuery<Category[]>({
@@ -185,8 +185,8 @@ export default function BlogClient() {
           )}
           
           <PostList 
-            posts={Array.isArray(posts) ? posts : []} 
-            isLoading={isLoading || (isFetching && !posts)}
+            posts={Array.isArray(typedPosts) ? typedPosts : []} 
+            isLoading={isLoading || (isFetching && !typedPosts.length)}
           />
 
           {/* Optional: Newsletter or Follow CTA */}
