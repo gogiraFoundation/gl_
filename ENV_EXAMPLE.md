@@ -122,7 +122,28 @@ DEFAULT_FROM_EMAIL=noreply@gogirlabs.uk
 
 ---
 
-## 5. Frontend only – Cloudflare Pages / Vercel
+## 5. Backend – Heroku
+
+Set in **Heroku** → your app → **Settings** → **Config Vars**.  
+`ALLOWED_HOSTS` is auto-extended with `*.herokuapp.com` when `DYNO` is set; you can still set it to add custom domains.
+
+```env
+SECRET_KEY=your-django-secret-key-min-50-chars-long-and-random
+DEBUG=False
+# Optional: add custom domain(s); *.herokuapp.com is allowed automatically
+# ALLOWED_HOSTS=your-app.herokuapp.com,api.yourdomain.com
+```
+
+Add the **Heroku Postgres** add-on so `DATABASE_URL` is set. For CORS/CSRF from a frontend, add:
+
+```env
+CORS_ALLOWED_ORIGINS=https://your-frontend.vercel.app,https://www.yourdomain.com
+CSRF_TRUSTED_ORIGINS=https://your-frontend.vercel.app,https://www.yourdomain.com
+```
+
+---
+
+## 6. Frontend only – Cloudflare Pages / Vercel
 
 Set in **Cloudflare Pages** or **Vercel** → Project → Settings → Environment variables.
 
@@ -134,7 +155,7 @@ NEXT_PUBLIC_API_URL=https://api.gogirlabs.uk/api/v1
 
 ---
 
-## 6. Local Docker Compose (defaults)
+## 7. Local Docker Compose (defaults)
 
 If you use `docker-compose.yml` and only need to override the API URL for the frontend, you can rely on defaults. Optional **`gogir-labs-be/.env`**:
 
