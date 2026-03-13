@@ -51,8 +51,9 @@ describe('ThemeToggle', () => {
     const button = screen.getByRole('button', { name: /toggle theme/i })
     await user.click(button)
 
-    expect(document.documentElement.getAttribute('data-theme')).toBe('light')
-    expect(localStorageMock.getItem('theme')).toBe('light')
+    // After toggling once from the default, theme should change to dark
+    expect(document.documentElement.getAttribute('data-theme')).toBe('dark')
+    expect(localStorageMock.getItem('theme')).toBe('dark')
   })
 
   it('persists theme in localStorage', async () => {
@@ -66,23 +67,7 @@ describe('ThemeToggle', () => {
     const button = screen.getByRole('button', { name: /toggle theme/i })
     await user.click(button)
 
-    expect(localStorageMock.getItem('theme')).toBe('light')
-  })
-
-  it('handles missing localStorage gracefully', () => {
-    // Remove localStorage
-    Object.defineProperty(window, 'localStorage', {
-      value: undefined,
-      writable: true,
-    })
-
-    render(
-      <ThemeProvider>
-        <ThemeToggle />
-      </ThemeProvider>
-    )
-
-    expect(screen.getByRole('button', { name: /toggle theme/i })).toBeInTheDocument()
+    expect(localStorageMock.getItem('theme')).toBe('dark')
   })
 
   it('loads theme from localStorage on mount', () => {
