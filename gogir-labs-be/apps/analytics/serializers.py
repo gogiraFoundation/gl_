@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import PageView, Event
+
+from .models import Event, PageView
 
 
 class PageViewSerializer(serializers.ModelSerializer):

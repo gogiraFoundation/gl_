@@ -1,11 +1,12 @@
 from django.urls import path
+
 from .views import (
-    NewsletterSubscribeView,
-    NewsletterVerifyView,
-    NewsletterUnsubscribeView,
-    NewsletterSubscriberListView,
-    NewsletterStatsView,
     NewsletterSendView,
+    NewsletterStatsView,
+    NewsletterSubscriberListView,
+    NewsletterSubscribeView,
+    NewsletterUnsubscribeView,
+    NewsletterVerifyView,
 )
 
 urlpatterns = [

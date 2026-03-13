@@ -1,6 +1,6 @@
-from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
+from django.db import models
 
 
 def validate_image_file_size(value):

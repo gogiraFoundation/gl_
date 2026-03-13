@@ -33,7 +33,7 @@ jobs:
         working-directory: ./gogir-labs-be
         env:
           DEBUG: 'False'
-          SECRET_KEY: test-secret-key-for-cloudflare-check
+          SECRET_KEY: 'test-secret-key-for-cloudflare-check-min-50-chars-long-random'
           DATABASE_URL: sqlite:///db.sqlite3
         run: |
           python manage.py check --deploy
@@ -42,7 +42,7 @@ jobs:
         working-directory: ./gogir-labs-be
         env:
           DEBUG: 'False'
-          SECRET_KEY: test-secret-key-for-cloudflare-check
+          SECRET_KEY: 'test-secret-key-for-cloudflare-check-min-50-chars-long-random'
           DATABASE_URL: sqlite:///db.sqlite3
         run: |
           pytest -q

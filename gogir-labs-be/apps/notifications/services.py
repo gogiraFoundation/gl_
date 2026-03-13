@@ -2,14 +2,15 @@
 Notification service for sending notifications.
 """
 
+import logging
+from typing import Any, Dict, List, Optional
+
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import send_mail
-from django.template import Template, Context
-from django.conf import settings
+from django.template import Context, Template
 from django.utils import timezone
-from typing import Optional, Dict, Any, List
-import logging
 
 from .models import (
     Notification,

@@ -1,8 +1,9 @@
-from rest_framework import viewsets, filters
-from rest_framework.permissions import AllowAny, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, viewsets
+from rest_framework.permissions import AllowAny, IsAuthenticated
+
 from .models import Testimonial
-from .serializers import TestimonialSerializer, TestimonialListSerializer
+from .serializers import TestimonialListSerializer, TestimonialSerializer
 
 
 class TestimonialViewSet(viewsets.ModelViewSet):

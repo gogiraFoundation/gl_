@@ -1,14 +1,15 @@
-from rest_framework import viewsets, filters, status
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from rest_framework.permissions import AllowAny, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import Project, Technology, Category
+from rest_framework import filters, status, viewsets
+from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+
+from .models import Category, Project, Technology
 from .serializers import (
-    ProjectSerializer,
-    ProjectListSerializer,
-    TechnologySerializer,
     CategorySerializer,
+    ProjectListSerializer,
+    ProjectSerializer,
+    TechnologySerializer,
 )
 
 

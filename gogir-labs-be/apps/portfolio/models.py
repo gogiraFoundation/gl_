@@ -1,7 +1,7 @@
-from django.db import models
-from django.utils.text import slugify
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
+from django.db import models
+from django.utils.text import slugify
 
 
 class Category(models.Model):
@@ -124,8 +124,8 @@ class Project(models.Model):
 
         # Send notification when project is published
         if self.published and not was_published:
-            from apps.notifications.services import NotificationService
             from apps.notifications.models import NotificationType
+            from apps.notifications.services import NotificationService
 
             NotificationService.notify_admins(
                 notification_type=NotificationType.CONTENT_PUBLISHED,

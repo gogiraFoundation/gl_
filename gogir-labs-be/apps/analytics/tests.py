@@ -1,6 +1,7 @@
 import pytest
 from django.test import TestCase
-from .models import PageView, Event
+
+from .models import Event, PageView
 
 
 class PageViewModelTest(TestCase):

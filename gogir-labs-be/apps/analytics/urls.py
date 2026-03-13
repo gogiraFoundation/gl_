@@ -1,9 +1,10 @@
 from django.urls import path
+
 from .views import (
-    PageViewTrackView,
-    PageViewStatsView,
-    EventTrackView,
     EventStatsView,
+    EventTrackView,
+    PageViewStatsView,
+    PageViewTrackView,
 )
 
 urlpatterns = [

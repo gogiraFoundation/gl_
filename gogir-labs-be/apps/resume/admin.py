@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Experience, Education, Certification, Skill
+
+from .models import Certification, Education, Experience, Skill
 
 
 @admin.register(Experience)

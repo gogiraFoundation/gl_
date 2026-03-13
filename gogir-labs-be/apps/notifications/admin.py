@@ -1,7 +1,8 @@
-from django.contrib import admin
 from django import forms
+from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.utils.html import format_html
+
 from .models import (
     Notification,
     NotificationPreference,

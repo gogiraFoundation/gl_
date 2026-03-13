@@ -2,12 +2,12 @@
 API URL routing configuration.
 """
 
-from django.urls import path, include
+from django.urls import include, path
+from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from rest_framework.permissions import AllowAny
 
 
 # Create custom views that explicitly allow unauthenticated access

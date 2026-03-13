@@ -2,13 +2,15 @@
 Newsletter service for sending newsletters and managing subscriptions.
 """
 
-from django.conf import settings
-from django.template import Template, Context
-from typing import Optional, List
 import logging
+from typing import List, Optional
+
+from django.conf import settings
+from django.template import Context, Template
+
+from apps.notifications.services import EmailService
 
 from .models import NewsletterSubscriber
-from apps.notifications.services import EmailService
 
 logger = logging.getLogger(__name__)
 

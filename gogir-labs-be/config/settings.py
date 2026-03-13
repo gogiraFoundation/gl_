@@ -2,10 +2,11 @@
 Django settings for config project.
 """
 
-from pathlib import Path
-from decouple import config, Csv
-from datetime import timedelta
 import os
+from datetime import timedelta
+from pathlib import Path
+
+from decouple import Csv, config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent

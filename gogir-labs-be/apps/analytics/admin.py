@@ -1,11 +1,11 @@
-from django.contrib import admin
-from django.utils.html import format_html
-from django.urls import reverse
-from django.utils.safestring import mark_safe
-from django.utils import timezone
-from django.contrib import messages
+from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
-from .models import PageView, Event
+from django.urls import reverse
+from django.utils import timezone
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
+
+from .models import Event, PageView
 
 
 @admin.register(PageView)

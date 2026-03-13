@@ -1,5 +1,6 @@
-from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from rest_framework import serializers
+
 from .models import Notification, NotificationPreference, NotificationTemplate
 
 User = get_user_model()
@@ -9,6 +10,7 @@ class NotificationSerializer(serializers.ModelSerializer):
     """Serializer for notifications."""
 
     type_display = serializers.CharField(source="get_type_display", read_only=True)
+    related_object = serializers.SerializerMethodField()
 
     class Meta:
         model = Notification
@@ -25,6 +27,15 @@ class NotificationSerializer(serializers.ModelSerializer):
             "created_at",
         ]
         read_only_fields = ["read", "read_at", "created_at"]
+
+    def get_related_object(self, obj):
+        """Return related object id and type for GenericForeignKey (schema-friendly)."""
+        if obj.content_type_id and obj.object_id:
+            return {
+                "content_type_id": obj.content_type_id,
+                "object_id": obj.object_id,
+            }
+        return None
 
 
 class NotificationListSerializer(serializers.ModelSerializer):
