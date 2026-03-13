@@ -179,10 +179,10 @@ export function NewsletterForm({
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <Mail className="h-5 w-5 text-gray-400" />
             </div>
-        <input
-          type="email"
-          id="newsletter-email"
-          {...register('email')}
+            <input
+              type="email"
+              id="newsletter-email"
+              {...register('email')}
               className="glass w-full rounded-lg py-3 pl-10 pr-4 text-white placeholder-gray-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500"
               placeholder="your.email@example.com"
               autoComplete="email"
