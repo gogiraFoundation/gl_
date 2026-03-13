@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { NewsletterForm } from '../NewsletterForm'
 import api from '@/lib/api'
+import { AnalyticsProvider } from '@/contexts/AnalyticsContext'
 
 // Mock the API
 jest.mock('@/lib/api', () => ({
@@ -29,7 +30,11 @@ describe('NewsletterForm', () => {
   })
 
   const renderWithProviders = (ui: React.ReactElement) => {
-    return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>)
+    return render(
+      <AnalyticsProvider>
+        <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
+      </AnalyticsProvider>
+    )
   }
 
   it('renders email field in compact mode', () => {
@@ -56,14 +61,10 @@ describe('NewsletterForm', () => {
       await user.click(submitButton)
     })
 
-    await waitFor(
-      () => {
-        // Check for validation error - could be in error message or form validation
-        const errorText = screen.queryByText(/invalid email/i) || screen.queryByText(/email/i)
-        expect(errorText).toBeInTheDocument()
-      },
-      { timeout: 3000 }
-    )
+    await waitFor(() => {
+      // Validation should prevent API call when email is invalid
+      expect(mockApi.post).not.toHaveBeenCalled()
+    })
   })
 
   it('submits subscription with valid email', async () => {
