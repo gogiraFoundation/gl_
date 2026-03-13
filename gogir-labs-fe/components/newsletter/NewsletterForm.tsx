@@ -23,7 +23,11 @@ interface NewsletterFormProps {
   compact?: boolean
 }
 
-export function NewsletterForm({ source = 'unknown', showNameField = false, compact = false }: NewsletterFormProps) {
+export function NewsletterForm({
+  source = 'unknown',
+  showNameField = false,
+  compact = false,
+}: NewsletterFormProps) {
   const { trackFormSubmit } = useAnalyticsEvent()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
@@ -52,16 +56,16 @@ export function NewsletterForm({ source = 'unknown', showNameField = false, comp
         name: data.name || '',
         source: data.source || source,
       })
-      
+
       // Track form submission
       trackFormSubmit('newsletter', {
         source: data.source || source,
         hasName: !!data.name,
       })
-      
+
       setSubmitStatus('success')
       reset()
-      
+
       // Reset success message after 5 seconds
       setTimeout(() => {
         setSubmitStatus('idle')
@@ -88,7 +92,6 @@ export function NewsletterForm({ source = 'unknown', showNameField = false, comp
         <input
           type="text"
           id="website"
-          name="website"
           {...register('website')}
           className="hidden"
           tabIndex={-1}
@@ -100,33 +103,30 @@ export function NewsletterForm({ source = 'unknown', showNameField = false, comp
             <input
               type="email"
               id="newsletter-email-compact"
-              name="email"
               {...register('email')}
-              className="w-full px-4 py-2 min-h-[48px] glass rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-sm"
+              className="glass min-h-[48px] w-full rounded-lg px-4 py-2 text-sm text-white placeholder-gray-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500"
               placeholder="Enter your email"
               autoComplete="email"
             />
-            {errors.email && (
-              <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>
-            )}
+            {errors.email && <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>}
           </div>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-4 py-2 bg-gradient-primary text-white rounded-lg font-semibold hover:scale-105 transition-all duration-300 hover:shadow-glow-purple disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 text-sm whitespace-nowrap"
+            className="whitespace-nowrap rounded-lg bg-gradient-primary px-4 py-2 text-sm font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-glow-purple disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
           >
             {isSubmitting ? '...' : 'Subscribe'}
           </button>
         </div>
 
         {submitStatus === 'success' && (
-          <div className="p-3 bg-green-500/20 border border-green-500/50 text-green-300 rounded-lg text-sm">
+          <div className="rounded-lg border border-green-500/50 bg-green-500/20 p-3 text-sm text-green-300">
             Successfully subscribed! Please check your email to verify.
           </div>
         )}
 
         {submitStatus === 'error' && (
-          <div className="p-3 bg-red-500/20 border border-red-500/50 text-red-300 rounded-lg text-sm">
+          <div className="rounded-lg border border-red-500/50 bg-red-500/20 p-3 text-sm text-red-300">
             {errorMessage}
           </div>
         )}
@@ -140,7 +140,6 @@ export function NewsletterForm({ source = 'unknown', showNameField = false, comp
       <input
         type="text"
         id="newsletter-website"
-        name="website"
         {...register('website')}
         className="hidden"
         tabIndex={-1}
@@ -150,15 +149,17 @@ export function NewsletterForm({ source = 'unknown', showNameField = false, comp
       {showNameField && (
         <div>
           <div className="flex items-center gap-4">
-            <label htmlFor="newsletter-name" className="text-sm font-medium text-white whitespace-nowrap min-w-[100px]">
+            <label
+              htmlFor="newsletter-name"
+              className="min-w-[100px] whitespace-nowrap text-sm font-medium text-white"
+            >
               Name (Optional)
             </label>
             <input
               type="text"
               id="newsletter-name"
-              name="name"
               {...register('name')}
-              className="flex-1 px-4 py-3 glass rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+              className="glass flex-1 rounded-lg px-4 py-3 text-white placeholder-gray-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500"
               placeholder="Your name"
               autoComplete="name"
             />
@@ -168,37 +169,37 @@ export function NewsletterForm({ source = 'unknown', showNameField = false, comp
 
       <div>
         <div className="flex items-center gap-4">
-            <label htmlFor="newsletter-email" className="text-sm font-medium text-white whitespace-nowrap min-w-[100px]">
-              Email *
-            </label>
-            <div className="relative flex-1">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Mail className="w-5 h-5 text-gray-400" />
-              </div>
-              <input
-                type="email"
-                id="newsletter-email"
-                name="email"
-                {...register('email')}
-              className="w-full pl-10 pr-4 py-3 glass rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+          <label
+            htmlFor="newsletter-email"
+            className="min-w-[100px] whitespace-nowrap text-sm font-medium text-white"
+          >
+            Email *
+          </label>
+          <div className="relative flex-1">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+              <Mail className="h-5 w-5 text-gray-400" />
+            </div>
+        <input
+          type="email"
+          id="newsletter-email"
+          {...register('email')}
+              className="glass w-full rounded-lg py-3 pl-10 pr-4 text-white placeholder-gray-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500"
               placeholder="your.email@example.com"
               autoComplete="email"
             />
           </div>
         </div>
-        {errors.email && (
-          <p className="ml-[116px] text-sm text-red-400">{errors.email.message}</p>
-        )}
+        {errors.email && <p className="ml-[116px] text-sm text-red-400">{errors.email.message}</p>}
       </div>
 
       {submitStatus === 'success' && (
-        <div className="p-4 bg-green-500/20 border border-green-500/50 text-green-300 rounded-lg">
+        <div className="rounded-lg border border-green-500/50 bg-green-500/20 p-4 text-green-300">
           Successfully subscribed! Please check your email to verify your subscription.
         </div>
       )}
 
       {submitStatus === 'error' && (
-        <div className="p-4 bg-red-500/20 border border-red-500/50 text-red-300 rounded-lg">
+        <div className="rounded-lg border border-red-500/50 bg-red-500/20 p-4 text-red-300">
           {errorMessage}
         </div>
       )}
@@ -206,11 +207,10 @@ export function NewsletterForm({ source = 'unknown', showNameField = false, comp
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full px-5 py-2.5 bg-gradient-primary text-white rounded-lg font-semibold hover:scale-105 transition-all duration-300 hover:shadow-glow-purple disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+        className="w-full rounded-lg bg-gradient-primary px-5 py-2.5 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-glow-purple disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
       >
         {isSubmitting ? 'Subscribing...' : 'Subscribe to Newsletter'}
       </button>
     </form>
   )
 }
-

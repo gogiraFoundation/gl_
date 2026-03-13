@@ -25,12 +25,12 @@ export function RelatedPosts({ postId }: RelatedPostsProps) {
   }
 
   return (
-    <section className="mt-12 pt-8 border-t border-gray-700">
-      <div className="flex items-center gap-2 mb-6">
-        <BookOpen className="w-6 h-6 text-purple-400" />
+    <section className="mt-12 border-t border-gray-700 pt-8">
+      <div className="mb-6 flex items-center gap-2">
+        <BookOpen className="h-6 w-6 text-purple-400" />
         <h2 className="text-2xl font-bold text-white">You Might Also Like</h2>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {relatedPosts.map((post: any) => (
           <PostCard key={post.id} post={post} />
         ))}
@@ -38,4 +38,3 @@ export function RelatedPosts({ postId }: RelatedPostsProps) {
     </section>
   )
 }
-

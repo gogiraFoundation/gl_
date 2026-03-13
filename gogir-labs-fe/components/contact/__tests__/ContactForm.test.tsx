@@ -29,11 +29,7 @@ describe('ContactForm', () => {
   })
 
   const renderWithProviders = (ui: React.ReactElement) => {
-    return render(
-      <QueryClientProvider client={queryClient}>
-        {ui}
-      </QueryClientProvider>
-    )
+    return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>)
   }
 
   it('renders form fields', () => {
@@ -47,7 +43,7 @@ describe('ContactForm', () => {
   it('validates required fields', async () => {
     const user = userEvent.setup()
     renderWithProviders(<ContactForm />)
-    
+
     const submitButton = screen.getByRole('button', { name: /discuss your project/i })
     await user.click(submitButton)
 
@@ -59,7 +55,7 @@ describe('ContactForm', () => {
   it('validates email format', async () => {
     const user = userEvent.setup()
     renderWithProviders(<ContactForm />)
-    
+
     await user.type(screen.getByLabelText(/name/i), 'John Doe')
     const emailInput = screen.getByLabelText(/email/i)
     await user.type(emailInput, 'invalid-email')
@@ -69,19 +65,22 @@ describe('ContactForm', () => {
     const submitButton = screen.getByRole('button', { name: /discuss your project/i })
     await user.click(submitButton)
 
-    await waitFor(() => {
-      // Check for validation error - could be in error message or form validation
-      const errorText = screen.queryByText(/invalid email/i) || screen.queryByText(/email/i)
-      expect(errorText).toBeInTheDocument()
-    }, { timeout: 3000 })
+    await waitFor(
+      () => {
+        // Check for validation error - could be in error message or form validation
+        const errorText = screen.queryByText(/invalid email/i) || screen.queryByText(/email/i)
+        expect(errorText).toBeInTheDocument()
+      },
+      { timeout: 3000 }
+    )
   })
 
   it('submits form with valid data', async () => {
     const user = userEvent.setup()
     mockApi.post.mockResolvedValue({ data: { message: 'Success' } })
-    
+
     renderWithProviders(<ContactForm />)
-    
+
     await act(async () => {
       await user.type(screen.getByLabelText(/name/i), 'John Doe')
       await user.type(screen.getByLabelText(/email/i), 'john@example.com')
@@ -107,9 +106,9 @@ describe('ContactForm', () => {
   it('handles network failure', async () => {
     const user = userEvent.setup()
     mockApi.post.mockRejectedValue(new Error('Network error'))
-    
+
     renderWithProviders(<ContactForm />)
-    
+
     await user.type(screen.getByLabelText(/name/i), 'John Doe')
     await user.type(screen.getByLabelText(/email/i), 'john@example.com')
     await user.type(screen.getByLabelText(/subject/i), 'Test Subject')
@@ -126,9 +125,9 @@ describe('ContactForm', () => {
   it('handles very long inputs', async () => {
     const user = userEvent.setup()
     mockApi.post.mockResolvedValue({ data: { message: 'Success' } })
-    
+
     renderWithProviders(<ContactForm />)
-    
+
     const longName = 'A'.repeat(100)
     await user.type(screen.getByLabelText(/name/i), longName)
     await user.type(screen.getByLabelText(/email/i), 'john@example.com')
@@ -146,9 +145,9 @@ describe('ContactForm', () => {
   it('handles XSS attempt in inputs', async () => {
     const user = userEvent.setup()
     mockApi.post.mockResolvedValue({ data: { message: 'Success' } })
-    
+
     renderWithProviders(<ContactForm />)
-    
+
     await user.type(screen.getByLabelText(/name/i), '<script>alert("XSS")</script>')
     await user.type(screen.getByLabelText(/email/i), 'john@example.com')
     await user.type(screen.getByLabelText(/subject/i), 'Test Subject')
@@ -166,9 +165,9 @@ describe('ContactForm', () => {
   it('shows success message after submission', async () => {
     const user = userEvent.setup()
     mockApi.post.mockResolvedValue({ data: { message: 'Success' } })
-    
+
     renderWithProviders(<ContactForm />)
-    
+
     await act(async () => {
       await user.type(screen.getByLabelText(/name/i), 'John Doe')
       await user.type(screen.getByLabelText(/email/i), 'john@example.com')
@@ -186,4 +185,3 @@ describe('ContactForm', () => {
     })
   })
 })
-

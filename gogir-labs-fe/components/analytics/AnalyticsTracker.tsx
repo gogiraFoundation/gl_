@@ -13,4 +13,3 @@ export function AnalyticsTracker() {
 
   return <ConsentBanner />
 }
-

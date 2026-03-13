@@ -58,4 +58,3 @@ describe('PostCard', () => {
     expect(screen.getByText('Test Post')).toBeInTheDocument()
   })
 })
-

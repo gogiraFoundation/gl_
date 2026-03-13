@@ -21,11 +21,11 @@ const config: Config = {
     },
     extend: {
       maxWidth: {
-        'content': '1200px',
+        content: '1200px',
       },
       spacing: {
-        'section': '4rem', // 64px for section spacing
-        'inner': '1.5rem', // 24px for inner padding
+        section: '4rem', // 64px for section spacing
+        inner: '1.5rem', // 24px for inner padding
       },
       colors: {
         primary: {
@@ -59,8 +59,10 @@ const config: Config = {
       backgroundImage: {
         'gradient-primary': 'linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%)',
         'gradient-secondary': 'linear-gradient(135deg, #1a1a2e 0%, #0a0a0a 100%)',
-        'gradient-card': 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%)',
-        'gradient-mesh': 'radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.3) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.3) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.2) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(59, 130, 246, 0.2) 0px, transparent 50%)',
+        'gradient-card':
+          'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%)',
+        'gradient-mesh':
+          'radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.3) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.3) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.2) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(59, 130, 246, 0.2) 0px, transparent 50%)',
       },
       boxShadow: {
         'glow-purple': '0 0 20px rgba(139, 92, 246, 0.5), 0 0 40px rgba(139, 92, 246, 0.3)',
@@ -68,8 +70,8 @@ const config: Config = {
         'glow-white': '0 0 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(255, 255, 255, 0.1)',
       },
       animation: {
-        'float': 'float 6s ease-in-out infinite',
-        'glow': 'glow 2s ease-in-out infinite',
+        float: 'float 6s ease-in-out infinite',
+        glow: 'glow 2s ease-in-out infinite',
         'gradient-shift': 'gradient-shift 3s ease infinite',
         'fade-in-up': 'fadeInUp 0.6s ease-out',
         'slide-in-left': 'slideInLeft 0.6s ease-out',
@@ -83,7 +85,9 @@ const config: Config = {
         },
         glow: {
           '0%, 100%': { boxShadow: '0 0 20px rgba(139, 92, 246, 0.5)' },
-          '50%': { boxShadow: '0 0 40px rgba(139, 92, 246, 0.5), 0 0 60px rgba(139, 92, 246, 0.3)' },
+          '50%': {
+            boxShadow: '0 0 40px rgba(139, 92, 246, 0.5), 0 0 60px rgba(139, 92, 246, 0.3)',
+          },
         },
         gradientShift: {
           '0%': { backgroundPosition: '0% 50%' },
@@ -91,16 +95,16 @@ const config: Config = {
           '100%': { backgroundPosition: '0% 50%' },
         },
         fadeInUp: {
-          'from': { opacity: '0', transform: 'translateY(30px)' },
-          'to': { opacity: '1', transform: 'translateY(0)' },
+          from: { opacity: '0', transform: 'translateY(30px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
         },
         slideInLeft: {
-          'from': { opacity: '0', transform: 'translateX(-50px)' },
-          'to': { opacity: '1', transform: 'translateX(0)' },
+          from: { opacity: '0', transform: 'translateX(-50px)' },
+          to: { opacity: '1', transform: 'translateX(0)' },
         },
         slideInRight: {
-          'from': { opacity: '0', transform: 'translateX(50px)' },
-          'to': { opacity: '1', transform: 'translateX(0)' },
+          from: { opacity: '0', transform: 'translateX(50px)' },
+          to: { opacity: '1', transform: 'translateX(0)' },
         },
       },
     },
@@ -108,4 +112,3 @@ const config: Config = {
   plugins: [],
 }
 export default config
-

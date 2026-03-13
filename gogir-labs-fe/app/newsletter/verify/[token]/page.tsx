@@ -41,43 +41,43 @@ export default function NewsletterVerifyPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-grow py-20 px-4 relative">
+      <main className="relative flex-grow px-4 py-20">
         {/* Background Gradient */}
         <div className="absolute inset-0 bg-gradient-mesh opacity-30"></div>
-        
-        <div className="relative z-10 max-w-2xl mx-auto">
-          <div className="text-center mb-12 animate-fade-in-up">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4">
+
+        <div className="relative z-10 mx-auto max-w-2xl">
+          <div className="mb-12 animate-fade-in-up text-center">
+            <h1 className="mb-4 text-4xl font-bold sm:text-5xl md:text-6xl">
               <GradientText>Email Verification</GradientText>
             </h1>
           </div>
 
-          <div className="glass rounded-2xl p-8 scroll-fade-in text-center">
+          <div className="glass scroll-fade-in rounded-2xl p-8 text-center">
             {status === 'loading' && (
               <div>
-                <div className="inline-block p-4 rounded-full bg-purple-500/20 mb-6">
-                  <Loader2 className="w-12 h-12 text-purple-400 animate-spin" />
+                <div className="mb-6 inline-block rounded-full bg-purple-500/20 p-4">
+                  <Loader2 className="h-12 w-12 animate-spin text-purple-400" />
                 </div>
-                <h2 className="text-2xl font-bold mb-4 text-white">Verifying your email...</h2>
+                <h2 className="mb-4 text-2xl font-bold text-white">Verifying your email...</h2>
                 <p className="text-gray-300">Please wait while we verify your subscription.</p>
               </div>
             )}
 
             {status === 'success' && (
               <div>
-                <div className="inline-block p-4 rounded-full bg-green-500/20 mb-6">
-                  <CheckCircle className="w-12 h-12 text-green-400" />
+                <div className="mb-6 inline-block rounded-full bg-green-500/20 p-4">
+                  <CheckCircle className="h-12 w-12 text-green-400" />
                 </div>
-                <h2 className="text-2xl font-bold mb-4 text-white">Email Verified!</h2>
-                <p className="text-gray-300 mb-6">{message}</p>
-                <p className="text-sm text-gray-400 mb-6">
+                <h2 className="mb-4 text-2xl font-bold text-white">Email Verified!</h2>
+                <p className="mb-6 text-gray-300">{message}</p>
+                <p className="mb-6 text-sm text-gray-400">
                   You're all set! You'll start receiving our newsletter updates.
                 </p>
                 <button
                   onClick={() => router.push('/')}
-                  className="px-6 py-3 bg-gradient-primary text-white rounded-lg font-semibold hover:scale-105 transition-all duration-300 hover:shadow-glow-purple"
+                  className="rounded-lg bg-gradient-primary px-6 py-3 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-glow-purple"
                 >
                   Go to Homepage
                 </button>
@@ -86,21 +86,21 @@ export default function NewsletterVerifyPage() {
 
             {status === 'error' && (
               <div>
-                <div className="inline-block p-4 rounded-full bg-red-500/20 mb-6">
-                  <XCircle className="w-12 h-12 text-red-400" />
+                <div className="mb-6 inline-block rounded-full bg-red-500/20 p-4">
+                  <XCircle className="h-12 w-12 text-red-400" />
                 </div>
-                <h2 className="text-2xl font-bold mb-4 text-white">Verification Failed</h2>
-                <p className="text-gray-300 mb-6">{message}</p>
+                <h2 className="mb-4 text-2xl font-bold text-white">Verification Failed</h2>
+                <p className="mb-6 text-gray-300">{message}</p>
                 <div className="space-y-3">
                   <button
                     onClick={() => router.push('/newsletter/subscribe')}
-                    className="px-6 py-3 bg-gradient-primary text-white rounded-lg font-semibold hover:scale-105 transition-all duration-300 hover:shadow-glow-purple"
+                    className="rounded-lg bg-gradient-primary px-6 py-3 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-glow-purple"
                   >
                     Subscribe Again
                   </button>
                   <button
                     onClick={() => router.push('/')}
-                    className="block w-full px-6 py-3 border-2 border-purple-500 text-purple-400 rounded-lg font-semibold hover:bg-purple-500/10 transition-all duration-300"
+                    className="block w-full rounded-lg border-2 border-purple-500 px-6 py-3 font-semibold text-purple-400 transition-all duration-300 hover:bg-purple-500/10"
                   >
                     Go to Homepage
                   </button>
@@ -114,4 +114,3 @@ export default function NewsletterVerifyPage() {
     </div>
   )
 }
-

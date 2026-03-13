@@ -23,4 +23,3 @@ export function GradientText({ children, className, gradient = 'primary' }: Grad
     </span>
   )
 }
-

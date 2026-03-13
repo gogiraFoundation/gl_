@@ -36,29 +36,29 @@ export default function TestimonialsPage() {
   }, [])
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-grow py-12 px-4 relative">
+      <main className="relative flex-grow px-4 py-12">
         <div className="absolute inset-0 bg-gradient-mesh opacity-30"></div>
-        <div className="relative z-10 max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Quote className="w-8 h-8 text-purple-400" />
-              <h1 className="text-4xl md:text-5xl font-bold gradient-text">Testimonials</h1>
+        <div className="relative z-10 mx-auto max-w-7xl">
+          <div className="mb-12 text-center">
+            <div className="mb-4 flex items-center justify-center gap-2">
+              <Quote className="h-8 w-8 text-purple-400" />
+              <h1 className="gradient-text text-4xl font-bold md:text-5xl">Testimonials</h1>
             </div>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+            <p className="mx-auto max-w-2xl text-lg text-gray-400">
               What clients and colleagues say about working with me
             </p>
           </div>
 
           {isLoading ? (
-            <div className="text-center py-12 text-gray-400">Loading testimonials...</div>
+            <div className="py-12 text-center text-gray-400">Loading testimonials...</div>
           ) : testimonials.length === 0 ? (
-            <div className="text-center py-12">
+            <div className="py-12 text-center">
               <p className="text-gray-400">No testimonials available yet.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {testimonials.map((testimonial: Testimonial) => (
                 <TestimonialCard key={testimonial.id} testimonial={testimonial} />
               ))}
@@ -70,4 +70,3 @@ export default function TestimonialsPage() {
     </div>
   )
 }
-

@@ -23,7 +23,7 @@ export function ScrollAnimation({
     if (ref.current) {
       const rect = ref.current.getBoundingClientRect()
       const isInViewport = rect.top < window.innerHeight && rect.bottom > 0
-      
+
       if (isInViewport) {
         // Show immediately if already visible
         setIsVisible(true)
@@ -64,16 +64,12 @@ export function ScrollAnimation({
     animationType === 'fade-in'
       ? 'fade-in-on-scroll'
       : animationType === 'slide-left'
-      ? 'slide-in-left-on-scroll'
-      : 'slide-in-right-on-scroll'
+        ? 'slide-in-left-on-scroll'
+        : 'slide-in-right-on-scroll'
 
   return (
-    <div
-      ref={ref}
-      className={`${animationClass} ${isVisible ? 'visible' : ''} ${className}`}
-    >
+    <div ref={ref} className={`${animationClass} ${isVisible ? 'visible' : ''} ${className}`}>
       {children}
     </div>
   )
 }
-

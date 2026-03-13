@@ -33,7 +33,7 @@ function UnsubscribeContent() {
         token: unsubscribeToken || token,
         email: emailAddress || email,
       })
-      
+
       setStatus('success')
       setMessage(response.data.message || 'Successfully unsubscribed from newsletter.')
     } catch (error: any) {
@@ -57,48 +57,48 @@ function UnsubscribeContent() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-grow py-20 px-4 relative">
+      <main className="relative flex-grow px-4 py-20">
         {/* Background Gradient */}
         <div className="absolute inset-0 bg-gradient-mesh opacity-30"></div>
-        
-        <div className="relative z-10 max-w-2xl mx-auto">
-          <div className="text-center mb-12 animate-fade-in-up">
-            <div className="inline-block p-4 rounded-full bg-gradient-primary/20 mb-6">
-              <Mail className="w-12 h-12 text-purple-400" />
+
+        <div className="relative z-10 mx-auto max-w-2xl">
+          <div className="mb-12 animate-fade-in-up text-center">
+            <div className="bg-gradient-primary/20 mb-6 inline-block rounded-full p-4">
+              <Mail className="h-12 w-12 text-purple-400" />
             </div>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4">
+            <h1 className="mb-4 text-4xl font-bold sm:text-5xl md:text-6xl">
               <GradientText>Unsubscribe</GradientText>
             </h1>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+            <p className="mx-auto max-w-2xl text-xl text-gray-300">
               We're sorry to see you go. You can unsubscribe from our newsletter below.
             </p>
           </div>
 
-          <div className="glass rounded-2xl p-8 scroll-fade-in">
+          <div className="glass scroll-fade-in rounded-2xl p-8">
             {status === 'success' ? (
               <div className="text-center">
-                <div className="inline-block p-4 rounded-full bg-green-500/20 mb-6">
-                  <CheckCircle className="w-12 h-12 text-green-400" />
+                <div className="mb-6 inline-block rounded-full bg-green-500/20 p-4">
+                  <CheckCircle className="h-12 w-12 text-green-400" />
                 </div>
-                <h2 className="text-2xl font-bold mb-4 text-white">Unsubscribed Successfully</h2>
-                <p className="text-gray-300 mb-6">{message}</p>
+                <h2 className="mb-4 text-2xl font-bold text-white">Unsubscribed Successfully</h2>
+                <p className="mb-6 text-gray-300">{message}</p>
                 <p className="text-sm text-gray-400">
                   You can resubscribe at any time by visiting our website.
                 </p>
               </div>
             ) : status === 'error' ? (
               <div className="text-center">
-                <div className="inline-block p-4 rounded-full bg-red-500/20 mb-6">
-                  <XCircle className="w-12 h-12 text-red-400" />
+                <div className="mb-6 inline-block rounded-full bg-red-500/20 p-4">
+                  <XCircle className="h-12 w-12 text-red-400" />
                 </div>
-                <h2 className="text-2xl font-bold mb-4 text-white">Unsubscribe Failed</h2>
-                <p className="text-gray-300 mb-6">{message}</p>
+                <h2 className="mb-4 text-2xl font-bold text-white">Unsubscribe Failed</h2>
+                <p className="mb-6 text-gray-300">{message}</p>
                 <form onSubmit={onSubmit} className="mt-6">
                   <div className="space-y-4">
                     <div>
-                      <label htmlFor="email" className="block text-sm font-medium mb-2 text-white">
+                      <label htmlFor="email" className="mb-2 block text-sm font-medium text-white">
                         Email Address
                       </label>
                       <input
@@ -106,7 +106,7 @@ function UnsubscribeContent() {
                         id="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-4 py-3 glass rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                        className="glass w-full rounded-lg px-4 py-3 text-white placeholder-gray-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500"
                         placeholder="your.email@example.com"
                         required
                       />
@@ -114,7 +114,7 @@ function UnsubscribeContent() {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full px-6 py-3 bg-gradient-primary text-white rounded-lg font-semibold hover:scale-105 transition-all duration-300 hover:shadow-glow-purple disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                      className="w-full rounded-lg bg-gradient-primary px-6 py-3 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-glow-purple disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
                     >
                       {isSubmitting ? 'Unsubscribing...' : 'Unsubscribe'}
                     </button>
@@ -125,7 +125,7 @@ function UnsubscribeContent() {
               <form onSubmit={onSubmit} className="space-y-6">
                 {!token && (
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium mb-2 text-white">
+                    <label htmlFor="email" className="mb-2 block text-sm font-medium text-white">
                       Email Address
                     </label>
                     <input
@@ -133,7 +133,7 @@ function UnsubscribeContent() {
                       id="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full px-4 py-3 glass rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                      className="glass w-full rounded-lg px-4 py-3 text-white placeholder-gray-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500"
                       placeholder="your.email@example.com"
                       required
                     />
@@ -142,7 +142,7 @@ function UnsubscribeContent() {
 
                 {token && (
                   <div className="text-center">
-                    <p className="text-gray-300 mb-4">Processing your unsubscribe request...</p>
+                    <p className="mb-4 text-gray-300">Processing your unsubscribe request...</p>
                   </div>
                 )}
 
@@ -150,7 +150,7 @@ function UnsubscribeContent() {
                   <button
                     type="submit"
                     disabled={isSubmitting || !email}
-                    className="w-full px-6 py-3 bg-gradient-primary text-white rounded-lg font-semibold hover:scale-105 transition-all duration-300 hover:shadow-glow-purple disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                    className="w-full rounded-lg bg-gradient-primary px-6 py-3 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-glow-purple disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
                   >
                     {isSubmitting ? 'Unsubscribing...' : 'Unsubscribe'}
                   </button>
@@ -167,17 +167,19 @@ function UnsubscribeContent() {
 
 export default function NewsletterUnsubscribePage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-grow py-20 px-4 relative">
-          <div className="text-center">
-            <p className="text-gray-300">Loading...</p>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen flex-col">
+          <Header />
+          <main className="relative flex-grow px-4 py-20">
+            <div className="text-center">
+              <p className="text-gray-300">Loading...</p>
+            </div>
+          </main>
+          <Footer />
+        </div>
+      }
+    >
       <UnsubscribeContent />
     </Suspense>
   )

@@ -1,7 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { useParams } from 'next/navigation'
+import { notFound, useParams } from 'next/navigation'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { PostContent } from '@/components/blog/PostContent'
@@ -27,16 +27,16 @@ interface Post {
 }
 
 export default function BlogPostPage() {
-  const params = useParams()
-  const rawSlug = (params as { slug?: string | string[] }).slug
-  const slug =
-    typeof rawSlug === 'string'
-      ? rawSlug
-      : Array.isArray(rawSlug)
-      ? rawSlug[0]
-      : ''
+  const params = useParams() as { slug?: string | string[] }
+  const rawSlug = params.slug
+  if (!rawSlug) notFound()
+  const slug: string = Array.isArray(rawSlug) ? rawSlug[0] : rawSlug
 
-  const { data: post, isLoading, error } = useQuery<Post>({
+  const {
+    data: post,
+    isLoading,
+    error,
+  } = useQuery<Post>({
     queryKey: ['post', slug],
     queryFn: async () => {
       try {
@@ -44,12 +44,12 @@ export default function BlogPostPage() {
         console.log('=== API Response Debug ===')
         console.log('Fetching post by slug:', slug)
         console.log('API URL:', `/blog/posts/by-slug/?slug=${slug}`)
-        
+
         const response = await api.get(`/blog/posts/by-slug/`, {
-          params: { slug }
+          params: { slug },
         })
         const postData = response.data
-        
+
         console.log('=== Full API Response ===')
         console.log('Response status:', response.status)
         console.log('Full response data:', postData)
@@ -59,19 +59,19 @@ export default function BlogPostPage() {
         console.log('Content field length:', postData?.content?.length || 0)
         console.log('Content field isEmpty:', !postData?.content?.trim())
         console.log('All post fields:', Object.keys(postData || {}))
-        
+
         if (!postData) {
           console.error('ERROR: Post data is null or undefined')
           throw new Error('Post not found')
         }
-        
+
         if (!postData.content) {
           console.warn('WARNING: Content field is missing or empty')
           console.warn('Available fields:', Object.keys(postData))
         } else {
           console.log('✅ Content field found with length:', postData.content.length)
         }
-        
+
         return postData
       } catch (err: any) {
         console.error('Error fetching post:', err)
@@ -80,7 +80,7 @@ export default function BlogPostPage() {
         throw err
       }
     },
-    enabled: !!slug,
+    enabled: true,
     retry: 1,
   })
 
@@ -96,51 +96,60 @@ export default function BlogPostPage() {
     if (post) {
       // Update meta tags for SEO and social sharing
       document.title = `${post.title} | Blog - Emmanuel Ugbaije`
-      
+
       // Update description
       const metaDescription = document.querySelector('meta[name="description"]')
       if (metaDescription) {
         metaDescription.setAttribute('content', post.meta_description || post.excerpt)
       }
-      
+
       // Open Graph tags
-      const ogTitle = document.querySelector('meta[property="og:title"]') || document.createElement('meta')
+      const ogTitle =
+        document.querySelector('meta[property="og:title"]') || document.createElement('meta')
       ogTitle.setAttribute('property', 'og:title')
       ogTitle.setAttribute('content', post.title)
       if (!document.querySelector('meta[property="og:title"]')) {
         document.head.appendChild(ogTitle)
       }
-      
-      const ogDescription = document.querySelector('meta[property="og:description"]') || document.createElement('meta')
+
+      const ogDescription =
+        document.querySelector('meta[property="og:description"]') || document.createElement('meta')
       ogDescription.setAttribute('property', 'og:description')
       ogDescription.setAttribute('content', post.meta_description || post.excerpt)
       if (!document.querySelector('meta[property="og:description"]')) {
         document.head.appendChild(ogDescription)
       }
-      
-      const ogImage = document.querySelector('meta[property="og:image"]') || document.createElement('meta')
+
+      const ogImage =
+        document.querySelector('meta[property="og:image"]') || document.createElement('meta')
       ogImage.setAttribute('property', 'og:image')
-      ogImage.setAttribute('content', post.featured_image || `${window.location.origin}/og-image.jpg`)
+      ogImage.setAttribute(
+        'content',
+        post.featured_image || `${window.location.origin}/og-image.jpg`
+      )
       if (!document.querySelector('meta[property="og:image"]')) {
         document.head.appendChild(ogImage)
       }
-      
-      const ogUrl = document.querySelector('meta[property="og:url"]') || document.createElement('meta')
+
+      const ogUrl =
+        document.querySelector('meta[property="og:url"]') || document.createElement('meta')
       ogUrl.setAttribute('property', 'og:url')
       ogUrl.setAttribute('content', `${window.location.origin}/blog/${post.slug}`)
       if (!document.querySelector('meta[property="og:url"]')) {
         document.head.appendChild(ogUrl)
       }
-      
-      const ogType = document.querySelector('meta[property="og:type"]') || document.createElement('meta')
+
+      const ogType =
+        document.querySelector('meta[property="og:type"]') || document.createElement('meta')
       ogType.setAttribute('property', 'og:type')
       ogType.setAttribute('content', 'article')
       if (!document.querySelector('meta[property="og:type"]')) {
         document.head.appendChild(ogType)
       }
-      
+
       // Twitter Card tags
-      const twitterCard = document.querySelector('meta[name="twitter:card"]') || document.createElement('meta')
+      const twitterCard =
+        document.querySelector('meta[name="twitter:card"]') || document.createElement('meta')
       twitterCard.setAttribute('name', 'twitter:card')
       twitterCard.setAttribute('content', 'summary_large_image')
       if (!document.querySelector('meta[name="twitter:card"]')) {
@@ -151,10 +160,10 @@ export default function BlogPostPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="flex min-h-screen flex-col">
         <Header />
-        <main className="flex-grow py-12 px-4">
-          <div className="max-w-4xl mx-auto text-center">Loading post...</div>
+        <main className="flex-grow px-4 py-12">
+          <div className="mx-auto max-w-4xl text-center">Loading post...</div>
         </main>
         <Footer />
       </div>
@@ -163,11 +172,11 @@ export default function BlogPostPage() {
 
   if (error || !post) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="flex min-h-screen flex-col">
         <Header />
-        <main className="flex-grow py-12 px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-2xl font-bold mb-4">Post not found</h1>
+        <main className="flex-grow px-4 py-12">
+          <div className="mx-auto max-w-4xl text-center">
+            <h1 className="mb-4 text-2xl font-bold">Post not found</h1>
             <p className="text-gray-600 dark:text-gray-400">
               The blog post you're looking for doesn't exist or has been removed.
             </p>
@@ -179,17 +188,14 @@ export default function BlogPostPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-grow py-12 px-4 relative">
+      <main className="relative flex-grow px-4 py-12">
         {/* Background Gradient */}
         <div className="absolute inset-0 bg-gradient-mesh opacity-30"></div>
-        <div className="relative z-10 max-w-4xl mx-auto">
-          {post && <PostContent post={post} />}
-        </div>
+        <div className="relative z-10 mx-auto max-w-4xl">{post && <PostContent post={post} />}</div>
       </main>
       <Footer />
     </div>
   )
 }
-

@@ -43,7 +43,7 @@ export function ProjectFilters({
           placeholder="Search projects..."
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-800 dark:text-white"
+          className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
           autoComplete="off"
         />
       </div>
@@ -53,7 +53,7 @@ export function ProjectFilters({
           name="project-category"
           value={selectedCategory || ''}
           onChange={(e) => onCategoryChange(e.target.value ? Number(e.target.value) : null)}
-          className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-800 dark:text-white"
+          className="rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
         >
           <option value="">All Categories</option>
           {categories.map((category) => (
@@ -67,7 +67,7 @@ export function ProjectFilters({
           name="project-technology"
           value={selectedTechnology || ''}
           onChange={(e) => onTechnologyChange(e.target.value ? Number(e.target.value) : null)}
-          className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-800 dark:text-white"
+          className="rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
         >
           <option value="">All Technologies</option>
           {technologies.map((tech) => (
@@ -82,7 +82,7 @@ export function ProjectFilters({
               onCategoryChange(null)
               onTechnologyChange(null)
             }}
-            className="px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+            className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
           >
             Clear Filters
           </button>
@@ -91,4 +91,3 @@ export function ProjectFilters({
     </div>
   )
 }
-

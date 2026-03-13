@@ -20,7 +20,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     // Check localStorage or system preference
     if (typeof window !== 'undefined') {
       const savedTheme = localStorage.getItem('theme') as Theme | null
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light'
       const initialTheme = savedTheme || systemTheme
       setTheme(initialTheme)
       document.documentElement.setAttribute('data-theme', initialTheme)
@@ -37,11 +39,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }
 
   // Always provide the context, even if not mounted yet
-  return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
-    </ThemeContext.Provider>
-  )
+  return <ThemeContext.Provider value={{ theme, toggleTheme }}>{children}</ThemeContext.Provider>
 }
 
 export function useTheme() {
@@ -51,4 +49,3 @@ export function useTheme() {
   }
   return context
 }
-

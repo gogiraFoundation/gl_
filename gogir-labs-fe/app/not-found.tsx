@@ -5,36 +5,36 @@ import { Home, Search, ArrowLeft } from 'lucide-react'
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-grow flex items-center justify-center px-4 py-20 relative">
+      <main className="relative flex flex-grow items-center justify-center px-4 py-20">
         <div className="absolute inset-0 bg-gradient-mesh opacity-30"></div>
-        <div className="relative z-10 max-w-2xl mx-auto text-center">
-          <h1 className="text-9xl font-bold gradient-text mb-4">404</h1>
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Page Not Found</h2>
-          <p className="text-gray-400 text-lg mb-8">
+        <div className="relative z-10 mx-auto max-w-2xl text-center">
+          <h1 className="gradient-text mb-4 text-9xl font-bold">404</h1>
+          <h2 className="mb-6 text-4xl font-bold text-white md:text-5xl">Page Not Found</h2>
+          <p className="mb-8 text-lg text-gray-400">
             The page you're looking for doesn't exist or has been moved.
           </p>
-          <div className="flex flex-wrap gap-4 justify-center">
+          <div className="flex flex-wrap justify-center gap-4">
             <Link
               href="/"
-              className="flex items-center gap-2 px-6 py-3 bg-gradient-primary text-white rounded-lg font-semibold hover:scale-105 transition-all duration-300 hover:shadow-glow-purple"
+              className="flex items-center gap-2 rounded-lg bg-gradient-primary px-6 py-3 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-glow-purple"
             >
-              <Home className="w-5 h-5" />
+              <Home className="h-5 w-5" />
               Go Home
             </Link>
             <Link
               href="/blog"
-              className="flex items-center gap-2 px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white rounded-lg font-semibold transition-all duration-300"
+              className="flex items-center gap-2 rounded-lg bg-gray-800 px-6 py-3 font-semibold text-white transition-all duration-300 hover:bg-gray-700"
             >
-              <Search className="w-5 h-5" />
+              <Search className="h-5 w-5" />
               Browse Blog
             </Link>
             <Link
               href="/portfolio"
-              className="flex items-center gap-2 px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white rounded-lg font-semibold transition-all duration-300"
+              className="flex items-center gap-2 rounded-lg bg-gray-800 px-6 py-3 font-semibold text-white transition-all duration-300 hover:bg-gray-700"
             >
-              <ArrowLeft className="w-5 h-5" />
+              <ArrowLeft className="h-5 w-5" />
               View Portfolio
             </Link>
           </div>
@@ -44,4 +44,3 @@ export default function NotFound() {
     </div>
   )
 }
-

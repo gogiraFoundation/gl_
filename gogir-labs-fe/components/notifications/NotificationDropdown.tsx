@@ -70,15 +70,15 @@ export function NotificationDropdown({ onClose }: { onClose: () => void }) {
   return (
     <div
       ref={dropdownRef}
-      className="absolute right-0 mt-2 w-96 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 max-h-96 overflow-y-auto"
+      className="absolute right-0 z-50 mt-2 max-h-96 w-96 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800"
     >
-      <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+      <div className="flex items-center justify-between border-b border-gray-200 p-4 dark:border-gray-700">
         <h3 className="text-lg font-semibold">Notifications</h3>
         <div className="flex items-center gap-2">
           {notifications.length > 0 && (
             <button
               onClick={() => markAllRead.mutate()}
-              className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+              className="text-sm text-blue-600 hover:underline dark:text-blue-400"
             >
               Mark all read
             </button>
@@ -87,7 +87,7 @@ export function NotificationDropdown({ onClose }: { onClose: () => void }) {
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
           >
-            <X className="w-5 h-5" />
+            <X className="h-5 w-5" />
           </button>
         </div>
       </div>
@@ -101,17 +101,17 @@ export function NotificationDropdown({ onClose }: { onClose: () => void }) {
           {notifications.map((notification) => (
             <div
               key={notification.id}
-              className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
+              className={`p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-700 ${
                 !notification.read ? 'bg-blue-50 dark:bg-blue-900/20' : ''
               }`}
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h4 className="font-semibold text-sm">{notification.title}</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">
+                  <h4 className="text-sm font-semibold">{notification.title}</h4>
+                  <p className="mt-1 line-clamp-2 text-sm text-gray-600 dark:text-gray-400">
                     {notification.message}
                   </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
+                  <p className="mt-2 text-xs text-gray-500 dark:text-gray-500">
                     {new Date(notification.created_at).toLocaleString()}
                   </p>
                 </div>
@@ -121,7 +121,7 @@ export function NotificationDropdown({ onClose }: { onClose: () => void }) {
                     className="ml-2 p-1 text-gray-400 hover:text-green-600 dark:hover:text-green-400"
                     aria-label="Mark as read"
                   >
-                    <Check className="w-4 h-4" />
+                    <Check className="h-4 w-4" />
                   </button>
                 )}
               </div>
@@ -131,10 +131,10 @@ export function NotificationDropdown({ onClose }: { onClose: () => void }) {
       )}
 
       {notifications.length > 0 && (
-        <div className="p-4 border-t border-gray-200 dark:border-gray-700 text-center">
+        <div className="border-t border-gray-200 p-4 text-center dark:border-gray-700">
           <Link
             href="/admin/notifications"
-            className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+            className="text-sm text-blue-600 hover:underline dark:text-blue-400"
             onClick={onClose}
           >
             View all notifications
@@ -144,4 +144,3 @@ export function NotificationDropdown({ onClose }: { onClose: () => void }) {
     </div>
   )
 }
-

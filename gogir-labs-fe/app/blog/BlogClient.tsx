@@ -38,7 +38,6 @@ interface Tag {
   slug: string
 }
 
-
 export default function BlogClient() {
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
   const [selectedTag, setSelectedTag] = useState<number | null>(null)
@@ -65,40 +64,40 @@ export default function BlogClient() {
       if (selectedCategory) params.category = selectedCategory
       if (selectedTag) params.tags = selectedTag
       if (debouncedSearch) params.search = debouncedSearch
-      
+
       console.log('🔍 BlogClient: Fetching posts with params:', params)
       console.log('🔍 BlogClient: API baseURL:', api.defaults.baseURL)
-      
+
       try {
         const response = await api.get('/blog/posts/', { params })
-        
+
         console.log('✅ BlogClient: API Response Status:', response.status)
         console.log('✅ BlogClient: API Response Data:', response.data)
         console.log('✅ BlogClient: Response Data Type:', typeof response.data)
         console.log('✅ BlogClient: Has results?', 'results' in response.data)
         console.log('✅ BlogClient: Is Array?', Array.isArray(response.data))
-        
+
         // Handle different response shapes
         const data = response.data
-        
+
         // Case 1: Django REST Framework pagination { results: [...], count: ... }
         if (data.results && Array.isArray(data.results)) {
           console.log('✅ BlogClient: Using results array, count:', data.results.length)
           return data.results
         }
-        
+
         // Case 2: Direct array
         if (Array.isArray(data)) {
           console.log('✅ BlogClient: Using direct array, count:', data.length)
           return data
         }
-        
+
         // Case 3: Wrapped in data property
         if (data.data && Array.isArray(data.data)) {
           console.log('✅ BlogClient: Using data.data array, count:', data.data.length)
           return data.data
         }
-        
+
         // Case 4: Empty or unexpected shape
         console.warn('⚠️ BlogClient: Unexpected response shape, returning empty array')
         console.warn('⚠️ BlogClient: Response keys:', Object.keys(data))
@@ -145,22 +144,23 @@ export default function BlogClient() {
   })
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-grow py-20 px-4 relative">
+      <main className="relative flex-grow px-4 py-20">
         {/* Background Gradient */}
         <div className="absolute inset-0 bg-gradient-mesh opacity-30"></div>
-        
-        <div className="relative z-10 max-w-7xl mx-auto">
-          <div className="text-center mb-12 animate-fade-in-up">
-            <h1 className="text-5xl md:text-6xl font-bold mb-4">
+
+        <div className="relative z-10 mx-auto max-w-7xl">
+          <div className="mb-12 animate-fade-in-up text-center">
+            <h1 className="mb-4 text-5xl font-bold md:text-6xl">
               <span className="gradient-text">Blog</span>
             </h1>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-              Insights on infrastructure, DevOps, cloud technologies, and software engineering - from Terraform to Kubernetes, CI/CD to scalable architecture.
+            <p className="mx-auto max-w-2xl text-lg text-gray-400">
+              Insights on infrastructure, DevOps, cloud technologies, and software engineering -
+              from Terraform to Kubernetes, CI/CD to scalable architecture.
             </p>
           </div>
-          
+
           <BlogFilters
             categories={categories || []}
             tags={tags || []}
@@ -171,28 +171,40 @@ export default function BlogClient() {
             onTagChange={setSelectedTag}
             onSearchChange={setSearchQuery}
           />
-          
+
           {error && (
-            <div className="mb-8 p-4 bg-red-500/20 border border-red-500/50 text-red-300 rounded-lg">
-              <p className="font-semibold mb-2">Error loading posts</p>
+            <div className="mb-8 rounded-lg border border-red-500/50 bg-red-500/20 p-4 text-red-300">
+              <p className="mb-2 font-semibold">Error loading posts</p>
               <p className="text-sm">
                 {error instanceof Error ? error.message : 'An unexpected error occurred'}
               </p>
-              <p className="text-xs mt-2 opacity-75">
-                Check the browser console for more details.
-              </p>
+              <p className="mt-2 text-xs opacity-75">Check the browser console for more details.</p>
             </div>
           )}
-          
-          <PostList 
-            posts={Array.isArray(typedPosts) ? typedPosts : []} 
+
+          <PostList
+            posts={Array.isArray(typedPosts) ? typedPosts : []}
             isLoading={isLoading || (isFetching && !typedPosts.length)}
           />
 
           {/* Optional: Newsletter or Follow CTA */}
           <div className="mt-16 text-center">
-            <p className="text-gray-300 mb-4">
-              Like what you're reading? Follow me on <Link href="https://www.linkedin.com/in/emmanuel-ugbaje-b19227161/" className="text-purple-400 hover:text-purple-300 underline">LinkedIn</Link> or <Link href="https://medium.com/@aigbemanuel" className="text-purple-400 hover:text-purple-300 underline">Medium</Link> for more insights.
+            <p className="mb-4 text-gray-300">
+              Like what you're reading? Follow me on{' '}
+              <Link
+                href="https://www.linkedin.com/in/emmanuel-ugbaje-b19227161/"
+                className="text-purple-400 underline hover:text-purple-300"
+              >
+                LinkedIn
+              </Link>{' '}
+              or{' '}
+              <Link
+                href="https://medium.com/@aigbemanuel"
+                className="text-purple-400 underline hover:text-purple-300"
+              >
+                Medium
+              </Link>{' '}
+              for more insights.
             </p>
           </div>
         </div>
@@ -201,4 +213,3 @@ export default function BlogClient() {
     </div>
   )
 }
-

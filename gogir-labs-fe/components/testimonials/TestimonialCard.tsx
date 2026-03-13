@@ -24,9 +24,9 @@ interface TestimonialCardProps {
 export function TestimonialCard({ testimonial }: TestimonialCardProps) {
   return (
     <GlowCard glowColor="purple" className="p-6">
-      <div className="flex items-center mb-4">
+      <div className="mb-4 flex items-center">
         {testimonial.client_image ? (
-          <div className="relative w-12 h-12 rounded-full overflow-hidden mr-4 border-2 border-purple-500/50">
+          <div className="relative mr-4 h-12 w-12 overflow-hidden rounded-full border-2 border-purple-500/50">
             <Image
               src={testimonial.client_image}
               alt={testimonial.client_name}
@@ -35,8 +35,8 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
             />
           </div>
         ) : (
-          <div className="w-12 h-12 rounded-full bg-gradient-primary flex items-center justify-center mr-4 border-2 border-purple-500/50">
-            <span className="text-white font-bold text-lg">
+          <div className="mr-4 flex h-12 w-12 items-center justify-center rounded-full border-2 border-purple-500/50 bg-gradient-primary">
+            <span className="text-lg font-bold text-white">
               {testimonial.client_name.charAt(0).toUpperCase()}
             </span>
           </div>
@@ -53,16 +53,13 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
         {Array.from({ length: 5 }).map((_, i) => (
           <Star
             key={i}
-            className={`w-4 h-4 ${
-              i < testimonial.rating
-                ? 'text-yellow-400 fill-yellow-400'
-                : 'text-gray-600'
+            className={`h-4 w-4 ${
+              i < testimonial.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-600'
             }`}
           />
         ))}
       </div>
-      <p className="text-gray-300 italic leading-relaxed">&quot;{testimonial.content}&quot;</p>
+      <p className="italic leading-relaxed text-gray-300">&quot;{testimonial.content}&quot;</p>
     </GlowCard>
   )
 }
-

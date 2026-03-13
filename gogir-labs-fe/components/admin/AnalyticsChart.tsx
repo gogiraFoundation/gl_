@@ -1,6 +1,14 @@
 'use client'
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts'
 
 interface AnalyticsChartProps {
   data: Array<{ [key: string]: string | number }>
@@ -11,7 +19,7 @@ interface AnalyticsChartProps {
 
 export function AnalyticsChart({ data, dataKey, nameKey, label }: AnalyticsChartProps) {
   if (!data || data.length === 0) {
-    return <div className="text-center py-12 text-gray-500">No data available</div>
+    return <div className="py-12 text-center text-gray-500">No data available</div>
   }
 
   return (
@@ -26,4 +34,3 @@ export function AnalyticsChart({ data, dataKey, nameKey, label }: AnalyticsChart
     </ResponsiveContainer>
   )
 }
-

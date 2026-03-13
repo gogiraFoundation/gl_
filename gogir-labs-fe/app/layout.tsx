@@ -11,15 +11,23 @@ export const metadata: Metadata = {
     default: 'Emmanuel Ugbaje - Software Engineer | Building Solutions with Data Insights',
     template: '%s | Emmanuel Ugbaje',
   },
-  description: 'Software Engineer specializing in Python, Django, data analysis, and RESTful APIs. Building accessible, efficient digital products that deliver real public value.',
-  keywords: ['Software Engineer', 'Python Developer', 'Django', 'Data Analysis', 'REST APIs', 'PostgreSQL', 'Agile Development', 'CI/CD', 'Accessibility', 'User-Centered Design'],
+  description:
+    'Software Engineer specializing in Python, Django, data analysis, and RESTful APIs. Building accessible, efficient digital products that deliver real public value.',
+  keywords: [
+    'Software Engineer',
+    'Python Developer',
+    'Django',
+    'Data Analysis',
+    'REST APIs',
+    'PostgreSQL',
+    'Agile Development',
+    'CI/CD',
+    'Accessibility',
+    'User-Centered Design',
+  ],
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={inter.variable} data-theme="dark">
       <head>
@@ -35,4 +43,3 @@ export default function RootLayout({
     </html>
   )
 }
-
