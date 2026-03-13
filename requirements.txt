@@ -1,0 +1,1 @@
+-r gogir-labs-be/requirements.txt
