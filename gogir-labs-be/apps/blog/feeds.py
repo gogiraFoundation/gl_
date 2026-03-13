@@ -5,13 +5,16 @@ from .models import Post
 
 class BlogFeed(Feed):
     """RSS feed for blog posts."""
+
     title = "Emmanuel Ugbaije - Blog"
     link = "/blog/"
     description = "Latest blog posts from Emmanuel Ugbaije"
     feed_type = Atom1Feed
 
     def items(self):
-        return Post.objects.filter(published=True).order_by('-published_at', '-created_at')[:20]
+        return Post.objects.filter(published=True).order_by(
+            "-published_at", "-created_at"
+        )[:20]
 
     def item_title(self, item):
         return item.title
@@ -38,5 +41,5 @@ class BlogFeed(Feed):
 
 class BlogRSSFeed(BlogFeed):
     """RSS 2.0 feed for blog posts."""
-    feed_type = None  # Default RSS 2.0
 
+    feed_type = None  # Default RSS 2.0

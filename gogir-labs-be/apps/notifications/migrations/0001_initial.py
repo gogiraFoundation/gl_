@@ -11,60 +11,183 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('contenttypes', '0002_remove_content_type_name'),
+        ("contenttypes", "0002_remove_content_type_name"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='NotificationTemplate',
+            name="NotificationTemplate",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('notification_type', models.CharField(choices=[('contact_message', 'Contact Message'), ('blog_comment', 'Blog Comment'), ('blog_comment_approved', 'Blog Comment Approved'), ('analytics_alert', 'Analytics Alert'), ('system_error', 'System Error'), ('user_login', 'User Login'), ('content_published', 'Content Published'), ('content_updated', 'Content Updated')], max_length=50, unique=True)),
-                ('subject_template', models.CharField(help_text='Email subject template', max_length=200)),
-                ('body_template', models.TextField(help_text='Plain text email body template')),
-                ('html_template', models.TextField(blank=True, help_text='HTML email body template')),
-                ('enabled', models.BooleanField(default=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "notification_type",
+                    models.CharField(
+                        choices=[
+                            ("contact_message", "Contact Message"),
+                            ("blog_comment", "Blog Comment"),
+                            ("blog_comment_approved", "Blog Comment Approved"),
+                            ("analytics_alert", "Analytics Alert"),
+                            ("system_error", "System Error"),
+                            ("user_login", "User Login"),
+                            ("content_published", "Content Published"),
+                            ("content_updated", "Content Updated"),
+                        ],
+                        max_length=50,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "subject_template",
+                    models.CharField(
+                        help_text="Email subject template", max_length=200
+                    ),
+                ),
+                (
+                    "body_template",
+                    models.TextField(help_text="Plain text email body template"),
+                ),
+                (
+                    "html_template",
+                    models.TextField(blank=True, help_text="HTML email body template"),
+                ),
+                ("enabled", models.BooleanField(default=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
             ],
             options={
-                'ordering': ['notification_type'],
+                "ordering": ["notification_type"],
             },
         ),
         migrations.CreateModel(
-            name='NotificationPreference',
+            name="NotificationPreference",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('notification_type', models.CharField(choices=[('contact_message', 'Contact Message'), ('blog_comment', 'Blog Comment'), ('blog_comment_approved', 'Blog Comment Approved'), ('analytics_alert', 'Analytics Alert'), ('system_error', 'System Error'), ('user_login', 'User Login'), ('content_published', 'Content Published'), ('content_updated', 'Content Updated')], max_length=50)),
-                ('email_enabled', models.BooleanField(default=True)),
-                ('in_app_enabled', models.BooleanField(default=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='notification_preferences', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "notification_type",
+                    models.CharField(
+                        choices=[
+                            ("contact_message", "Contact Message"),
+                            ("blog_comment", "Blog Comment"),
+                            ("blog_comment_approved", "Blog Comment Approved"),
+                            ("analytics_alert", "Analytics Alert"),
+                            ("system_error", "System Error"),
+                            ("user_login", "User Login"),
+                            ("content_published", "Content Published"),
+                            ("content_updated", "Content Updated"),
+                        ],
+                        max_length=50,
+                    ),
+                ),
+                ("email_enabled", models.BooleanField(default=True)),
+                ("in_app_enabled", models.BooleanField(default=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="notification_preferences",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['user', 'notification_type'],
-                'unique_together': {('user', 'notification_type')},
+                "ordering": ["user", "notification_type"],
+                "unique_together": {("user", "notification_type")},
             },
         ),
         migrations.CreateModel(
-            name='Notification',
+            name="Notification",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('type', models.CharField(choices=[('contact_message', 'Contact Message'), ('blog_comment', 'Blog Comment'), ('blog_comment_approved', 'Blog Comment Approved'), ('analytics_alert', 'Analytics Alert'), ('system_error', 'System Error'), ('user_login', 'User Login'), ('content_published', 'Content Published'), ('content_updated', 'Content Updated')], max_length=50)),
-                ('title', models.CharField(max_length=200)),
-                ('message', models.TextField()),
-                ('data', models.JSONField(blank=True, default=dict, help_text='Additional notification context')),
-                ('read', models.BooleanField(default=False)),
-                ('read_at', models.DateTimeField(blank=True, null=True)),
-                ('object_id', models.PositiveIntegerField(blank=True, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('content_type', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='contenttypes.contenttype')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='notifications', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "type",
+                    models.CharField(
+                        choices=[
+                            ("contact_message", "Contact Message"),
+                            ("blog_comment", "Blog Comment"),
+                            ("blog_comment_approved", "Blog Comment Approved"),
+                            ("analytics_alert", "Analytics Alert"),
+                            ("system_error", "System Error"),
+                            ("user_login", "User Login"),
+                            ("content_published", "Content Published"),
+                            ("content_updated", "Content Updated"),
+                        ],
+                        max_length=50,
+                    ),
+                ),
+                ("title", models.CharField(max_length=200)),
+                ("message", models.TextField()),
+                (
+                    "data",
+                    models.JSONField(
+                        blank=True,
+                        default=dict,
+                        help_text="Additional notification context",
+                    ),
+                ),
+                ("read", models.BooleanField(default=False)),
+                ("read_at", models.DateTimeField(blank=True, null=True)),
+                ("object_id", models.PositiveIntegerField(blank=True, null=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "content_type",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="contenttypes.contenttype",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="notifications",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-created_at'],
-                'indexes': [models.Index(fields=['user', 'read', '-created_at'], name='notificatio_user_id_4fcc58_idx'), models.Index(fields=['type', 'created_at'], name='notificatio_type_8e213d_idx'), models.Index(fields=['user', 'created_at'], name='notificatio_user_id_c62b26_idx')],
+                "ordering": ["-created_at"],
+                "indexes": [
+                    models.Index(
+                        fields=["user", "read", "-created_at"],
+                        name="notificatio_user_id_4fcc58_idx",
+                    ),
+                    models.Index(
+                        fields=["type", "created_at"],
+                        name="notificatio_type_8e213d_idx",
+                    ),
+                    models.Index(
+                        fields=["user", "created_at"],
+                        name="notificatio_user_id_c62b26_idx",
+                    ),
+                ],
             },
         ),
     ]

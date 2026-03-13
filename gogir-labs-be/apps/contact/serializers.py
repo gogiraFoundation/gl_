@@ -8,8 +8,18 @@ class ContactMessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ContactMessage
-        fields = ['id', 'name', 'email', 'subject', 'message', 'website', 'read', 'replied', 'created_at']
-        read_only_fields = ['read', 'replied', 'created_at']
+        fields = [
+            "id",
+            "name",
+            "email",
+            "subject",
+            "message",
+            "website",
+            "read",
+            "replied",
+            "created_at",
+        ]
+        read_only_fields = ["read", "replied", "created_at"]
 
     def validate_website(self, value):
         """Honeypot validation - if filled, it's spam."""
@@ -20,7 +30,7 @@ class ContactMessageSerializer(serializers.ModelSerializer):
 
 class ContactMessageListSerializer(serializers.ModelSerializer):
     """Serializer for admin list view."""
+
     class Meta:
         model = ContactMessage
-        fields = ['id', 'name', 'email', 'subject', 'read', 'replied', 'created_at']
-
+        fields = ["id", "name", "email", "subject", "read", "replied", "created_at"]

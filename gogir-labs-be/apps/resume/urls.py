@@ -1,20 +1,20 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
-    ExperienceViewSet, 
-    EducationViewSet, 
-    CertificationViewSet, 
+    ExperienceViewSet,
+    EducationViewSet,
+    CertificationViewSet,
     SkillViewSet,
-    download_resume_pdf
+    download_resume_pdf,
 )
 
 router = DefaultRouter()
-router.register(r'experience', ExperienceViewSet, basename='experience')
-router.register(r'education', EducationViewSet, basename='education')
-router.register(r'certifications', CertificationViewSet, basename='certification')
-router.register(r'skills', SkillViewSet, basename='skill')
+router.register(r"experience", ExperienceViewSet, basename="experience")
+router.register(r"education", EducationViewSet, basename="education")
+router.register(r"certifications", CertificationViewSet, basename="certification")
+router.register(r"skills", SkillViewSet, basename="skill")
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('download/', download_resume_pdf, name='resume-download'),
+    path("", include(router.urls)),
+    path("download/", download_resume_pdf, name="resume-download"),
 ]

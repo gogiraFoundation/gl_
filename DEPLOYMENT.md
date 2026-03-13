@@ -57,12 +57,12 @@ python -c "from django.core.management.utils import get_random_secret_key; print
 sudo apt-get update
 sudo apt-get install certbot
 
-# Generate certificates
-sudo certbot certonly --standalone -d gogirlabs.com -d www.gogirlabs.com
+# Generate certificates (API subdomain only; frontend is on Cloudflare Pages)
+sudo certbot certonly --standalone -d api.gogirlabs.uk
 
 # Copy certificates to nginx/ssl directory
-sudo cp /etc/letsencrypt/live/gogirlabs.com/fullchain.pem nginx/ssl/cert.pem
-sudo cp /etc/letsencrypt/live/gogirlabs.com/privkey.pem nginx/ssl/key.pem
+sudo cp /etc/letsencrypt/live/api.gogirlabs.uk/fullchain.pem nginx/ssl/cert.pem
+sudo cp /etc/letsencrypt/live/api.gogirlabs.uk/privkey.pem nginx/ssl/key.pem
 sudo chmod 644 nginx/ssl/cert.pem
 sudo chmod 600 nginx/ssl/key.pem
 ```
@@ -86,8 +86,8 @@ chmod +x deploy.sh
 ./deploy.sh production
 
 # 2. Verify deployment
-curl https://gogirlabs.com/api/v1/blog/posts/
-curl https://gogirlabs.com/
+curl https://api.gogirlabs.uk/api/v1/blog/posts/
+# Frontend: https://www.gogirlabs.uk (Cloudflare Pages)
 ```
 
 ## Manual Deployment Steps

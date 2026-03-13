@@ -4,21 +4,26 @@ from django.utils import timezone
 
 class Experience(models.Model):
     """Work experience entry."""
+
     title = models.CharField(max_length=200)
     company = models.CharField(max_length=200)
     location = models.CharField(max_length=200, blank=True)
     start_date = models.DateField()
-    end_date = models.DateField(null=True, blank=True, help_text="Leave blank if current position")
+    end_date = models.DateField(
+        null=True, blank=True, help_text="Leave blank if current position"
+    )
     is_current = models.BooleanField(default=False)
     description = models.TextField(help_text="Job description and achievements")
-    technologies = models.CharField(max_length=500, blank=True, help_text="Comma-separated list of technologies")
+    technologies = models.CharField(
+        max_length=500, blank=True, help_text="Comma-separated list of technologies"
+    )
     order = models.IntegerField(default=0, help_text="Display order")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-order', '-start_date']
-        verbose_name_plural = 'Experiences'
+        ordering = ["-order", "-start_date"]
+        verbose_name_plural = "Experiences"
 
     def __str__(self):
         return f"{self.title} at {self.company}"
@@ -26,6 +31,7 @@ class Experience(models.Model):
 
 class Education(models.Model):
     """Education entry."""
+
     degree = models.CharField(max_length=200)
     institution = models.CharField(max_length=200)
     location = models.CharField(max_length=200, blank=True)
@@ -40,7 +46,7 @@ class Education(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-order', '-start_date']
+        ordering = ["-order", "-start_date"]
 
     def __str__(self):
         return f"{self.degree} from {self.institution}"
@@ -48,6 +54,7 @@ class Education(models.Model):
 
 class Certification(models.Model):
     """Professional certification."""
+
     name = models.CharField(max_length=200)
     issuer = models.CharField(max_length=200)
     issue_date = models.DateField()
@@ -59,7 +66,7 @@ class Certification(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-order', '-issue_date']
+        ordering = ["-order", "-issue_date"]
 
     def __str__(self):
         return f"{self.name} from {self.issuer}"
@@ -67,24 +74,24 @@ class Certification(models.Model):
 
 class Skill(models.Model):
     """Skill entry."""
+
     CATEGORY_CHOICES = [
-        ('programming', 'Programming Languages'),
-        ('framework', 'Frameworks & Libraries'),
-        ('database', 'Databases'),
-        ('cloud', 'Cloud & DevOps'),
-        ('tool', 'Tools & Technologies'),
-        ('soft', 'Soft Skills'),
+        ("programming", "Programming Languages"),
+        ("framework", "Frameworks & Libraries"),
+        ("database", "Databases"),
+        ("cloud", "Cloud & DevOps"),
+        ("tool", "Tools & Technologies"),
+        ("soft", "Soft Skills"),
     ]
-    
+
     name = models.CharField(max_length=100)
-    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='tool')
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default="tool")
     proficiency = models.IntegerField(default=5, help_text="1-10 scale")
     order = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['category', 'order', 'name']
+        ordering = ["category", "order", "name"]
 
     def __str__(self):
         return self.name
-

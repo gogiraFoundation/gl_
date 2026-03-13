@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
   images: {
-    domains: ['localhost', '127.0.0.1'],
+    domains: ['localhost', '127.0.0.1', 'api.gogirlabs.uk'],
     remotePatterns: [
       {
         protocol: 'http',
@@ -15,6 +15,11 @@ const nextConfig = {
         protocol: 'http',
         hostname: '127.0.0.1',
         port: '8000',
+        pathname: '/media/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'api.gogirlabs.uk',
         pathname: '/media/**',
       },
     ],

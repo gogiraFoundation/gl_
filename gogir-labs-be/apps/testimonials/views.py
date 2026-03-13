@@ -9,15 +9,16 @@ class TestimonialViewSet(viewsets.ModelViewSet):
     """
     ViewSet for viewing and editing Testimonial instances.
     """
+
     queryset = Testimonial.objects.filter(published=True)
     permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
-    filterset_fields = ['featured', 'published', 'rating']
-    ordering_fields = ['order', 'created_at']
-    ordering = ['-order', '-created_at']
+    filterset_fields = ["featured", "published", "rating"]
+    ordering_fields = ["order", "created_at"]
+    ordering = ["-order", "-created_at"]
 
     def get_serializer_class(self):
-        if self.action == 'list':
+        if self.action == "list":
             return TestimonialListSerializer
         return TestimonialSerializer
 
@@ -27,4 +28,3 @@ class TestimonialViewSet(viewsets.ModelViewSet):
         if self.request.user.is_authenticated and self.request.user.is_staff:
             queryset = Testimonial.objects.all()
         return queryset
-
