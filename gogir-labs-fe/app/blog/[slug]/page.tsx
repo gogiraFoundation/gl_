@@ -97,10 +97,12 @@ export default function BlogPostPage() {
       // Update meta tags for SEO and social sharing
       document.title = `${post.title} | Blog - Emmanuel Ugbaije`
 
+      const description: string = post.meta_description ?? post.excerpt ?? ''
+
       // Update description
       const metaDescription = document.querySelector('meta[name="description"]')
       if (metaDescription) {
-        metaDescription.setAttribute('content', post.meta_description || post.excerpt)
+        metaDescription.setAttribute('content', description)
       }
 
       // Open Graph tags
@@ -115,7 +117,7 @@ export default function BlogPostPage() {
       const ogDescription =
         document.querySelector('meta[property="og:description"]') || document.createElement('meta')
       ogDescription.setAttribute('property', 'og:description')
-      ogDescription.setAttribute('content', post.meta_description || post.excerpt)
+      ogDescription.setAttribute('content', description)
       if (!document.querySelector('meta[property="og:description"]')) {
         document.head.appendChild(ogDescription)
       }

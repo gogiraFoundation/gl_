@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { Header } from '@/components/layout/Header'
@@ -44,7 +44,7 @@ interface SearchResult {
   total: number
 }
 
-export default function SearchPage() {
+function SearchPageContent() {
   const searchParams = useSearchParams()
   const query = searchParams.get('q') || ''
   const [searchQuery, setSearchQuery] = useState(query)
@@ -180,5 +180,25 @@ export default function SearchPage() {
       </main>
       <Footer />
     </div>
+  )
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen flex-col">
+          <Header />
+          <main className="flex-grow px-4 py-12">
+            <div className="mx-auto max-w-4xl text-center text-gray-400">
+              Loading search results...
+            </div>
+          </main>
+          <Footer />
+        </div>
+      }
+    >
+      <SearchPageContent />
+    </Suspense>
   )
 }
