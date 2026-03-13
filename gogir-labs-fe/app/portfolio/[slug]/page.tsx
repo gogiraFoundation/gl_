@@ -31,12 +31,16 @@ export default function ProjectPage() {
   const params = useParams()
   const slug = params.slug as string
 
-  const { data: project, isLoading, error } = useQuery<Project>({
+  const {
+    data: project,
+    isLoading,
+    error,
+  } = useQuery<Project>({
     queryKey: ['project', slug],
     queryFn: async () => {
       try {
         const response = await api.get('/portfolio/projects/by-slug/', {
-          params: { slug }
+          params: { slug },
         })
         return response.data
       } catch (err: any) {
@@ -60,10 +64,10 @@ export default function ProjectPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="flex min-h-screen flex-col">
         <Header />
-        <main className="flex-grow py-12 px-4">
-          <div className="max-w-4xl mx-auto text-center">Loading project...</div>
+        <main className="flex-grow px-4 py-12">
+          <div className="mx-auto max-w-4xl text-center">Loading project...</div>
         </main>
         <Footer />
       </div>
@@ -72,11 +76,11 @@ export default function ProjectPage() {
 
   if (error || !project) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="flex min-h-screen flex-col">
         <Header />
-        <main className="flex-grow py-12 px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-2xl font-bold mb-4">Project not found</h1>
+        <main className="flex-grow px-4 py-12">
+          <div className="mx-auto max-w-4xl text-center">
+            <h1 className="mb-4 text-2xl font-bold">Project not found</h1>
             <p className="text-gray-600 dark:text-gray-400">
               The project you're looking for doesn't exist or has been removed.
             </p>
@@ -88,11 +92,11 @@ export default function ProjectPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-grow py-12 px-4 relative">
+      <main className="relative flex-grow px-4 py-12">
         <div className="absolute inset-0 bg-gradient-mesh opacity-30"></div>
-        <div className="relative z-10 max-w-4xl mx-auto">
+        <div className="relative z-10 mx-auto max-w-4xl">
           <ProjectContent project={project} />
         </div>
       </main>
@@ -100,4 +104,3 @@ export default function ProjectPage() {
     </div>
   )
 }
-

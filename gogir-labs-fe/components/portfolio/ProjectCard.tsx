@@ -32,23 +32,23 @@ const iconMap: Record<string, any> = {
 
 export function ProjectCard({ project }: ProjectCardProps) {
   const { trackClick } = useAnalyticsEvent()
-  
+
   // Select icon based on category or default
-  const Icon = project.category?.name.toLowerCase().includes('web') 
-    ? Globe 
+  const Icon = project.category?.name.toLowerCase().includes('web')
+    ? Globe
     : project.category?.name.toLowerCase().includes('mobile')
-    ? Code
-    : Star
+      ? Code
+      : Star
 
   return (
-    <GlowCard glowColor="purple" className="h-full flex flex-col">
+    <GlowCard glowColor="purple" className="flex h-full flex-col">
       {/* Icon and Image Section */}
-      <div className="flex items-start gap-4 mb-4">
-        <div className="flex-shrink-0 w-16 h-16 rounded-lg bg-gradient-primary flex items-center justify-center shadow-glow-purple">
-          <Icon className="w-8 h-8 text-white" />
+      <div className="mb-4 flex items-start gap-4">
+        <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-primary shadow-glow-purple">
+          <Icon className="h-8 w-8 text-white" />
         </div>
         {project.featured_image && (
-          <div className="relative flex-1 h-32 rounded-lg overflow-hidden">
+          <div className="relative h-32 flex-1 overflow-hidden rounded-lg">
             <Image
               src={project.featured_image}
               alt={`${project.title} - ${project.category?.name || 'Project'} showcase`}
@@ -64,28 +64,28 @@ export function ProjectCard({ project }: ProjectCardProps) {
       {/* Content */}
       <div className="flex-grow">
         {project.category && (
-          <span className="text-xs text-purple-400 font-semibold uppercase tracking-wide">
+          <span className="text-xs font-semibold uppercase tracking-wide text-purple-400">
             {project.category.name}
           </span>
         )}
-        <h3 className="text-xl font-bold mt-2 mb-3 text-white">{project.title}</h3>
-        <p className="text-gray-400 text-sm mb-4 line-clamp-3 leading-relaxed">
+        <h3 className="mb-3 mt-2 text-xl font-bold text-white">{project.title}</h3>
+        <p className="mb-4 line-clamp-3 text-sm leading-relaxed text-gray-400">
           {project.description}
         </p>
-        
+
         {/* Technologies */}
         {project.technologies.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-4">
+          <div className="mb-4 flex flex-wrap gap-2">
             {project.technologies.slice(0, 3).map((tech) => (
               <span
                 key={tech.id}
-                className="px-2 py-1 text-xs bg-purple-500/20 text-purple-300 rounded border border-purple-500/30"
+                className="rounded border border-purple-500/30 bg-purple-500/20 px-2 py-1 text-xs text-purple-300"
               >
                 {tech.name}
               </span>
             ))}
             {project.technologies.length > 3 && (
-              <span className="px-2 py-1 text-xs bg-purple-500/20 text-purple-300 rounded border border-purple-500/30">
+              <span className="rounded border border-purple-500/30 bg-purple-500/20 px-2 py-1 text-xs text-purple-300">
                 +{project.technologies.length - 3}
               </span>
             )}
@@ -97,14 +97,19 @@ export function ProjectCard({ project }: ProjectCardProps) {
       <div className="mt-auto">
         <Link
           href={`/portfolio/${project.slug}`}
-          onClick={() => trackClick('project_view', { projectId: project.id, projectTitle: project.title, category: project.category?.name })}
-          className="group flex items-center justify-center gap-2 w-full px-4 py-3 bg-gradient-primary text-white rounded-lg font-semibold hover:scale-105 transition-all duration-300 hover:shadow-glow-purple"
+          onClick={() =>
+            trackClick('project_view', {
+              projectId: project.id,
+              projectTitle: project.title,
+              category: project.category?.name,
+            })
+          }
+          className="group flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-primary px-4 py-3 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-glow-purple"
         >
           <span>LEARN MORE</span>
-          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
         </Link>
       </div>
     </GlowCard>
   )
 }
-

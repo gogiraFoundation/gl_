@@ -10,12 +10,17 @@ interface GlowCardProps {
   hover?: boolean
 }
 
-export function GlowCard({ children, className, glowColor = 'purple', hover = true }: GlowCardProps) {
+export function GlowCard({
+  children,
+  className,
+  glowColor = 'purple',
+  hover = true,
+}: GlowCardProps) {
   return (
     <div
       className={cn(
         'card-glow rounded-lg p-5',
-        hover && 'hover:scale-105 transition-transform duration-300 active:scale-100',
+        hover && 'transition-transform duration-300 hover:scale-105 active:scale-100',
         glowColor === 'purple' && 'hover:shadow-glow-purple',
         glowColor === 'blue' && 'hover:shadow-glow-blue',
         className
@@ -25,4 +30,3 @@ export function GlowCard({ children, className, glowColor = 'purple', hover = tr
     </div>
   )
 }
-

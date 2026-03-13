@@ -17,6 +17,8 @@ const mockPost = {
   views: 10,
   created_at: '2024-01-01T00:00:00Z',
   published_at: '2024-01-01T00:00:00Z',
+  meta_title: 'Test meta title',
+  meta_description: 'Test meta description',
 }
 
 // Mock DOMPurify
@@ -61,4 +63,3 @@ describe('PostContent', () => {
     expect(screen.getByText('Test Post')).toBeInTheDocument()
   })
 })
-

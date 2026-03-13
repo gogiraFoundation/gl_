@@ -33,10 +33,10 @@ export default function ResumePage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="flex min-h-screen flex-col">
         <Header />
-        <main className="flex-grow py-12 px-4">
-          <div className="max-w-4xl mx-auto text-center">Loading resume...</div>
+        <main className="flex-grow px-4 py-12">
+          <div className="mx-auto max-w-4xl text-center">Loading resume...</div>
         </main>
         <Footer />
       </div>
@@ -44,11 +44,11 @@ export default function ResumePage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-grow py-12 px-4 relative">
+      <main className="relative flex-grow px-4 py-12">
         <div className="absolute inset-0 bg-gradient-mesh opacity-30"></div>
-        <div className="relative z-10 max-w-4xl mx-auto">
+        <div className="relative z-10 mx-auto max-w-4xl">
           {resumeData && (
             <ResumeContent
               experience={resumeData.experience}
@@ -63,4 +63,3 @@ export default function ResumePage() {
     </div>
   )
 }
-

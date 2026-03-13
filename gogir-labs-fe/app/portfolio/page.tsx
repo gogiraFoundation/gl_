@@ -44,7 +44,8 @@ export default function PortfolioPage() {
   useEffect(() => {
     document.title = 'Portfolio | Emmanuel Ugbaije - Infrastructure & DevOps Projects'
     const metaDescription = document.querySelector('meta[name="description"]')
-    const descriptionContent = 'Explore the portfolio of Infrastructure & DevOps Engineer Emmanuel Ugbaije. See real-world projects using Terraform, Kubernetes, CI/CD, AWS, Azure, and scalable cloud platforms.'
+    const descriptionContent =
+      'Explore the portfolio of Infrastructure & DevOps Engineer Emmanuel Ugbaije. See real-world projects using Terraform, Kubernetes, CI/CD, AWS, Azure, and scalable cloud platforms.'
     if (metaDescription) {
       metaDescription.setAttribute('content', descriptionContent)
     } else {
@@ -55,7 +56,12 @@ export default function PortfolioPage() {
     }
   }, [])
 
-  const { data: projects, isLoading, error, isFetching } = useQuery<Project[]>({
+  const {
+    data: projects,
+    isLoading,
+    error,
+    isFetching,
+  } = useQuery<Project[]>({
     queryKey: ['projects', selectedCategory, selectedTechnology, searchQuery],
     queryFn: async () => {
       try {
@@ -63,18 +69,18 @@ export default function PortfolioPage() {
         if (selectedCategory) params.category = selectedCategory
         if (selectedTechnology) params.technologies = selectedTechnology
         if (searchQuery) params.search = searchQuery
-        
+
         const response = await api.get('/portfolio/projects/', { params })
-        
+
         // Handle paginated response
         const projectsData = response.data.results || response.data
-        
+
         // Ensure we return an array
         if (!Array.isArray(projectsData)) {
           console.warn('Projects data is not an array:', projectsData)
           return []
         }
-        
+
         return projectsData
       } catch (err: any) {
         console.error('Error fetching projects:', err)
@@ -104,22 +110,23 @@ export default function PortfolioPage() {
   })
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-grow py-20 px-4 relative">
+      <main className="relative flex-grow px-4 py-20">
         {/* Background Gradient */}
         <div className="absolute inset-0 bg-gradient-mesh opacity-30"></div>
-        
-        <div className="relative z-10 max-w-7xl mx-auto">
-          <div className="text-center mb-12 animate-fade-in-up">
-            <h1 className="text-5xl md:text-6xl font-bold mb-4">
+
+        <div className="relative z-10 mx-auto max-w-7xl">
+          <div className="mb-12 animate-fade-in-up text-center">
+            <h1 className="mb-4 text-5xl font-bold md:text-6xl">
               <span className="gradient-text">Portfolio</span>
             </h1>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-              Real‑world projects demonstrating expertise in cloud infrastructure, Infrastructure as Code (Terraform, Kubernetes), CI/CD automation, and scalable platform design.
+            <p className="mx-auto max-w-2xl text-lg text-gray-400">
+              Real‑world projects demonstrating expertise in cloud infrastructure, Infrastructure as
+              Code (Terraform, Kubernetes), CI/CD automation, and scalable platform design.
             </p>
           </div>
-          
+
           <ProjectFilters
             categories={categories || []}
             technologies={technologies || []}
@@ -130,13 +137,15 @@ export default function PortfolioPage() {
             onTechnologyChange={setSelectedTechnology}
             onSearchChange={setSearchQuery}
           />
-          
+
           {(isLoading || isFetching) && !typedProjects.length ? (
-            <div className="text-center py-12 text-gray-400">Loading projects...</div>
+            <div className="py-12 text-center text-gray-400">Loading projects...</div>
           ) : error ? (
-            <div className="text-center py-12 text-red-400">
+            <div className="py-12 text-center text-red-400">
               <p className="mb-2">Error loading projects</p>
-              <p className="text-sm text-gray-400">{error instanceof Error ? error.message : 'Unknown error'}</p>
+              <p className="text-sm text-gray-400">
+                {error instanceof Error ? error.message : 'Unknown error'}
+              </p>
             </div>
           ) : (
             <ProjectGrid projects={typedProjects} />
@@ -146,7 +155,11 @@ export default function PortfolioPage() {
           {typedProjects.length > 0 && (
             <div className="mt-16 text-center">
               <p className="text-gray-300">
-                Interested in a custom solution or want to discuss a project? <Link href="/contact" className="text-purple-400 hover:text-purple-300 underline">Get in touch</Link>.
+                Interested in a custom solution or want to discuss a project?{' '}
+                <Link href="/contact" className="text-purple-400 underline hover:text-purple-300">
+                  Get in touch
+                </Link>
+                .
               </p>
             </div>
           )}

@@ -18,45 +18,41 @@ export default function ContactClient() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex min-h-screen flex-col">
       <Header />
 
-      <main className="flex-grow py-20 px-4 relative">
+      <main className="relative flex-grow px-4 py-20">
         <div className="absolute inset-0 bg-gradient-mesh opacity-30" />
 
-        <div className="relative z-10 max-w-6xl mx-auto">
+        <div className="relative z-10 mx-auto max-w-6xl">
           {/* Header */}
-          <div className="text-center mb-16 animate-fade-in-up">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6">
+          <div className="mb-16 animate-fade-in-up text-center">
+            <h1 className="mb-6 text-4xl font-bold sm:text-5xl md:text-6xl">
               <span className="text-white">Hi </span>
               <div>...</div>
-              <GradientText>
-                Let's Chat
-              </GradientText>
-              <span className="text-white">
-                {' '}
-              </span>
+              <GradientText>Let's Chat</GradientText>
+              <span className="text-white"> </span>
             </h1>
 
             <div className="container-content space-y-4">
-              <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+              <p className="mx-auto max-w-2xl text-xl text-gray-300">
                 Interested in collaborating or have a scalable cloud project in mind? Let's connect.
               </p>
 
-              <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-                Ready to discuss how technology can improve the overall outlook of your business? Whether you have a project in mind or want to explore how I can contribute to your cross-functional team, I'd love to hear from you.
+              <p className="mx-auto max-w-2xl text-lg text-gray-400">
+                Ready to discuss how technology can improve the overall outlook of your business?
+                Whether you have a project in mind or want to explore how I can contribute to your
+                cross-functional team, I'd love to hear from you.
               </p>
             </div>
           </div>
 
           {/* Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+          <div className="mb-12 grid grid-cols-1 gap-8 lg:grid-cols-2">
             {/* Contact Form */}
             <div>
-              <div className="glass rounded-2xl p-6 w-full">
-                <h2 className="text-2xl font-bold mb-6 text-white">
-                  Send a Message
-                </h2>
+              <div className="glass w-full rounded-2xl p-6">
+                <h2 className="mb-6 text-2xl font-bold text-white">Send a Message</h2>
 
                 <ContactForm />
               </div>
@@ -64,28 +60,27 @@ export default function ContactClient() {
 
             {/* Contact Info */}
             <div>
-              <div className="glass rounded-2xl p-6 h-full flex flex-col space-y-6">
+              <div className="glass flex h-full flex-col space-y-6 rounded-2xl p-6">
                 <div>
-                  <h2 className="text-2xl font-bold mb-4 text-white">
-                    Get in Touch
-                  </h2>
+                  <h2 className="mb-4 text-2xl font-bold text-white">Get in Touch</h2>
 
-                  <p className="text-gray-300 mb-6">
-                    Prefer direct contact? Reach out via email or connect on social media for the latest on cloud infrastructure, DevOps, and scalable platforms.
+                  <p className="mb-6 text-gray-300">
+                    Prefer direct contact? Reach out via email or connect on social media for the
+                    latest on cloud infrastructure, DevOps, and scalable platforms.
                   </p>
                 </div>
 
                 <div className="space-y-4">
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-gradient-primary flex items-center justify-center flex-shrink-0">
-                      <Mail className="w-6 h-6 text-white" />
+                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-primary">
+                      <Mail className="h-6 w-6 text-white" />
                     </div>
 
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm text-gray-400 mb-1">Email</p>
+                    <div className="min-w-0 flex-1">
+                      <p className="mb-1 text-sm text-gray-400">Email</p>
                       <a
                         href="mailto:gogirafoundation@gmail.com"
-                        className="text-white hover:text-purple-400 transition-colors break-all block"
+                        className="block break-all text-white transition-colors hover:text-purple-400"
                       >
                         gogiraFoundation@gmail.com
                       </a>
@@ -93,10 +88,8 @@ export default function ContactClient() {
                   </div>
 
                   {/* Socials */}
-                  <div className="pt-6 border-t border-purple-500/20">
-                    <p className="text-sm text-gray-400 mb-4">
-                      Connect on Social Media
-                    </p>
+                  <div className="border-t border-purple-500/20 pt-6">
+                    <p className="mb-4 text-sm text-gray-400">Connect on Social Media</p>
 
                     <div className="flex gap-4">
                       <a
@@ -105,7 +98,7 @@ export default function ContactClient() {
                         rel="me noopener noreferrer"
                         aria-label="GitHub"
                       >
-                        <Github className="w-8 h-8 text-white" />
+                        <Github className="h-8 w-8 text-white" />
                       </a>
 
                       <a
@@ -114,7 +107,7 @@ export default function ContactClient() {
                         rel="me noopener noreferrer"
                         aria-label="LinkedIn"
                       >
-                        <Linkedin className="w-8 h-8 text-white" />
+                        <Linkedin className="h-8 w-8 text-white" />
                       </a>
 
                       <a
@@ -123,7 +116,7 @@ export default function ContactClient() {
                         rel="me noopener noreferrer"
                         aria-label="Medium"
                       >
-                        <BookOpen className="w-8 h-8 text-white" />
+                        <BookOpen className="h-8 w-8 text-white" />
                       </a>
                     </div>
                   </div>
@@ -146,4 +139,3 @@ export default function ContactClient() {
     </div>
   )
 }
-

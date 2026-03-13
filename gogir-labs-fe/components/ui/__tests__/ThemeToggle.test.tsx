@@ -1,7 +1,7 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { ThemeToggle } from '../ThemeToggle'
+import { ThemeToggle } from '../../ThemeToggle'
 import { ThemeProvider } from '@/contexts/ThemeContext'
 
 // Mock localStorage
@@ -47,7 +47,7 @@ describe('ThemeToggle', () => {
         <ThemeToggle />
       </ThemeProvider>
     )
-    
+
     const button = screen.getByRole('button', { name: /toggle theme/i })
     await user.click(button)
 
@@ -62,7 +62,7 @@ describe('ThemeToggle', () => {
         <ThemeToggle />
       </ThemeProvider>
     )
-    
+
     const button = screen.getByRole('button', { name: /toggle theme/i })
     await user.click(button)
 
@@ -81,20 +81,19 @@ describe('ThemeToggle', () => {
         <ThemeToggle />
       </ThemeProvider>
     )
-    
+
     expect(screen.getByRole('button', { name: /toggle theme/i })).toBeInTheDocument()
   })
 
   it('loads theme from localStorage on mount', () => {
     localStorageMock.setItem('theme', 'light')
-    
+
     render(
       <ThemeProvider>
         <ThemeToggle />
       </ThemeProvider>
     )
-    
+
     expect(document.documentElement.getAttribute('data-theme')).toBe('light')
   })
 })
-

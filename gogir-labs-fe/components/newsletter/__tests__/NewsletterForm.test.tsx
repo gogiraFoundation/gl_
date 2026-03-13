@@ -29,11 +29,7 @@ describe('NewsletterForm', () => {
   })
 
   const renderWithProviders = (ui: React.ReactElement) => {
-    return render(
-      <QueryClientProvider client={queryClient}>
-        {ui}
-      </QueryClientProvider>
-    )
+    return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>)
   }
 
   it('renders email field in compact mode', () => {
@@ -51,7 +47,7 @@ describe('NewsletterForm', () => {
   it('validates email format', async () => {
     const user = userEvent.setup()
     renderWithProviders(<NewsletterForm compact={true} />)
-    
+
     await act(async () => {
       await user.type(screen.getByPlaceholderText(/enter your email/i), 'invalid-email')
     })
@@ -60,11 +56,14 @@ describe('NewsletterForm', () => {
       await user.click(submitButton)
     })
 
-    await waitFor(() => {
-      // Check for validation error - could be in error message or form validation
-      const errorText = screen.queryByText(/invalid email/i) || screen.queryByText(/email/i)
-      expect(errorText).toBeInTheDocument()
-    }, { timeout: 3000 })
+    await waitFor(
+      () => {
+        // Check for validation error - could be in error message or form validation
+        const errorText = screen.queryByText(/invalid email/i) || screen.queryByText(/email/i)
+        expect(errorText).toBeInTheDocument()
+      },
+      { timeout: 3000 }
+    )
   })
 
   it('submits subscription with valid email', async () => {
@@ -75,9 +74,9 @@ describe('NewsletterForm', () => {
         subscriber: { email: 'test@example.com', verification_required: true },
       },
     })
-    
+
     renderWithProviders(<NewsletterForm compact={true} />)
-    
+
     await act(async () => {
       await user.type(screen.getByPlaceholderText(/enter your email/i), 'test@example.com')
     })
@@ -102,9 +101,9 @@ describe('NewsletterForm', () => {
         data: { email: ['This email is already subscribed.'] },
       },
     })
-    
+
     renderWithProviders(<NewsletterForm compact={true} />)
-    
+
     await user.type(screen.getByPlaceholderText(/enter your email/i), 'test@example.com')
     const submitButton = screen.getByRole('button', { name: /subscribe/i })
     await user.click(submitButton)
@@ -117,9 +116,9 @@ describe('NewsletterForm', () => {
   it('handles network failure', async () => {
     const user = userEvent.setup()
     mockApi.post.mockRejectedValue(new Error('Network error'))
-    
+
     renderWithProviders(<NewsletterForm compact={true} />)
-    
+
     await user.type(screen.getByPlaceholderText(/enter your email/i), 'test@example.com')
     const submitButton = screen.getByRole('button', { name: /subscribe/i })
     await user.click(submitButton)
@@ -137,9 +136,9 @@ describe('NewsletterForm', () => {
         subscriber: { email: 'test@example.com', verification_required: true },
       },
     })
-    
+
     renderWithProviders(<NewsletterForm compact={true} />)
-    
+
     await act(async () => {
       await user.type(screen.getByPlaceholderText(/enter your email/i), 'test@example.com')
     })
@@ -153,4 +152,3 @@ describe('NewsletterForm', () => {
     })
   })
 })
-

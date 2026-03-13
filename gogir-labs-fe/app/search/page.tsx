@@ -56,7 +56,7 @@ export default function SearchPage() {
         return { query: '', blog_posts: [], projects: [], total: 0 }
       }
       const response = await api.get('/search/', {
-        params: { q: query }
+        params: { q: query },
       })
       return response.data
     },
@@ -78,27 +78,27 @@ export default function SearchPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-grow py-12 px-4 relative">
+      <main className="relative flex-grow px-4 py-12">
         <div className="absolute inset-0 bg-gradient-mesh opacity-30"></div>
-        <div className="relative z-10 max-w-7xl mx-auto">
+        <div className="relative z-10 mx-auto max-w-7xl">
           {/* Search Header */}
           <div className="mb-8">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 gradient-text">Search</h1>
+            <h1 className="gradient-text mb-4 text-4xl font-bold md:text-5xl">Search</h1>
             <form onSubmit={handleSearch} className="max-w-2xl">
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 transform text-gray-400" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search blog posts, projects..."
-                  className="w-full pl-12 pr-4 py-3 bg-gray-900 border-2 border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  className="w-full rounded-lg border-2 border-gray-600 bg-gray-900 py-3 pl-12 pr-4 text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
                 <button
                   type="submit"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 px-6 py-2 bg-gradient-primary text-white rounded-lg font-semibold hover:scale-105 transition-all"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 transform rounded-lg bg-gradient-primary px-6 py-2 font-semibold text-white transition-all hover:scale-105"
                 >
                   Search
                 </button>
@@ -107,28 +107,31 @@ export default function SearchPage() {
           </div>
 
           {/* Results */}
-          {isLoading && (
-            <div className="text-center py-12 text-gray-400">Searching...</div>
-          )}
+          {isLoading && <div className="py-12 text-center text-gray-400">Searching...</div>}
 
           {!isLoading && query && results && (
             <>
               {results.total === 0 ? (
-                <div className="text-center py-12">
-                  <p className="text-xl text-gray-400 mb-2">No results found for &quot;{query}&quot;</p>
+                <div className="py-12 text-center">
+                  <p className="mb-2 text-xl text-gray-400">
+                    No results found for &quot;{query}&quot;
+                  </p>
                   <p className="text-gray-500">Try different keywords or check your spelling.</p>
                 </div>
               ) : (
                 <>
                   <div className="mb-6 text-gray-400">
-                    Found {results.total} result{results.total !== 1 ? 's' : ''} for &quot;{query}&quot;
+                    Found {results.total} result{results.total !== 1 ? 's' : ''} for &quot;{query}
+                    &quot;
                   </div>
 
                   {/* Blog Posts */}
                   {results.blog_posts.length > 0 && (
                     <section className="mb-12">
-                      <h2 className="text-2xl font-bold mb-6 text-white">Blog Posts ({results.blog_posts.length})</h2>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      <h2 className="mb-6 text-2xl font-bold text-white">
+                        Blog Posts ({results.blog_posts.length})
+                      </h2>
+                      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                         {results.blog_posts.map((post) => (
                           <PostCard key={post.id} post={post} />
                         ))}
@@ -139,8 +142,10 @@ export default function SearchPage() {
                   {/* Projects */}
                   {results.projects.length > 0 && (
                     <section>
-                      <h2 className="text-2xl font-bold mb-6 text-white">Projects ({results.projects.length})</h2>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      <h2 className="mb-6 text-2xl font-bold text-white">
+                        Projects ({results.projects.length})
+                      </h2>
+                      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                         {results.projects.map((project) => (
                           <ProjectCard key={project.id} project={project} />
                         ))}
@@ -153,13 +158,19 @@ export default function SearchPage() {
           )}
 
           {!query && (
-            <div className="text-center py-12">
-              <p className="text-xl text-gray-400 mb-4">Enter a search query to find content</p>
-              <div className="flex flex-wrap gap-4 justify-center mt-6">
-                <Link href="/blog" className="px-4 py-2 bg-purple-500/20 text-purple-300 rounded-lg hover:bg-purple-500/30 transition-colors">
+            <div className="py-12 text-center">
+              <p className="mb-4 text-xl text-gray-400">Enter a search query to find content</p>
+              <div className="mt-6 flex flex-wrap justify-center gap-4">
+                <Link
+                  href="/blog"
+                  className="rounded-lg bg-purple-500/20 px-4 py-2 text-purple-300 transition-colors hover:bg-purple-500/30"
+                >
                   Browse Blog
                 </Link>
-                <Link href="/portfolio" className="px-4 py-2 bg-purple-500/20 text-purple-300 rounded-lg hover:bg-purple-500/30 transition-colors">
+                <Link
+                  href="/portfolio"
+                  className="rounded-lg bg-purple-500/20 px-4 py-2 text-purple-300 transition-colors hover:bg-purple-500/30"
+                >
                   Browse Portfolio
                 </Link>
               </div>
@@ -171,4 +182,3 @@ export default function SearchPage() {
     </div>
   )
 }
-

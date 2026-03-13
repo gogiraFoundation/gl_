@@ -48,12 +48,12 @@ export function ContactForm() {
         subject: data.subject,
         message: data.message,
       })
-      
+
       // Track form submission
       trackFormSubmit('contact', {
         subject: data.subject,
       })
-      
+
       setSubmitStatus('success')
       reset()
     } catch (error: any) {
@@ -78,54 +78,59 @@ export function ContactForm() {
 
       <div className="space-y-2">
         <div className="flex items-center gap-4">
-          <label htmlFor="name" className="text-sm font-semibold text-white whitespace-nowrap min-w-[100px]">
+          <label
+            htmlFor="name"
+            className="min-w-[100px] whitespace-nowrap text-sm font-semibold text-white"
+          >
             Name *
           </label>
           <input
             type="text"
             id="name"
             {...register('name')}
-            className="flex-1 px-4 py-3 min-h-[48px] bg-gray-900 border-2 border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+            className="min-h-[48px] flex-1 rounded-lg border-2 border-gray-600 bg-gray-900 px-4 py-3 text-white placeholder-gray-400 transition-all focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
             placeholder="Your name"
             autoComplete="name"
             style={{ backgroundColor: 'rgba(17, 24, 39, 0.95)' }}
           />
         </div>
-        {errors.name && (
-          <p className="ml-[116px] text-sm text-red-400">{errors.name.message}</p>
-        )}
+        {errors.name && <p className="ml-[116px] text-sm text-red-400">{errors.name.message}</p>}
       </div>
 
       <div className="space-y-2">
         <div className="flex items-center gap-4">
-          <label htmlFor="email" className="text-sm font-semibold text-white whitespace-nowrap min-w-[100px]">
+          <label
+            htmlFor="email"
+            className="min-w-[100px] whitespace-nowrap text-sm font-semibold text-white"
+          >
             Email *
           </label>
           <input
             type="email"
             id="email"
             {...register('email')}
-            className="flex-1 px-4 py-3 min-h-[48px] bg-gray-900 border-2 border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+            className="min-h-[48px] flex-1 rounded-lg border-2 border-gray-600 bg-gray-900 px-4 py-3 text-white placeholder-gray-400 transition-all focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
             placeholder="your.email@example.com"
             autoComplete="email"
             style={{ backgroundColor: 'rgba(17, 24, 39, 0.95)' }}
           />
         </div>
-        {errors.email && (
-          <p className="ml-[116px] text-sm text-red-400">{errors.email.message}</p>
-        )}
+        {errors.email && <p className="ml-[116px] text-sm text-red-400">{errors.email.message}</p>}
       </div>
 
       <div className="space-y-2">
         <div className="flex items-center gap-4">
-          <label htmlFor="subject" className="text-sm font-semibold text-white whitespace-nowrap min-w-[100px]">
+          <label
+            htmlFor="subject"
+            className="min-w-[100px] whitespace-nowrap text-sm font-semibold text-white"
+          >
             Subject *
           </label>
           <input
             type="text"
             id="subject"
             {...register('subject')}
-            className="flex-1 px-4 py-3 min-h-[48px] bg-gray-900 border-2 border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+            className="min-h-[48px] flex-1 rounded-lg border-2 border-gray-600 bg-gray-900 px-4 py-3 text-white placeholder-gray-400 transition-all focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
             placeholder="What's this about?"
             autoComplete="off"
             style={{ backgroundColor: 'rgba(17, 24, 39, 0.95)' }}
@@ -138,14 +143,17 @@ export function ContactForm() {
 
       <div className="space-y-2">
         <div className="flex items-start gap-4">
-          <label htmlFor="message" className="text-sm font-semibold text-white whitespace-nowrap min-w-[100px] pt-3">
+          <label
+            htmlFor="message"
+            className="min-w-[100px] whitespace-nowrap pt-3 text-sm font-semibold text-white"
+          >
             Message *
           </label>
           <textarea
             id="message"
             rows={6}
             {...register('message')}
-            className="flex-1 px-4 py-3 bg-gray-900 border-2 border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all resize-none"
+            className="flex-1 resize-none rounded-lg border-2 border-gray-600 bg-gray-900 px-4 py-3 text-white placeholder-gray-400 transition-all focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
             placeholder="Tell me about your project or opportunity..."
             autoComplete="off"
             style={{ backgroundColor: 'rgba(17, 24, 39, 0.95)' }}
@@ -157,13 +165,13 @@ export function ContactForm() {
       </div>
 
       {submitStatus === 'success' && (
-        <div className="p-4 bg-green-500/20 border border-green-500/50 text-green-300 rounded-lg">
+        <div className="rounded-lg border border-green-500/50 bg-green-500/20 p-4 text-green-300">
           Thank you for your message! We will get back to you soon.
         </div>
       )}
 
       {submitStatus === 'error' && (
-        <div className="p-4 bg-red-500/20 border border-red-500/50 text-red-300 rounded-lg">
+        <div className="rounded-lg border border-red-500/50 bg-red-500/20 p-4 text-red-300">
           There was an error submitting your message. Please try again.
         </div>
       )}
@@ -171,11 +179,10 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full px-5 py-2.5 mt-4 min-h-[44px] bg-gradient-primary text-white rounded-lg font-semibold hover:scale-105 transition-all duration-300 hover:shadow-glow-purple disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+        className="mt-4 min-h-[44px] w-full rounded-lg bg-gradient-primary px-5 py-2.5 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-glow-purple disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
       >
         {isSubmitting ? 'Sending...' : 'Discuss Your Project'}
       </button>
     </form>
   )
 }
-

@@ -16,6 +16,7 @@ interface Testimonial {
   client_image: string | null
   company_logo: string | null
   featured: boolean
+  published?: boolean
 }
 
 export function TestimonialCarousel() {
@@ -25,13 +26,15 @@ export function TestimonialCarousel() {
   const { data: testimonials = [] } = useQuery<Testimonial[]>({
     queryKey: ['testimonials', 'featured'],
     queryFn: async () => {
-      const response = await api.get('/testimonials/', { params: { featured: true, published: true } })
+      const response = await api.get('/testimonials/', {
+        params: { featured: true, published: true },
+      })
       return response.data.results || response.data
     },
     staleTime: 10 * 60 * 1000,
   })
 
-  const featuredTestimonials = testimonials.filter(t => t.featured && t.published).slice(0, 5)
+  const featuredTestimonials = testimonials.filter((t) => t.featured && t.published).slice(0, 5)
 
   useEffect(() => {
     if (!isAutoPlaying || featuredTestimonials.length <= 1) return
@@ -51,7 +54,9 @@ export function TestimonialCarousel() {
 
   const goToPrevious = () => {
     setIsAutoPlaying(false)
-    setCurrentIndex((prev) => (prev - 1 + featuredTestimonials.length) % featuredTestimonials.length)
+    setCurrentIndex(
+      (prev) => (prev - 1 + featuredTestimonials.length) % featuredTestimonials.length
+    )
   }
 
   const goToNext = () => {
@@ -65,22 +70,22 @@ export function TestimonialCarousel() {
   }
 
   return (
-    <div className="relative bg-gray-900/50 rounded-lg p-8 border border-gray-700">
-      <div className="flex items-center gap-2 mb-6">
-        <Quote className="w-6 h-6 text-purple-400" />
+    <div className="relative rounded-lg border border-gray-700 bg-gray-900/50 p-8">
+      <div className="mb-6 flex items-center gap-2">
+        <Quote className="h-6 w-6 text-purple-400" />
         <h2 className="text-2xl font-bold text-white">What People Say</h2>
       </div>
 
       <div className="relative min-h-[200px]">
         <div className="text-center">
           {/* Rating */}
-          <div className="flex justify-center gap-1 mb-4">
+          <div className="mb-4 flex justify-center gap-1">
             {[...Array(5)].map((_, i) => (
               <Star
                 key={i}
-                className={`w-5 h-5 ${
+                className={`h-5 w-5 ${
                   i < currentTestimonial.rating
-                    ? 'text-yellow-400 fill-yellow-400'
+                    ? 'fill-yellow-400 text-yellow-400'
                     : 'text-gray-600'
                 }`}
               />
@@ -88,14 +93,14 @@ export function TestimonialCarousel() {
           </div>
 
           {/* Content */}
-          <blockquote className="text-lg text-gray-300 mb-6 leading-relaxed">
+          <blockquote className="mb-6 text-lg leading-relaxed text-gray-300">
             &quot;{currentTestimonial.content}&quot;
           </blockquote>
 
           {/* Author */}
           <div className="flex items-center justify-center gap-4">
             {currentTestimonial.client_image && (
-              <div className="relative w-16 h-16 rounded-full overflow-hidden">
+              <div className="relative h-16 w-16 overflow-hidden rounded-full">
                 <Image
                   src={currentTestimonial.client_image}
                   alt={currentTestimonial.client_name}
@@ -119,29 +124,27 @@ export function TestimonialCarousel() {
           <>
             <button
               onClick={goToPrevious}
-              className="absolute left-0 top-1/2 transform -translate-y-1/2 p-2 bg-gray-800 hover:bg-gray-700 rounded-full transition-colors"
+              className="absolute left-0 top-1/2 -translate-y-1/2 transform rounded-full bg-gray-800 p-2 transition-colors hover:bg-gray-700"
               aria-label="Previous testimonial"
             >
-              <ChevronLeft className="w-5 h-5 text-white" />
+              <ChevronLeft className="h-5 w-5 text-white" />
             </button>
             <button
               onClick={goToNext}
-              className="absolute right-0 top-1/2 transform -translate-y-1/2 p-2 bg-gray-800 hover:bg-gray-700 rounded-full transition-colors"
+              className="absolute right-0 top-1/2 -translate-y-1/2 transform rounded-full bg-gray-800 p-2 transition-colors hover:bg-gray-700"
               aria-label="Next testimonial"
             >
-              <ChevronRight className="w-5 h-5 text-white" />
+              <ChevronRight className="h-5 w-5 text-white" />
             </button>
 
             {/* Dots */}
-            <div className="flex justify-center gap-2 mt-6">
+            <div className="mt-6 flex justify-center gap-2">
               {featuredTestimonials.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => goToSlide(index)}
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    index === currentIndex
-                      ? 'bg-purple-400 w-8'
-                      : 'bg-gray-600 hover:bg-gray-500'
+                  className={`h-2 w-2 rounded-full transition-all ${
+                    index === currentIndex ? 'w-8 bg-purple-400' : 'bg-gray-600 hover:bg-gray-500'
                   }`}
                   aria-label={`Go to testimonial ${index + 1}`}
                 />
@@ -153,4 +156,3 @@ export function TestimonialCarousel() {
     </div>
   )
 }
-

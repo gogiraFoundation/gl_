@@ -26,30 +26,29 @@ export function Header() {
     pathnameFromHook ?? (typeof window !== 'undefined' ? window.location.pathname : '')
 
   return (
-    <header className="sticky top-0 z-50 glass border-b border-purple-500/20">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <Link 
-            href="/" 
-            className="text-xl font-bold gradient-text hover:scale-105 transition-transform"
+    <header className="glass sticky top-0 z-50 border-b border-purple-500/20">
+      <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
+          <Link
+            href="/"
+            className="gradient-text text-xl font-bold transition-transform hover:scale-105"
           >
             Emmanuel Ugbaje
           </Link>
-          
+
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden items-center gap-6 md:flex">
             <div className="flex space-x-6">
               {navigation.map((item) => {
-                const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))
+                const isActive =
+                  pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))
                 return (
                   <Link
                     key={item.name}
                     href={item.href}
                     className={cn(
-                      'text-sm font-medium relative transition-all duration-300',
-                      isActive
-                        ? 'text-purple-400'
-                        : 'text-gray-300 hover:text-purple-400'
+                      'relative text-sm font-medium transition-all duration-300',
+                      isActive ? 'text-purple-400' : 'text-gray-300 hover:text-purple-400'
                     )}
                   >
                     {item.name}
@@ -60,39 +59,45 @@ export function Header() {
                 )
               })}
             </div>
-            
+
             {/* Search & Social Icons */}
-            <div className="flex items-center gap-4 ml-4 pl-4 border-l border-purple-500/20">
+            <div className="ml-4 flex items-center gap-4 border-l border-purple-500/20 pl-4">
               <SearchBar />
               <a
                 href="https://github.com/gogiraFoundation"
                 target="_blank"
                 rel="me noopener noreferrer"
-                onClick={() => trackClick('social_github', { platform: 'github', location: 'header' })}
-                className="text-gray-400 hover:text-white hover:scale-110 transition-all duration-300"
+                onClick={() =>
+                  trackClick('social_github', { platform: 'github', location: 'header' })
+                }
+                className="text-gray-400 transition-all duration-300 hover:scale-110 hover:text-white"
                 aria-label="GitHub"
               >
-                <Github className="w-8 h-8" />
+                <Github className="h-8 w-8" />
               </a>
               <a
                 href="https://www.linkedin.com/in/emmanuel-ugbaje"
                 target="_blank"
                 rel="me noopener noreferrer"
-                onClick={() => trackClick('social_linkedin', { platform: 'linkedin', location: 'header' })}
-                className="text-gray-400 hover:text-blue-400 hover:scale-110 transition-all duration-300"
+                onClick={() =>
+                  trackClick('social_linkedin', { platform: 'linkedin', location: 'header' })
+                }
+                className="text-gray-400 transition-all duration-300 hover:scale-110 hover:text-blue-400"
                 aria-label="LinkedIn"
               >
-                <Linkedin className="w-8 h-8" />
+                <Linkedin className="h-8 w-8" />
               </a>
               <a
                 href="https://medium.com/@aigbemanuel"
                 target="_blank"
                 rel="me noopener noreferrer"
-                onClick={() => trackClick('social_medium', { platform: 'medium', location: 'header' })}
-                className="text-gray-400 hover:text-white hover:scale-110 transition-all duration-300"
+                onClick={() =>
+                  trackClick('social_medium', { platform: 'medium', location: 'header' })
+                }
+                className="text-gray-400 transition-all duration-300 hover:scale-110 hover:text-white"
                 aria-label="Medium"
               >
-                <BookOpen className="w-8 h-8" />
+                <BookOpen className="h-8 w-8" />
               </a>
               <ThemeToggle />
             </div>
@@ -103,69 +108,78 @@ export function Header() {
             <ThemeToggle />
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="text-gray-300 hover:text-white transition-colors"
+              className="text-gray-300 transition-colors hover:text-white"
               aria-label="Toggle menu"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
           </div>
         </div>
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-purple-500/20 animate-slide-in-left">
+          <div className="animate-slide-in-left border-t border-purple-500/20 py-4 md:hidden">
             <div className="flex flex-col space-y-4">
               {navigation.map((item) => {
-                const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))
+                const isActive =
+                  pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))
                 return (
                   <Link
                     key={item.name}
                     href={item.href}
                     onClick={() => {
                       setMobileMenuOpen(false)
-                      trackClick('nav_link', { link: item.name, href: item.href, location: 'mobile' })
+                      trackClick('nav_link', {
+                        link: item.name,
+                        href: item.href,
+                        location: 'mobile',
+                      })
                     }}
                     className={cn(
                       'text-base font-medium transition-colors',
-                      isActive
-                        ? 'text-purple-400'
-                        : 'text-gray-300 hover:text-purple-400'
+                      isActive ? 'text-purple-400' : 'text-gray-300 hover:text-purple-400'
                     )}
                   >
                     {item.name}
                   </Link>
                 )
               })}
-              <div className="flex items-center gap-4 pt-4 border-t border-purple-500/20">
+              <div className="flex items-center gap-4 border-t border-purple-500/20 pt-4">
                 <a
                   href="https://github.com/gogiraFoundation"
                   target="_blank"
                   rel="me noopener noreferrer"
-                  onClick={() => trackClick('social_github', { platform: 'github', location: 'mobile' })}
-                  className="text-gray-400 hover:text-white transition-colors"
+                  onClick={() =>
+                    trackClick('social_github', { platform: 'github', location: 'mobile' })
+                  }
+                  className="text-gray-400 transition-colors hover:text-white"
                   aria-label="GitHub"
                 >
-                  <Github className="w-8 h-8" />
+                  <Github className="h-8 w-8" />
                 </a>
                 <a
                   href="https://www.linkedin.com/in/emmanuel-ugbaje"
                   target="_blank"
                   rel="me noopener noreferrer"
-                  onClick={() => trackClick('social_linkedin', { platform: 'linkedin', location: 'mobile' })}
-                  className="text-gray-400 hover:text-blue-400 transition-colors"
+                  onClick={() =>
+                    trackClick('social_linkedin', { platform: 'linkedin', location: 'mobile' })
+                  }
+                  className="text-gray-400 transition-colors hover:text-blue-400"
                   aria-label="LinkedIn"
                 >
-                  <Linkedin className="w-8 h-8" />
+                  <Linkedin className="h-8 w-8" />
                 </a>
                 <a
                   href="https://medium.com/@aigbemanuel"
                   target="_blank"
                   rel="me noopener noreferrer"
-                  onClick={() => trackClick('social_medium', { platform: 'medium', location: 'mobile' })}
-                  className="text-gray-400 hover:text-white transition-colors"
+                  onClick={() =>
+                    trackClick('social_medium', { platform: 'medium', location: 'mobile' })
+                  }
+                  className="text-gray-400 transition-colors hover:text-white"
                   aria-label="Medium"
                 >
-                  <BookOpen className="w-8 h-8" />
+                  <BookOpen className="h-8 w-8" />
                 </a>
               </div>
             </div>
@@ -175,4 +189,3 @@ export function Header() {
     </header>
   )
 }
-

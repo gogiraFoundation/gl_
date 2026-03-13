@@ -20,7 +20,7 @@ export function ShareButtons({ url, title, description = '', type = 'blog' }: Sh
 
   const handleShare = async (platform: string, shareUrl: string) => {
     trackClick(`share_${platform}`, { type, title, url })
-    
+
     // Use Web Share API if available (mobile)
     if (navigator.share && platform === 'native') {
       try {
@@ -61,17 +61,17 @@ export function ShareButtons({ url, title, description = '', type = 'blog' }: Sh
   }
 
   return (
-    <div className="flex items-center gap-3 flex-wrap">
+    <div className="flex flex-wrap items-center gap-3">
       <span className="text-sm text-gray-400">Share:</span>
-      
+
       {/* Native Share (Mobile) */}
-      {typeof navigator !== 'undefined' && navigator.share && (
+      {typeof navigator !== 'undefined' && typeof navigator.share === 'function' && (
         <button
           onClick={() => handleShare('native', '')}
-          className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors"
+          className="flex items-center gap-2 rounded-lg bg-gray-800 px-4 py-2 text-white transition-colors hover:bg-gray-700"
           aria-label="Share"
         >
-          <Share2 className="w-4 h-4" />
+          <Share2 className="h-4 w-4" />
           <span className="text-sm">Share</span>
         </button>
       )}
@@ -79,47 +79,47 @@ export function ShareButtons({ url, title, description = '', type = 'blog' }: Sh
       {/* Twitter */}
       <button
         onClick={() => handleShare('twitter', shareLinks.twitter)}
-        className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-blue-500 text-white rounded-lg transition-colors"
+        className="flex items-center gap-2 rounded-lg bg-gray-800 px-4 py-2 text-white transition-colors hover:bg-blue-500"
         aria-label="Share on Twitter"
       >
-        <Twitter className="w-4 h-4" />
+        <Twitter className="h-4 w-4" />
         <span className="text-sm">Twitter</span>
       </button>
 
       {/* LinkedIn */}
       <button
         onClick={() => handleShare('linkedin', shareLinks.linkedin)}
-        className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-blue-600 text-white rounded-lg transition-colors"
+        className="flex items-center gap-2 rounded-lg bg-gray-800 px-4 py-2 text-white transition-colors hover:bg-blue-600"
         aria-label="Share on LinkedIn"
       >
-        <Linkedin className="w-4 h-4" />
+        <Linkedin className="h-4 w-4" />
         <span className="text-sm">LinkedIn</span>
       </button>
 
       {/* Facebook */}
       <button
         onClick={() => handleShare('facebook', shareLinks.facebook)}
-        className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-blue-700 text-white rounded-lg transition-colors"
+        className="flex items-center gap-2 rounded-lg bg-gray-800 px-4 py-2 text-white transition-colors hover:bg-blue-700"
         aria-label="Share on Facebook"
       >
-        <Facebook className="w-4 h-4" />
+        <Facebook className="h-4 w-4" />
         <span className="text-sm">Facebook</span>
       </button>
 
       {/* Copy Link */}
       <button
         onClick={handleCopyLink}
-        className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors"
+        className="flex items-center gap-2 rounded-lg bg-gray-800 px-4 py-2 text-white transition-colors hover:bg-gray-700"
         aria-label="Copy link"
       >
         {copied ? (
           <>
-            <Check className="w-4 h-4" />
+            <Check className="h-4 w-4" />
             <span className="text-sm">Copied!</span>
           </>
         ) : (
           <>
-            <LinkIcon className="w-4 h-4" />
+            <LinkIcon className="h-4 w-4" />
             <span className="text-sm">Copy Link</span>
           </>
         )}
@@ -127,4 +127,3 @@ export function ShareButtons({ url, title, description = '', type = 'blog' }: Sh
     </div>
   )
 }
-

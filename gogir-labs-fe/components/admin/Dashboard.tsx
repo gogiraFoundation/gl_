@@ -64,25 +64,25 @@ export function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="bg-white dark:bg-gray-800 shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+      <div className="border-b bg-white shadow-sm dark:bg-gray-800">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center justify-between">
             <h1 className="text-2xl font-bold">Admin Dashboard</h1>
             <div className="flex items-center gap-4">
               <Link
                 href="/admin/notifications"
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                className="rounded-lg bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
               >
                 Notifications
                 {notificationStats && notificationStats.unread > 0 && (
-                  <span className="ml-2 px-2 py-1 bg-red-500 rounded-full text-xs">
+                  <span className="ml-2 rounded-full bg-red-500 px-2 py-1 text-xs">
                     {notificationStats.unread}
                   </span>
                 )}
               </Link>
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+                className="rounded-lg bg-red-600 px-4 py-2 text-white transition hover:bg-red-700"
               >
                 Logout
               </button>
@@ -91,13 +91,13 @@ export function Dashboard() {
         </div>
       </div>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-6">
-          <label className="block text-sm font-medium mb-2">Time Range</label>
+          <label className="mb-2 block text-sm font-medium">Time Range</label>
           <select
             value={days}
             onChange={(e) => setDays(Number(e.target.value))}
-            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-800 dark:text-white"
+            className="rounded-lg border border-gray-300 px-4 py-2 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
           >
             <option value={7}>Last 7 days</option>
             <option value={30}>Last 30 days</option>
@@ -105,12 +105,12 @@ export function Dashboard() {
           </select>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-8">
-          <div className="flex items-center justify-between mb-4">
+        <div className="mb-8 rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
+          <div className="mb-4 flex items-center justify-between">
             <h2 className="text-xl font-bold">Notifications</h2>
             <Link
               href="/admin/notifications"
-              className="text-blue-600 dark:text-blue-400 hover:underline text-sm"
+              className="text-sm text-blue-600 hover:underline dark:text-blue-400"
             >
               View All
             </Link>
@@ -135,37 +135,37 @@ export function Dashboard() {
               </div>
             </div>
           ) : (
-            <p className="text-gray-500 text-center">Loading notification stats...</p>
+            <p className="text-center text-gray-500">Loading notification stats...</p>
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
+        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
+            <h3 className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">
               Total Page Views
             </h3>
             <p className="text-3xl font-bold">
               {loadingPageViews ? '...' : pageViewStats?.total_views || 0}
             </p>
           </div>
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
+          <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
+            <h3 className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">
               Unique Visitors
             </h3>
             <p className="text-3xl font-bold">
               {loadingPageViews ? '...' : pageViewStats?.unique_visitors || 0}
             </p>
           </div>
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
+          <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
+            <h3 className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">
               Total Events
             </h3>
             <p className="text-3xl font-bold">
               {loadingEvents ? '...' : eventStats?.total_events || 0}
             </p>
           </div>
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
+          <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
+            <h3 className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">
               Event Types
             </h3>
             <p className="text-3xl font-bold">
@@ -174,11 +174,11 @@ export function Dashboard() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-bold mb-4">Page Views Over Time</h2>
+        <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
+            <h2 className="mb-4 text-xl font-bold">Page Views Over Time</h2>
             {loadingPageViews ? (
-              <div className="text-center py-12">Loading...</div>
+              <div className="py-12 text-center">Loading...</div>
             ) : (
               <AnalyticsChart
                 data={pageViewStats?.views_by_day || []}
@@ -188,10 +188,10 @@ export function Dashboard() {
               />
             )}
           </div>
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-bold mb-4">Events Over Time</h2>
+          <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
+            <h2 className="mb-4 text-xl font-bold">Events Over Time</h2>
             {loadingEvents ? (
-              <div className="text-center py-12">Loading...</div>
+              <div className="py-12 text-center">Loading...</div>
             ) : (
               <AnalyticsChart
                 data={eventStats?.events_by_day || []}
@@ -203,31 +203,31 @@ export function Dashboard() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-bold mb-4">Top Pages</h2>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
+            <h2 className="mb-4 text-xl font-bold">Top Pages</h2>
             {loadingPageViews ? (
-              <div className="text-center py-12">Loading...</div>
+              <div className="py-12 text-center">Loading...</div>
             ) : (
               <ul className="space-y-2">
                 {pageViewStats?.top_pages?.slice(0, 10).map((page, index) => (
                   <li key={index} className="flex justify-between">
-                    <span className="text-gray-700 dark:text-gray-300 truncate">{page.path}</span>
+                    <span className="truncate text-gray-700 dark:text-gray-300">{page.path}</span>
                     <span className="text-gray-500 dark:text-gray-400">{page.count}</span>
                   </li>
                 ))}
               </ul>
             )}
           </div>
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-bold mb-4">Top Events</h2>
+          <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
+            <h2 className="mb-4 text-xl font-bold">Top Events</h2>
             {loadingEvents ? (
-              <div className="text-center py-12">Loading...</div>
+              <div className="py-12 text-center">Loading...</div>
             ) : (
               <ul className="space-y-2">
                 {eventStats?.top_events?.slice(0, 10).map((event, index) => (
                   <li key={index} className="flex justify-between">
-                    <span className="text-gray-700 dark:text-gray-300 truncate">
+                    <span className="truncate text-gray-700 dark:text-gray-300">
                       {event.event_name}
                     </span>
                     <span className="text-gray-500 dark:text-gray-400">{event.count}</span>
@@ -241,4 +241,3 @@ export function Dashboard() {
     </div>
   )
 }
-

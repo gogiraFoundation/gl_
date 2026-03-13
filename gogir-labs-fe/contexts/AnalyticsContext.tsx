@@ -9,7 +9,11 @@ interface AnalyticsContextType {
   giveConsent: () => void
   revokeConsent: () => void
   trackPageView: (path: string, referer?: string) => Promise<void>
-  trackEvent: (eventName: string, eventType: string, metadata?: Record<string, any>) => Promise<void>
+  trackEvent: (
+    eventName: string,
+    eventType: string,
+    metadata?: Record<string, any>
+  ) => Promise<void>
   getSessionId: () => string
 }
 
@@ -43,11 +47,11 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
 
     const stored = sessionStorage.getItem(SESSION_KEY)
     const storedTime = sessionStorage.getItem(`${SESSION_KEY}_time`)
-    
+
     if (stored && storedTime) {
       const time = parseInt(storedTime, 10)
       const now = Date.now()
-      
+
       // If session is still valid, return existing ID
       if (now - time < SESSION_DURATION) {
         return stored
@@ -58,7 +62,7 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
     const newSessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
     sessionStorage.setItem(SESSION_KEY, newSessionId)
     sessionStorage.setItem(`${SESSION_KEY}_time`, Date.now().toString())
-    
+
     return newSessionId
   }, [])
 
@@ -81,51 +85,53 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
-  const trackPageView = useCallback(async (path: string, referer?: string) => {
-    if (!trackingEnabled || typeof window === 'undefined') return
+  const trackPageView = useCallback(
+    async (path: string, referer?: string) => {
+      if (!trackingEnabled || typeof window === 'undefined') return
 
-    try {
-      const sessionId = getSessionId()
-      const userAgent = navigator.userAgent
-      
-      // Get IP address (will be handled by backend from request)
-      await api.post('/analytics/pageviews/', {
-        path,
-        referer: referer || document.referrer || '',
-        user_agent: userAgent,
-        session_id: sessionId,
-      })
-    } catch (error) {
-      // Silently fail - don't interrupt user experience
-      console.error('Analytics: Failed to track page view', error)
-    }
-  }, [trackingEnabled, getSessionId])
+      try {
+        const sessionId = getSessionId()
+        const userAgent = navigator.userAgent
 
-  const trackEvent = useCallback(async (
-    eventName: string,
-    eventType: string = 'custom',
-    metadata: Record<string, any> = {}
-  ) => {
-    if (!trackingEnabled || typeof window === 'undefined') return
+        // Get IP address (will be handled by backend from request)
+        await api.post('/analytics/pageviews/', {
+          path,
+          referer: referer || document.referrer || '',
+          user_agent: userAgent,
+          session_id: sessionId,
+        })
+      } catch (error) {
+        // Silently fail - don't interrupt user experience
+        console.error('Analytics: Failed to track page view', error)
+      }
+    },
+    [trackingEnabled, getSessionId]
+  )
 
-    try {
-      const sessionId = getSessionId()
-      const userAgent = navigator.userAgent
-      const path = window.location.pathname
+  const trackEvent = useCallback(
+    async (eventName: string, eventType: string = 'custom', metadata: Record<string, any> = {}) => {
+      if (!trackingEnabled || typeof window === 'undefined') return
 
-      await api.post('/analytics/events/', {
-        event_type: eventType,
-        event_name: eventName,
-        path,
-        metadata,
-        user_agent: userAgent,
-        session_id: sessionId,
-      })
-    } catch (error) {
-      // Silently fail - don't interrupt user experience
-      console.error('Analytics: Failed to track event', error)
-    }
-  }, [trackingEnabled, getSessionId])
+      try {
+        const sessionId = getSessionId()
+        const userAgent = navigator.userAgent
+        const path = window.location.pathname
+
+        await api.post('/analytics/events/', {
+          event_type: eventType,
+          event_name: eventName,
+          path,
+          metadata,
+          user_agent: userAgent,
+          session_id: sessionId,
+        })
+      } catch (error) {
+        // Silently fail - don't interrupt user experience
+        console.error('Analytics: Failed to track event', error)
+      }
+    },
+    [trackingEnabled, getSessionId]
+  )
 
   return (
     <AnalyticsContext.Provider
@@ -151,4 +157,3 @@ export function useAnalytics() {
   }
   return context
 }
-

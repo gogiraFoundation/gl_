@@ -24,4 +24,3 @@ export function usePageView() {
     }
   }, [pathname, trackPageView, trackingEnabled])
 }
-

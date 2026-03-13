@@ -28,14 +28,14 @@ export default function AnalyticsPage() {
   }, [])
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-grow py-12 px-4 relative">
+      <main className="relative flex-grow px-4 py-12">
         <div className="absolute inset-0 bg-gradient-mesh opacity-30"></div>
-        <div className="relative z-10 max-w-7xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold mb-8 gradient-text">Analytics Dashboard</h1>
+        <div className="relative z-10 mx-auto max-w-7xl">
+          <h1 className="gradient-text mb-8 text-4xl font-bold md:text-5xl">Analytics Dashboard</h1>
           {isLoading ? (
-            <div className="text-center py-12 text-gray-400">Loading analytics...</div>
+            <div className="py-12 text-center text-gray-400">Loading analytics...</div>
           ) : stats ? (
             <AnalyticsDashboard stats={stats} />
           ) : null}
@@ -45,4 +45,3 @@ export default function AnalyticsPage() {
     </div>
   )
 }
-

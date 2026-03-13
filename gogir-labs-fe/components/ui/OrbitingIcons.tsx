@@ -12,9 +12,9 @@ interface OrbitingIconsProps {
 
 export function OrbitingIcons({ centerIcon, icons, radius = 100, className }: OrbitingIconsProps) {
   return (
-    <div className={cn('relative w-full h-64 sm:h-96 flex items-center justify-center', className)}>
+    <div className={cn('relative flex h-64 w-full items-center justify-center sm:h-96', className)}>
       {/* Center Icon */}
-      <div className="relative z-10 flex items-center justify-center w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-gradient-primary shadow-glow-purple animate-pulse-glow">
+      <div className="relative z-10 flex h-16 w-16 animate-pulse-glow items-center justify-center rounded-full bg-gradient-primary shadow-glow-purple sm:h-24 sm:w-24">
         {centerIcon}
       </div>
 
@@ -27,7 +27,7 @@ export function OrbitingIcons({ centerIcon, icons, radius = 100, className }: Or
         return (
           <div
             key={index}
-            className="absolute flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-800 border-2 border-purple-500/50 hover:scale-125 hover:border-purple-500 hover:shadow-glow-purple transition-all duration-300"
+            className="absolute flex h-10 w-10 items-center justify-center rounded-full border-2 border-purple-500/50 bg-gray-800 transition-all duration-300 hover:scale-125 hover:border-purple-500 hover:shadow-glow-purple sm:h-12 sm:w-12"
             style={{
               left: `calc(50% + ${x}px)`,
               top: `calc(50% + ${y}px)`,
