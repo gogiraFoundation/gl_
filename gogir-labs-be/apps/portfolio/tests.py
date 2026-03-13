@@ -1,9 +1,11 @@
+from unittest.mock import patch
+
 import pytest
-from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
-from unittest.mock import patch
-from .models import Project, Technology, Category, ProjectImage
+from django.test import TestCase
+
+from .models import Category, Project, ProjectImage, Technology
 
 User = get_user_model()
 

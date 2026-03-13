@@ -1,11 +1,13 @@
+from django.conf import settings
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from django.conf import settings
-from .models import ContactMessage
-from .serializers import ContactMessageSerializer, ContactMessageListSerializer
-from apps.notifications.services import NotificationService
+
 from apps.notifications.models import NotificationType
+from apps.notifications.services import NotificationService
+
+from .models import ContactMessage
+from .serializers import ContactMessageListSerializer, ContactMessageSerializer
 
 
 class ContactMessageCreateView(generics.CreateAPIView):

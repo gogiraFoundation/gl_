@@ -1,4 +1,5 @@
 from django.contrib.sitemaps import Sitemap
+
 from apps.blog.models import Post
 from apps.portfolio.models import Project
 

@@ -1,17 +1,19 @@
 import pytest
-from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.db import IntegrityError
+from django.test import TestCase
 from django.utils import timezone
+
+from apps.blog.models import Category, Post
+from apps.contact.models import ContactMessage
+
 from .models import (
     Notification,
     NotificationPreference,
     NotificationTemplate,
     NotificationType,
 )
-from apps.blog.models import Post, Category
-from apps.contact.models import ContactMessage
 
 User = get_user_model()
 

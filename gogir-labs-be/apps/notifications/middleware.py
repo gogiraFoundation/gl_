@@ -3,9 +3,11 @@ Middleware for system error notifications.
 """
 
 import logging
+
 from django.utils.deprecation import MiddlewareMixin
-from .services import NotificationService
+
 from .models import NotificationType
+from .services import NotificationService
 
 logger = logging.getLogger(__name__)
 

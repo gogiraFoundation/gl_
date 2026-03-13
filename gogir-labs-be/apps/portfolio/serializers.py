@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Project, Technology, Category, ProjectImage
+
+from .models import Category, Project, ProjectImage, Technology
 
 
 class TechnologySerializer(serializers.ModelSerializer):

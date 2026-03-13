@@ -1,13 +1,14 @@
-from rest_framework import viewsets, status
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
 from django.db.models import Q
-from apps.blog.models import Post
-from apps.portfolio.models import Project
-from apps.blog.serializers import PostListSerializer
-from apps.portfolio.serializers import ProjectListSerializer
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+
 from apps.analytics.models import Event
+from apps.blog.models import Post
+from apps.blog.serializers import PostListSerializer
+from apps.portfolio.models import Project
+from apps.portfolio.serializers import ProjectListSerializer
 
 
 class SearchViewSet(viewsets.ViewSet):
@@ -86,8 +87,9 @@ class SearchViewSet(viewsets.ViewSet):
 
         # Track search event
         try:
-            from apps.analytics.models import Event
             from django.utils import timezone
+
+            from apps.analytics.models import Event
 
             # Extract IP and user agent
             ip_address = request.META.get("HTTP_X_FORWARDED_FOR")

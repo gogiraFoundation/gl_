@@ -2,11 +2,12 @@
 Django signals for system-wide notifications.
 """
 
+from django.contrib.auth import get_user_model
 from django.contrib.auth.signals import user_logged_in
 from django.dispatch import receiver
-from django.contrib.auth import get_user_model
-from .services import NotificationService
+
 from .models import NotificationType
+from .services import NotificationService
 
 User = get_user_model()
 

@@ -1,9 +1,9 @@
-from django.db import models
-from django.utils.text import slugify
+from ckeditor.fields import RichTextField
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
-from ckeditor.fields import RichTextField
+from django.db import models
+from django.utils.text import slugify
 
 User = get_user_model()
 
@@ -135,8 +135,8 @@ class Post(models.Model):
 
         # Send notification when post is published
         if self.published and not was_published:
-            from apps.notifications.services import NotificationService
             from apps.notifications.models import NotificationType
+            from apps.notifications.services import NotificationService
 
             NotificationService.notify_admins(
                 notification_type=NotificationType.CONTENT_PUBLISHED,

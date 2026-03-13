@@ -1,17 +1,20 @@
+from datetime import timedelta
+
+from django.db.models import Count, Q
+from django.utils import timezone
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from django.utils import timezone
-from datetime import timedelta
-from django.db.models import Count, Q
-from .models import PageView, Event
-from apps.notifications.services import NotificationService
+
 from apps.notifications.models import NotificationType
+from apps.notifications.services import NotificationService
+
+from .models import Event, PageView
 from .serializers import (
-    PageViewSerializer,
-    PageViewCreateSerializer,
-    EventSerializer,
     EventCreateSerializer,
+    EventSerializer,
+    PageViewCreateSerializer,
+    PageViewSerializer,
 )
 
 

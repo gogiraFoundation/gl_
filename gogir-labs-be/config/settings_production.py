@@ -3,8 +3,9 @@ Production-specific Django settings.
 Imported from settings.py when DEBUG=False to apply overrides.
 """
 
-from decouple import config
 import os
+
+from decouple import config
 
 # Security settings for production
 SECURE_SSL_REDIRECT = config("SECURE_SSL_REDIRECT", default=True, cast=bool)

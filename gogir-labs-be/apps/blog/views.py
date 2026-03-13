@@ -1,22 +1,24 @@
-from rest_framework import viewsets, filters, status
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from django_filters.rest_framework import DjangoFilterBackend
-from django.utils import timezone
 from django.contrib.auth import get_user_model
-from .models import Post, Category, Tag, Comment
-from apps.notifications.services import NotificationService
+from django.utils import timezone
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, status, viewsets
+from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+
 from apps.notifications.models import NotificationType
+from apps.notifications.services import NotificationService
+
+from .models import Category, Comment, Post, Tag
 
 User = get_user_model()
 from .serializers import (
-    PostSerializer,
-    PostListSerializer,
     CategorySerializer,
-    TagSerializer,
-    CommentSerializer,
     CommentCreateSerializer,
+    CommentSerializer,
+    PostListSerializer,
+    PostSerializer,
+    TagSerializer,
 )
 
 
