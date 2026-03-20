@@ -7,4 +7,17 @@ const api = axios.create({
   withCredentials: true,
 })
 
+// Attach JWT from localStorage for protected admin endpoints (Django + DRF SimpleJWT).
+// Runs only in the browser.
+api.interceptors.request.use((config) => {
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('access_token')
+    if (token) {
+      config.headers = config.headers ?? {}
+      ;(config.headers as Record<string, string>).Authorization = `Bearer ${token}`
+    }
+  }
+  return config
+})
+
 export default api

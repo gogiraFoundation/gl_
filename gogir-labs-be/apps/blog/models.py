@@ -1,4 +1,4 @@
-from ckeditor.fields import RichTextField
+from django_ckeditor_5.fields import CKEditor5Field
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
@@ -69,7 +69,7 @@ class Post(models.Model):
     excerpt = models.TextField(
         max_length=300, help_text="Short summary for listing pages"
     )
-    content = RichTextField()
+    content = CKEditor5Field(config_name="extends")
     featured_image = models.ImageField(
         upload_to="blog/",
         blank=True,

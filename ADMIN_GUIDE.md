@@ -2,6 +2,10 @@
 
 This guide explains how to upload and manage content, videos, and projects through the Django admin panel.
 
+## Theme (Light / Dark Mode)
+
+The frontend supports light and dark themes. The theme toggle is in the header (desktop and mobile). Theme choice is stored in `localStorage` and applied via `data-theme="light"` or `data-theme="dark"` on the document. For consistent contrast, layout components use Tailwind’s `dark:` variant with base classes for light mode (e.g. `bg-slate-100`, `text-slate-900`) and `dark:` for dark mode (e.g. `dark:bg-gray-900`, `dark:text-white`). New components should use the same pattern so text stays readable in both themes.
+
 ## Accessing the Admin Panel
 
 1. Navigate to: http://localhost:8000/admin

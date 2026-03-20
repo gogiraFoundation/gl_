@@ -1,5 +1,5 @@
 # Use Node 20 Alpine; refresh apk for base image security (e.g. OpenSSL)
-FROM node:20-alpine AS deps
+FROM node:25.8.1-alpine AS deps
 RUN apk update && apk upgrade --no-cache && npm install -g npm@latest
 
 WORKDIR /app
@@ -10,7 +10,7 @@ COPY package*.json ./
 # Install dependencies
 RUN npm ci --only=production
 
-FROM node:20-alpine AS builder
+FROM node:25.8.1-alpine AS builder
 RUN apk update && apk upgrade --no-cache && npm install -g npm@latest
 
 WORKDIR /app
@@ -26,7 +26,7 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM node:20-alpine AS runner
+FROM node:25.8.1-alpine AS runner
 RUN apk update && apk upgrade --no-cache && npm install -g npm@latest
 
 WORKDIR /app

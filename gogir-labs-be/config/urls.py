@@ -24,6 +24,7 @@ sitemaps = {
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("ckeditor5/", include("django_ckeditor_5.urls")),
     path("api/v1/", include("config.api_urls")),
     # API Documentation
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),

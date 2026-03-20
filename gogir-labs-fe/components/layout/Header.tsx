@@ -26,7 +26,7 @@ export function Header() {
     pathnameFromHook ?? (typeof window !== 'undefined' ? window.location.pathname : '')
 
   return (
-    <header className="glass sticky top-0 z-50 border-b border-purple-500/20">
+    <header className="glass sticky top-0 z-50 border-b border-slate-200 dark:border-purple-500/20">
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <Link
@@ -48,7 +48,9 @@ export function Header() {
                     href={item.href}
                     className={cn(
                       'relative text-sm font-medium transition-all duration-300',
-                      isActive ? 'text-purple-400' : 'text-gray-300 hover:text-purple-400'
+                      isActive
+                        ? 'text-purple-600 dark:text-purple-400'
+                        : 'text-slate-600 hover:text-purple-600 dark:text-gray-300 dark:hover:text-purple-400'
                     )}
                   >
                     {item.name}
@@ -61,7 +63,7 @@ export function Header() {
             </div>
 
             {/* Search & Social Icons */}
-            <div className="ml-4 flex items-center gap-4 border-l border-purple-500/20 pl-4">
+            <div className="ml-4 flex items-center gap-4 border-l border-slate-200 pl-4 dark:border-purple-500/20">
               <SearchBar />
               <a
                 href="https://github.com/gogiraFoundation"
@@ -70,7 +72,7 @@ export function Header() {
                 onClick={() =>
                   trackClick('social_github', { platform: 'github', location: 'header' })
                 }
-                className="text-gray-400 transition-all duration-300 hover:scale-110 hover:text-white"
+                className="text-slate-500 transition-all duration-300 hover:scale-110 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
                 aria-label="GitHub"
               >
                 <Github className="h-8 w-8" />
@@ -82,7 +84,7 @@ export function Header() {
                 onClick={() =>
                   trackClick('social_linkedin', { platform: 'linkedin', location: 'header' })
                 }
-                className="text-gray-400 transition-all duration-300 hover:scale-110 hover:text-blue-400"
+                className="text-slate-500 transition-all duration-300 hover:scale-110 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
                 aria-label="LinkedIn"
               >
                 <Linkedin className="h-8 w-8" />
@@ -94,7 +96,7 @@ export function Header() {
                 onClick={() =>
                   trackClick('social_medium', { platform: 'medium', location: 'header' })
                 }
-                className="text-gray-400 transition-all duration-300 hover:scale-110 hover:text-white"
+                className="text-slate-500 transition-all duration-300 hover:scale-110 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
                 aria-label="Medium"
               >
                 <BookOpen className="h-8 w-8" />
@@ -108,7 +110,7 @@ export function Header() {
             <ThemeToggle />
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="text-gray-300 transition-colors hover:text-white"
+              className="text-slate-600 transition-colors hover:text-slate-900 dark:text-gray-300 dark:hover:text-white"
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -118,7 +120,7 @@ export function Header() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="animate-slide-in-left border-t border-purple-500/20 py-4 md:hidden">
+          <div className="animate-slide-in-left border-t border-slate-200 py-4 dark:border-purple-500/20 md:hidden">
             <div className="flex flex-col space-y-4">
               {navigation.map((item) => {
                 const isActive =
@@ -137,14 +139,16 @@ export function Header() {
                     }}
                     className={cn(
                       'text-base font-medium transition-colors',
-                      isActive ? 'text-purple-400' : 'text-gray-300 hover:text-purple-400'
+                      isActive
+                        ? 'text-purple-600 dark:text-purple-400'
+                        : 'text-slate-600 hover:text-purple-600 dark:text-gray-300 dark:hover:text-purple-400'
                     )}
                   >
                     {item.name}
                   </Link>
                 )
               })}
-              <div className="flex items-center gap-4 border-t border-purple-500/20 pt-4">
+              <div className="flex items-center gap-4 border-t border-slate-200 pt-4 dark:border-purple-500/20">
                 <a
                   href="https://github.com/gogiraFoundation"
                   target="_blank"
@@ -152,7 +156,7 @@ export function Header() {
                   onClick={() =>
                     trackClick('social_github', { platform: 'github', location: 'mobile' })
                   }
-                  className="text-gray-400 transition-colors hover:text-white"
+                  className="text-slate-500 transition-colors hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
                   aria-label="GitHub"
                 >
                   <Github className="h-8 w-8" />
@@ -164,7 +168,7 @@ export function Header() {
                   onClick={() =>
                     trackClick('social_linkedin', { platform: 'linkedin', location: 'mobile' })
                   }
-                  className="text-gray-400 transition-colors hover:text-blue-400"
+                  className="text-slate-500 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
                   aria-label="LinkedIn"
                 >
                   <Linkedin className="h-8 w-8" />
@@ -176,7 +180,7 @@ export function Header() {
                   onClick={() =>
                     trackClick('social_medium', { platform: 'medium', location: 'mobile' })
                   }
-                  className="text-gray-400 transition-colors hover:text-white"
+                  className="text-slate-500 transition-colors hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
                   aria-label="Medium"
                 >
                   <BookOpen className="h-8 w-8" />

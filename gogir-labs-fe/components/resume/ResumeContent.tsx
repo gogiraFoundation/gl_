@@ -45,7 +45,7 @@ interface Skill {
   id: number
   name: string
   category: string
-  proficiency: number
+  proficiency?: number | null
   order: number
 }
 
@@ -261,7 +261,10 @@ export function ResumeContent({
                       key={skill.id}
                       className="rounded-full bg-gray-700/50 px-4 py-2 text-sm font-medium text-gray-200"
                     >
-                      {skill.name} ({skill.proficiency}/10)
+                      {skill.name}
+                      {typeof skill.proficiency === 'number' && (
+                        <> ({skill.proficiency}/10)</>
+                      )}
                     </span>
                   ))}
                 </div>
