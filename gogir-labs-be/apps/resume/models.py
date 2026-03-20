@@ -86,7 +86,11 @@ class Skill(models.Model):
 
     name = models.CharField(max_length=100)
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default="tool")
-    proficiency = models.IntegerField(default=5, help_text="1-10 scale")
+    proficiency = models.IntegerField(
+        null=True,
+        blank=True,
+        help_text="1-10 scale (optional)",
+    )
     order = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 

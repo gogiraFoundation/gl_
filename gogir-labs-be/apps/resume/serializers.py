@@ -7,6 +7,12 @@ class SkillSerializer(serializers.ModelSerializer):
     class Meta:
         model = Skill
         fields = ["id", "name", "category", "proficiency", "order"]
+        extra_kwargs = {
+            "proficiency": {
+                "required": False,
+                "allow_null": True,
+            }
+        }
 
 
 class ExperienceSerializer(serializers.ModelSerializer):

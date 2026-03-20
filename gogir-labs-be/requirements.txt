@@ -5,6 +5,8 @@ django-cors-headers==4.3.1
 python-decouple==3.8
 psycopg2-binary==2.9.9
 Pillow==10.3.0
+django-ckeditor-5>=0.2.20
+# django-ckeditor kept only so blog migration 0001_initial can load; not in INSTALLED_APPS
 django-ckeditor==6.7.3
 drf-spectacular==0.26.5
 django-filter==23.5

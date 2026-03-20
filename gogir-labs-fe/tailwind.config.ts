@@ -6,7 +6,7 @@ const config: Config = {
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
-  darkMode: ['class', '[data-theme="light"]'],
+  darkMode: ['class', '[data-theme="dark"]'],
   theme: {
     container: {
       center: true,

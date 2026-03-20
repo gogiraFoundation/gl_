@@ -205,7 +205,12 @@ def download_resume_pdf(request):
 
         for category, category_skills in skills_by_category.items():
             story.append(Paragraph(f"<b>{category}:</b>", normal_style))
-            skill_names = [f"{s.name} ({s.proficiency}/10)" for s in category_skills]
+            skill_names = []
+            for s in category_skills:
+                if s.proficiency is not None:
+                    skill_names.append(f"{s.name} ({s.proficiency}/10)")
+                else:
+                    skill_names.append(s.name)
             story.append(Paragraph(", ".join(skill_names), normal_style))
             story.append(Spacer(1, 0.15 * inch))
 
