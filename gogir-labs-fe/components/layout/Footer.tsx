@@ -56,9 +56,7 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="mb-4 text-lg font-bold text-slate-900 dark:text-white">
-              Quick Links
-            </h3>
+            <h3 className="mb-4 text-lg font-bold text-slate-900 dark:text-white">Quick Links</h3>
             <ul className="space-y-2">
               <li>
                 <Link
@@ -110,9 +108,7 @@ export function Footer() {
 
           {/* Newsletter */}
           <div>
-            <h3 className="mb-4 text-lg font-bold text-slate-900 dark:text-white">
-              Stay Updated
-            </h3>
+            <h3 className="mb-4 text-lg font-bold text-slate-900 dark:text-white">Stay Updated</h3>
             <p className="mb-4 text-sm text-slate-600 dark:text-gray-400">
               Subscribe to our newsletter for the latest updates and insights.
             </p>
