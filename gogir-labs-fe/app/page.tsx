@@ -7,7 +7,7 @@ import { Footer } from '@/components/layout/Footer'
 import { GradientText } from '@/components/ui/GradientText'
 import { SkillChips } from '@/components/ui/SkillChips'
 import { TestimonialCarousel } from '@/components/testimonials/TestimonialCarousel'
-import { ArrowRight, Code, Zap, Users, BarChart, GitBranch, Cpu } from 'lucide-react'
+import { ArrowRight, Code, Zap, Users, BarChart } from 'lucide-react'
 
 export default function Home() {
   useEffect(() => {

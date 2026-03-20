@@ -9,6 +9,7 @@ import { BlogFilters } from '@/components/blog/BlogFilters'
 import { useState } from 'react'
 import Link from 'next/link'
 import api from '@/lib/api'
+import type { AxiosError } from 'axios'
 
 interface Post {
   id: number
@@ -60,7 +61,7 @@ export default function BlogClient() {
       },
     ],
     queryFn: async () => {
-      const params: any = {}
+      const params: Record<string, string | number> = {}
       if (selectedCategory) params.category = selectedCategory
       if (selectedTag) params.tags = selectedTag
       if (debouncedSearch) params.search = debouncedSearch
@@ -102,10 +103,11 @@ export default function BlogClient() {
         console.warn('⚠️ BlogClient: Unexpected response shape, returning empty array')
         console.warn('⚠️ BlogClient: Response keys:', Object.keys(data))
         return []
-      } catch (err: any) {
+      } catch (err: unknown) {
+        const error = err as AxiosError<unknown>
         console.error('❌ BlogClient: API Error:', err)
-        console.error('❌ BlogClient: Error Response:', err.response?.data)
-        console.error('❌ BlogClient: Error Status:', err.response?.status)
+        console.error('❌ BlogClient: Error Response:', error.response?.data)
+        console.error('❌ BlogClient: Error Status:', error.response?.status)
         throw err
       }
     },

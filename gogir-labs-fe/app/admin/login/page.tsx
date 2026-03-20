@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import api from '@/lib/api'
+import type { AxiosError } from 'axios'
 
 const loginSchema = z.object({
   username: z.string().min(1, 'Username is required'),
@@ -37,8 +38,9 @@ export default function AdminLoginPage() {
       localStorage.setItem('access_token', access)
       localStorage.setItem('refresh_token', refresh)
       router.push('/admin')
-    } catch (err: any) {
-      setError(err.response?.data?.detail || 'Invalid credentials')
+    } catch (err: unknown) {
+      const axiosError = err as AxiosError<{ detail?: string }>
+      setError(axiosError.response?.data?.detail || 'Invalid credentials')
     } finally {
       setIsSubmitting(false)
     }
