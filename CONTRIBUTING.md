@@ -28,3 +28,5 @@ isort --check-only .
 - **`.github/workflows/backend-cloudflare-setup.yml`** — The production config sanity step uses **placeholder env values** when GitHub secrets are unset so CI stays green; real deploy values still come from your server/Heroku env. See [docs/CLOUDFLARE_PAGES.md](docs/CLOUDFLARE_PAGES.md) for optional repo secrets.
 
 When you open a PR, use the checklist in `.github/pull_request_template.md`.
+
+**Security Scan (Trivy → SARIF):** Pull requests **from forks** cannot upload results to the base repo’s Code Scanning UI (GitHub token limitation). The workflow still runs Trivy; only the upload step is skipped. Same-repo PRs and pushes upload when `security-events: write` is allowed.
