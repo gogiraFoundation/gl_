@@ -42,8 +42,10 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
           </div>
         )}
         <div>
-          <h4 className="font-semibold text-white">{testimonial.client_name}</h4>
-          <p className="text-sm text-gray-400">
+          <h4 className="font-semibold text-slate-900 dark:text-white">
+            {testimonial.client_name}
+          </h4>
+          <p className="text-sm text-slate-500 dark:text-gray-400">
             {testimonial.client_role}
             {testimonial.company && ` at ${testimonial.company}`}
           </p>
@@ -54,12 +56,16 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
           <Star
             key={i}
             className={`h-4 w-4 ${
-              i < testimonial.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-600'
+              i < testimonial.rating
+                ? 'fill-yellow-400 text-yellow-400'
+                : 'text-slate-300 dark:text-gray-600'
             }`}
           />
         ))}
       </div>
-      <p className="italic leading-relaxed text-gray-300">&quot;{testimonial.content}&quot;</p>
+      <p className="italic leading-relaxed text-slate-600 dark:text-gray-300">
+        &quot;{testimonial.content}&quot;
+      </p>
     </GlowCard>
   )
 }

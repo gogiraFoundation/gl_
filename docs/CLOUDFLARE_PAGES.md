@@ -40,6 +40,15 @@ On the server where the backend runs, set these environment variables (e.g. in `
 
 These are read by `config/settings.py`; multiple origins can be comma-separated.
 
+### 3b. GitHub Actions (`Backend Cloudflare Setup` workflow)
+
+The workflow `.github/workflows/backend-cloudflare-setup.yml` runs `scripts/check-prod-config.sh` to ensure required variables are present. You can set these **repository secrets** so CI validates your real values (otherwise the workflow uses safe CI placeholders and still passes):
+
+| Secret | Purpose |
+|--------|---------|
+| `API_ALLOWED_HOSTS` | Comma-separated hosts (e.g. `api.gogirlabs.uk`) |
+| `CLOUDFLARE_PAGES_URL` | Frontend origin used for CORS/CSRF/FRONTEND_URL (e.g. `https://www.gogirlabs.uk`) |
+
 ### 4. DNS (Cloudflare)
 
 - **www.gogirlabs.uk** → Cloudflare Pages (CNAME to your Pages project, or use the Pages custom domain wizard).
