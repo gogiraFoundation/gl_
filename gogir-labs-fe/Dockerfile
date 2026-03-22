@@ -22,6 +22,9 @@ RUN npm ci
 # Copy source code
 COPY . .
 
+# Standalone runner copies /app/public; Next.js may omit the folder if empty — create it so COPY succeeds
+RUN mkdir -p public
+
 # Build the application
 RUN npm run build
 
