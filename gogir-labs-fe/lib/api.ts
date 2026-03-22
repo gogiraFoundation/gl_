@@ -74,7 +74,7 @@ api.interceptors.response.use(
     clearStoredTokens()
     stripAuthorizationHeader(originalRequest)
     return api.request(originalRequest)
-  },
+  }
 )
 
 export default api
