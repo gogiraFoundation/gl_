@@ -42,28 +42,31 @@ export default function Home() {
             <div className="mb-6 animate-fade-in-up">
               <div className="glass mb-4 inline-block rounded-2xl px-5 py-2.5">
                 <p className="gradient-text text-base font-semibold">
-                  Hello! I Am <span className="text-white">Emmanuel Ugbaje</span>
+                  Hello! I Am{' '}
+                  <span className="text-slate-900 dark:text-white">Emmanuel Ugbaje</span>
                 </p>
               </div>
             </div>
 
             {/* Main Headline - SEO Optimized */}
             <h1 className="mb-4 animate-fade-in-up text-2xl font-bold delay-200 sm:text-3xl md:text-4xl lg:text-5xl">
-              <span className="text-white">Technical Project Manager & Python Developer</span>
+              <span className="text-slate-900 dark:text-white">
+                Technical Project Manager & Python Developer
+              </span>
             </h1>
             <br></br>
             <br></br>
-            <hr className="delay-250 mb-6 animate-fade-in-up border-gray-700" />
-            <p className="mb-6 animate-fade-in-up text-2xl text-gray-300 delay-300 md:text-3xl">
+            <hr className="delay-250 mb-6 animate-fade-in-up border-slate-200 dark:border-gray-700" />
+            <p className="mb-6 animate-fade-in-up text-2xl delay-300 md:text-3xl">
               <GradientText>Building Scalable Digital Products</GradientText>
             </p>
-            <p className="text-md mb-4 animate-fade-in-up text-gray-400 delay-500 md:text-lg">
+            <p className="text-md mb-4 animate-fade-in-up text-slate-500 delay-500 dark:text-gray-400 md:text-lg">
               SaaS | Energy Innovations | Clean Tech
             </p>
 
             {/* About Paragraph - SEO Optimized */}
             <div className="container-content mb-10 animate-fade-in-up delay-700">
-              <p className="text-lg leading-relaxed text-gray-300">
+              <p className="text-lg leading-relaxed text-slate-600 dark:text-gray-300">
                 Technical Project Manager and Python Developer with an MSc in Renewable Energy &
                 Sustainable Technology. I specialise in building scalable digital products, leading
                 cross-functional teams, and optimising energy systems using Python, Agile, and
@@ -89,7 +92,7 @@ export default function Home() {
               </Link>
               <Link
                 href="/contact"
-                className="rounded-lg border-2 border-purple-500 px-5 py-2.5 text-center font-semibold text-purple-400 transition-all duration-300 hover:scale-105 hover:border-purple-400 hover:bg-purple-500/10 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-transparent active:scale-100"
+                className="rounded-lg border-2 border-purple-600 px-5 py-2.5 text-center font-semibold text-purple-700 transition-all duration-300 hover:scale-105 hover:border-purple-500 hover:bg-purple-500/10 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-white active:scale-100 dark:border-purple-500 dark:text-purple-400 dark:hover:border-purple-400 dark:focus:ring-offset-transparent"
               >
                 Get in Touch
               </Link>
@@ -114,7 +117,7 @@ export default function Home() {
               <GradientText>Core Expertise & Toolchain</GradientText>
             </h2>
             <div className="container-content mb-8">
-              <p className="text-center text-gray-400">
+              <p className="text-center text-slate-500 dark:text-gray-400">
                 Combining technical depth with project leadership to deliver impactful solutions
                 across:
               </p>
@@ -157,10 +160,15 @@ export default function Home() {
                   >
                     <div className="mb-4 flex justify-center">
                       <div className="bg-gradient-primary/20 group-hover:bg-gradient-primary/40 rounded-lg p-3 transition-colors">
-                        <Icon className="h-8 w-8 text-purple-400" aria-label={item.alt} />
+                        <Icon
+                          className="h-8 w-8 text-purple-600 dark:text-purple-400"
+                          aria-label={item.alt}
+                        />
                       </div>
                     </div>
-                    <h3 className="mb-3 font-semibold text-white">{item.title}</h3>
+                    <h3 className="mb-3 font-semibold text-slate-900 dark:text-white">
+                      {item.title}
+                    </h3>
                     <SkillChips skills={item.skills} className="justify-center" />
                   </div>
                 )
@@ -169,18 +177,20 @@ export default function Home() {
 
             {/* Optional: Key Achievements Teaser */}
             <div className="mt-16 text-center">
-              <p className="mb-4 text-gray-400">Key achievements include:</p>
-              <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-300">
-                <span className="rounded-full bg-white/5 px-3 py-1">
+              <p className="mb-4 text-slate-500 dark:text-gray-400">Key achievements include:</p>
+              <div className="flex flex-wrap justify-center gap-4 text-sm text-slate-800 dark:text-gray-300">
+                <span className="rounded-full bg-slate-100 px-3 py-1 dark:bg-white/5">
                   ↑ 15% SaaS efficiency gain
                 </span>
-                <span className="rounded-full bg-white/5 px-3 py-1">
+                <span className="rounded-full bg-slate-100 px-3 py-1 dark:bg-white/5">
                   🔗 Blockchain tokenization research
                 </span>
-                <span className="rounded-full bg-white/5 px-3 py-1">
+                <span className="rounded-full bg-slate-100 px-3 py-1 dark:bg-white/5">
                   ⚡ ISO 50001 energy audits
                 </span>
-                <span className="rounded-full bg-white/5 px-3 py-1">🐍 Django + CI/CD systems</span>
+                <span className="rounded-full bg-slate-100 px-3 py-1 dark:bg-white/5">
+                  🐍 Django + CI/CD systems
+                </span>
               </div>
             </div>
           </div>
