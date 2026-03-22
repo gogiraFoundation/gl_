@@ -9,6 +9,7 @@ import { Footer } from '@/components/layout/Footer'
 import { PostContent } from '@/components/blog/PostContent'
 import api from '@/lib/api'
 import { useEffect } from 'react'
+import type { AxiosError } from 'axios'
 
 interface Post {
   id: number
@@ -75,10 +76,11 @@ export default function BlogPostPage() {
         }
 
         return postData
-      } catch (err: any) {
+      } catch (err: unknown) {
+        const error = err as AxiosError<unknown>
         console.error('Error fetching post:', err)
-        console.error('Error response:', err.response?.data)
-        console.error('Error status:', err.response?.status)
+        console.error('Error response:', error.response?.data)
+        console.error('Error status:', error.response?.status)
         throw err
       }
     },

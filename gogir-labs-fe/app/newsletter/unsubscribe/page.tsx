@@ -1,12 +1,13 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect, Suspense, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { GradientText } from '@/components/ui/GradientText'
 import { Mail, CheckCircle, XCircle } from 'lucide-react'
 import api from '@/lib/api'
+import type { AxiosError } from 'axios'
 
 function UnsubscribeContent() {
   const searchParams = useSearchParams()
@@ -16,38 +17,40 @@ function UnsubscribeContent() {
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [message, setMessage] = useState('')
 
+  const handleUnsubscribe = useCallback(
+    async (unsubscribeToken?: string, emailAddress?: string) => {
+      setIsSubmitting(true)
+      setStatus('idle')
+      setMessage('')
+
+      try {
+        const response = await api.post('/newsletter/unsubscribe/', {
+          token: unsubscribeToken || token,
+          email: emailAddress || email,
+        })
+
+        setStatus('success')
+        setMessage(response.data.message || 'Successfully unsubscribed from newsletter.')
+      } catch (error: unknown) {
+        console.error('Error unsubscribing:', error)
+        setStatus('error')
+
+        const axiosError = error as AxiosError<{ error?: string }>
+        const backendError = axiosError.response?.data?.error
+        setMessage(backendError || 'Failed to unsubscribe. Please try again.')
+      } finally {
+        setIsSubmitting(false)
+      }
+    },
+    [token, email]
+  )
+
   useEffect(() => {
     // If token is provided, auto-unsubscribe
     if (token) {
       handleUnsubscribe(token)
     }
-  }, [token])
-
-  const handleUnsubscribe = async (unsubscribeToken?: string, emailAddress?: string) => {
-    setIsSubmitting(true)
-    setStatus('idle')
-    setMessage('')
-
-    try {
-      const response = await api.post('/newsletter/unsubscribe/', {
-        token: unsubscribeToken || token,
-        email: emailAddress || email,
-      })
-
-      setStatus('success')
-      setMessage(response.data.message || 'Successfully unsubscribed from newsletter.')
-    } catch (error: any) {
-      console.error('Error unsubscribing:', error)
-      setStatus('error')
-      if (error.response?.data?.error) {
-        setMessage(error.response.data.error)
-      } else {
-        setMessage('Failed to unsubscribe. Please try again.')
-      }
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
+  }, [handleUnsubscribe, token])
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault()
