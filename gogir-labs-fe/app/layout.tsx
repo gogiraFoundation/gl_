@@ -7,6 +7,9 @@ import { AnalyticsTracker } from '@/components/analytics/AnalyticsTracker'
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
 export const metadata: Metadata = {
+  icons: {
+    icon: [{ url: '/icon.svg', type: 'image/svg+xml' }],
+  },
   title: {
     default: 'Emmanuel Ugbaje - Software Engineer | Building Solutions with Data Insights',
     template: '%s | Emmanuel Ugbaje',
