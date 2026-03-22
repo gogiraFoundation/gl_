@@ -17,7 +17,8 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+# Note: do not ignore `lib/` globally — it would exclude `gogir-labs-fe/lib/`.
+# Python build artifacts live under `build/` (ignored above).
 lib64/
 parts/
 sdist/
