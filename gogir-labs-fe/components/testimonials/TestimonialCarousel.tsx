@@ -70,10 +70,10 @@ export function TestimonialCarousel() {
   }
 
   return (
-    <div className="relative rounded-lg border border-gray-700 bg-gray-900/50 p-8">
+    <div className="relative rounded-lg border border-slate-200 bg-slate-50/90 p-8 dark:border-gray-700 dark:bg-gray-900/50">
       <div className="mb-6 flex items-center gap-2">
-        <Quote className="h-6 w-6 text-purple-400" />
-        <h2 className="text-2xl font-bold text-white">What People Say</h2>
+        <Quote className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-white">What People Say</h2>
       </div>
 
       <div className="relative min-h-[200px]">
@@ -86,14 +86,14 @@ export function TestimonialCarousel() {
                 className={`h-5 w-5 ${
                   i < currentTestimonial.rating
                     ? 'fill-yellow-400 text-yellow-400'
-                    : 'text-gray-600'
+                    : 'text-slate-300 dark:text-gray-600'
                 }`}
               />
             ))}
           </div>
 
           {/* Content */}
-          <blockquote className="mb-6 text-lg leading-relaxed text-gray-300">
+          <blockquote className="mb-6 text-lg leading-relaxed text-slate-600 dark:text-gray-300">
             &quot;{currentTestimonial.content}&quot;
           </blockquote>
 
@@ -110,8 +110,10 @@ export function TestimonialCarousel() {
               </div>
             )}
             <div>
-              <div className="font-semibold text-white">{currentTestimonial.client_name}</div>
-              <div className="text-sm text-gray-400">
+              <div className="font-semibold text-slate-900 dark:text-white">
+                {currentTestimonial.client_name}
+              </div>
+              <div className="text-sm text-slate-500 dark:text-gray-400">
                 {currentTestimonial.client_role}
                 {currentTestimonial.company && ` at ${currentTestimonial.company}`}
               </div>
@@ -124,17 +126,17 @@ export function TestimonialCarousel() {
           <>
             <button
               onClick={goToPrevious}
-              className="absolute left-0 top-1/2 -translate-y-1/2 transform rounded-full bg-gray-800 p-2 transition-colors hover:bg-gray-700"
+              className="absolute left-0 top-1/2 -translate-y-1/2 transform rounded-full border border-slate-200 bg-white p-2 text-slate-700 shadow-sm transition-colors hover:bg-slate-100 dark:border-transparent dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
               aria-label="Previous testimonial"
             >
-              <ChevronLeft className="h-5 w-5 text-white" />
+              <ChevronLeft className="h-5 w-5" />
             </button>
             <button
               onClick={goToNext}
-              className="absolute right-0 top-1/2 -translate-y-1/2 transform rounded-full bg-gray-800 p-2 transition-colors hover:bg-gray-700"
+              className="absolute right-0 top-1/2 -translate-y-1/2 transform rounded-full border border-slate-200 bg-white p-2 text-slate-700 shadow-sm transition-colors hover:bg-slate-100 dark:border-transparent dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
               aria-label="Next testimonial"
             >
-              <ChevronRight className="h-5 w-5 text-white" />
+              <ChevronRight className="h-5 w-5" />
             </button>
 
             {/* Dots */}
@@ -144,7 +146,9 @@ export function TestimonialCarousel() {
                   key={index}
                   onClick={() => goToSlide(index)}
                   className={`h-2 w-2 rounded-full transition-all ${
-                    index === currentIndex ? 'w-8 bg-purple-400' : 'bg-gray-600 hover:bg-gray-500'
+                    index === currentIndex
+                      ? 'w-8 bg-purple-600 dark:bg-purple-400'
+                      : 'bg-slate-300 hover:bg-slate-400 dark:bg-gray-600 dark:hover:bg-gray-500'
                   }`}
                   aria-label={`Go to testimonial ${index + 1}`}
                 />
