@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import api from '@/lib/api'
-import { Check, Trash2, Filter } from 'lucide-react'
+import { Check, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 
 interface Notification {
