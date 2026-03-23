@@ -1,7 +1,6 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { notFound, useParams } from 'next/navigation'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { PostContent } from '@/components/blog/PostContent'
@@ -26,11 +25,11 @@ interface Post {
   meta_description: string
 }
 
-export default function BlogPostClient() {
-  const params = useParams() as { slug?: string | string[] }
-  const rawSlug = params.slug
-  if (!rawSlug) notFound()
-  const slug = (Array.isArray(rawSlug) ? rawSlug[0] : rawSlug) as string
+interface BlogPostClientProps {
+  slug: string
+}
+
+export default function BlogPostClient({ slug }: BlogPostClientProps) {
 
   const {
     data: post,
