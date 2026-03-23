@@ -6,6 +6,30 @@
 - **Project type**: Next.js (App Router)
 - **Build directory**: `gogir-labs-fe`
 
+### Pages vs Workers Builds (important)
+
+This frontend is deployed with **Cloudflare Pages** (Next.js). Do **not** use a separate **Workers Builds** project with `npx wrangler versions upload` unless you add a real **Wrangler** config in the repo (`wrangler.toml` / `wrangler.jsonc` with `main` or `assets.directory`). This repository does not include a Worker entrypoint; Wrangler will fail with *Missing entry-point to Worker script or to assets directory*.
+
+If you see that error, you almost certainly have **Workers Builds** pointed at this monorepo with a **Deploy command** such as `npx wrangler versions upload` and no matching Worker. Fix it in the dashboard (below)—do not fix it by adding Python steps; `pip install -r gogir-labs-be/requirements.txt` does not satisfy Wrangler.
+
+#### Fix or remove a mistaken Workers Builds project
+
+1. Cloudflare dashboard → **Workers & Pages** → open the **Workers** / **Workers Builds** project that runs `wrangler versions upload` (e.g. “gogirlabs”).
+2. Either:
+   - **Delete** or **pause** the project if it was created by mistake, **or**
+   - **Remove** the custom **Deploy command** (`npx wrangler versions upload`) and any build steps that only exist to support that command.
+3. Redeploy the site from **Pages** only (next section).
+
+#### Confirm the Pages project (not Wrangler) serves the site
+
+1. **Workers & Pages** → select your **Pages** project (the one attached to **www.gogirlabs.uk**).
+2. **Settings → Builds & deployments**:
+   - **Root directory**: `gogir-labs-fe`
+   - **Framework preset**: Next.js
+   - **Build command**: e.g. `npm install && npm run build` (or `npm ci && npm run build`)
+   - **Build output**: use the default for the Next preset (do **not** set a custom “Deploy command” to `wrangler versions upload` on Pages).
+3. **Environment variables** (see below) include `NEXT_PUBLIC_API_URL`.
+
 ### 1. Create Cloudflare Pages project
 
 - In the Cloudflare dashboard, create a new Pages project and connect it to the `gl_` GitHub repository (`gogiraFoundation/gl_`).
