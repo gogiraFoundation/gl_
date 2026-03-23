@@ -478,6 +478,38 @@ a[href^='mailto:'] {
   box-shadow: 0 10px 40px var(--glow-color);
 }
 
+/* Portfolio listing: softer elevation, single hover motion (pairs with GlowCard variant="portfolio") */
+.card-glow.card-glow--portfolio {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.22),
+    0 0 0 1px rgba(139, 92, 246, 0.06);
+  background: linear-gradient(
+    165deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(139, 92, 246, 0.06) 50%,
+    rgba(59, 130, 246, 0.04) 100%
+  );
+  transition:
+    transform 0.25s ease-out,
+    box-shadow 0.25s ease-out,
+    border-color 0.25s ease-out;
+}
+
+[data-theme='light'] .card-glow.card-glow--portfolio {
+  border: 1px solid rgba(91, 33, 182, 0.12);
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
+}
+
+.card-glow.card-glow--portfolio:hover {
+  transform: translateY(-6px) scale(1.01);
+  border-color: rgba(139, 92, 246, 0.35);
+  box-shadow:
+    0 20px 48px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(139, 92, 246, 0.18),
+    0 0 40px rgba(139, 92, 246, 0.12);
+}
+
 /* Scroll Animations */
 .scroll-fade-in {
   opacity: 0;
@@ -939,8 +971,12 @@ a[href^='mailto:'] {
     transform: translateY(-2px) scale(1.01);
   }
 
+  .card-glow.card-glow--portfolio:hover {
+    transform: translateY(-3px) scale(1.01);
+  }
+
   /* Touch-friendly button sizes */
-  button,
+  button:not(.filter-chip),
   a[role='button'],
   .btn {
     min-height: 44px;
@@ -954,8 +990,8 @@ a[href^='mailto:'] {
     padding-right: 1rem;
   }
 
-  /* Ensure all buttons are full width on mobile */
-  button:not(.icon-button) {
+  /* Ensure all buttons are full width on mobile (exclude icon + filter chips) */
+  button:not(.icon-button):not(.filter-chip) {
     width: 100%;
   }
 

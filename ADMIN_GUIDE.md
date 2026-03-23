@@ -128,6 +128,15 @@ Instead of uploading large video files, you can use external video URLs:
 - View messages submitted through the contact form
 - Mark messages as "Read" or "Replied" after handling them
 
+## Troubleshooting (portfolio URLs)
+
+If the browser console shows **`GET /portfolio/<slug>?_rsc=… 404`**, that is Next.js **prefetching** a project page. The frontend disables prefetch on portfolio cards/search links to avoid noise; you may still see 404s if:
+
+- A project was **unpublished or deleted** but the user has an **old tab** or **cached** list data—refresh or clear site data.
+- The **slug was changed** in admin—old bookmarks and external links break. Prefer not changing slugs after launch, or add redirects at the host if you must.
+
+If clicking **Learn more** shows “Project not found” while the project appears in the list, check that **slug** matches in Django admin and that the project is **Published**.
+
 ## Tips
 
 1. **Always publish content** by checking the "Published" checkbox

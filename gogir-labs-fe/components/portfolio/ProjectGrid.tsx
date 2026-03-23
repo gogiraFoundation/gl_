@@ -32,9 +32,14 @@ export function ProjectGrid({ projects }: ProjectGridProps) {
   }
 
   return (
-    <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
       {projects.map((project, index) => (
-        <ScrollAnimation key={project.id} animationType="fade-in" delay={index * 50}>
+        <ScrollAnimation
+          key={project.id}
+          animationType="fade-in"
+          delay={index * 50}
+          className="h-full"
+        >
           <ProjectCard project={project} />
         </ScrollAnimation>
       ))}
