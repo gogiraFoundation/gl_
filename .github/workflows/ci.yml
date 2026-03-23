@@ -173,7 +173,7 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/gogir-labs-backend:latest
             ${{ secrets.DOCKER_USERNAME }}/gogir-labs-backend:${{ github.sha }}
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/gogir-labs-backend:buildcache
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/gogir-labs-backend:buildcache,ignore-error=true
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/gogir-labs-backend:buildcache,mode=max
 
       - name: Build and push frontend image
@@ -185,5 +185,5 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/gogir-labs-frontend:latest
             ${{ secrets.DOCKER_USERNAME }}/gogir-labs-frontend:${{ github.sha }}
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/gogir-labs-frontend:buildcache
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/gogir-labs-frontend:buildcache,ignore-error=true
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/gogir-labs-frontend:buildcache,mode=max
