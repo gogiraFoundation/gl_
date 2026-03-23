@@ -66,7 +66,7 @@ function SearchPageContent() {
 
   useEffect(() => {
     if (query) {
-      document.title = `Search: ${query} | Emmanuel Ugbaije`
+      document.title = `Search: ${query} | Emmanuel Ugbaje`
     }
   }, [query])
 

@@ -24,7 +24,7 @@ export default function AnalyticsPage() {
   })
 
   useEffect(() => {
-    document.title = 'Analytics Dashboard | Admin - Emmanuel Ugbaije'
+    document.title = 'Analytics Dashboard | Admin - Emmanuel Ugbaje'
   }, [])
 
   return (

@@ -44,14 +44,18 @@ export function ProjectFilters({
   const useTechSelect = technologies.length > TECH_SELECT_THRESHOLD
   const hasFilters = selectedCategory !== null || selectedTechnology !== null
 
-  const inputSurface =
-    'w-full border border-white/10 bg-gray-900/60 text-white shadow-sm backdrop-blur-sm placeholder:text-gray-500 focus-visible:border-purple-500/40 focus-visible:ring-2 focus-visible:ring-purple-500/40 dark:bg-gray-900/60'
+  const inputSurface = cn(
+    'w-full border shadow-sm backdrop-blur-sm transition-colors duration-200',
+    'border-[var(--border-default)] bg-[var(--surface-input)] text-[var(--text-primary)]',
+    'placeholder:text-[var(--text-tertiary)]',
+    'focus-visible:border-[var(--border-focus)] focus-visible:ring-2 focus-visible:ring-[var(--border-focus)]'
+  )
 
   return (
     <div className="mb-10 space-y-6">
       <div className="relative">
         <Search
-          className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500"
+          className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--text-tertiary)]"
           aria-hidden
         />
         <input
@@ -70,7 +74,7 @@ export function ProjectFilters({
       </div>
 
       <div>
-        <p className="mb-2.5 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+        <p className="mb-2.5 text-left text-xs font-semibold uppercase tracking-wider text-theme-muted">
           Categories
         </p>
         <div className="-mx-1 flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -79,8 +83,8 @@ export function ProjectFilters({
             className={cn(
               chipBase,
               selectedCategory === null
-                ? 'border-purple-500/50 bg-purple-500/20 text-white shadow-md shadow-purple-900/20'
-                : 'border-white/10 bg-white/5 text-gray-300 hover:border-white/20 hover:bg-white/10'
+                ? 'border-purple-500/50 bg-[var(--surface-chip-active)] text-[var(--text-primary)] shadow-md shadow-purple-900/15 dark:shadow-purple-900/20'
+                : 'border-[var(--border-default)] bg-[var(--surface-chip)] text-[var(--text-secondary)] hover:border-[var(--border-focus)] hover:bg-[var(--surface-elevated)]'
             )}
             onClick={() => onCategoryChange(null)}
             aria-pressed={selectedCategory === null}
@@ -96,8 +100,8 @@ export function ProjectFilters({
                 className={cn(
                   chipBase,
                   active
-                    ? 'border-purple-500/50 bg-purple-500/20 text-white shadow-md shadow-purple-900/20'
-                    : 'border-white/10 bg-white/5 text-gray-300 hover:border-white/20 hover:bg-white/10'
+                    ? 'border-purple-500/50 bg-[var(--surface-chip-active)] text-[var(--text-primary)] shadow-md shadow-purple-900/15 dark:shadow-purple-900/20'
+                    : 'border-[var(--border-default)] bg-[var(--surface-chip)] text-[var(--text-secondary)] hover:border-[var(--border-focus)] hover:bg-[var(--surface-elevated)]'
                 )}
                 onClick={() => onCategoryChange(category.id)}
                 aria-pressed={active}
@@ -110,7 +114,7 @@ export function ProjectFilters({
       </div>
 
       <div>
-        <p className="mb-2.5 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+        <p className="mb-2.5 text-left text-xs font-semibold uppercase tracking-wider text-theme-muted">
           Technologies
         </p>
         {useTechSelect ? (
@@ -135,7 +139,7 @@ export function ProjectFilters({
               ))}
             </select>
             <ChevronDown
-              className="pointer-events-none absolute right-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500"
+              className="pointer-events-none absolute right-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--text-tertiary)]"
               aria-hidden
             />
           </div>
@@ -146,8 +150,8 @@ export function ProjectFilters({
               className={cn(
                 chipBase,
                 selectedTechnology === null
-                  ? 'border-purple-500/50 bg-purple-500/20 text-white shadow-md shadow-purple-900/20'
-                  : 'border-white/10 bg-white/5 text-gray-300 hover:border-white/20 hover:bg-white/10'
+                  ? 'border-purple-500/50 bg-[var(--surface-chip-active)] text-[var(--text-primary)] shadow-md shadow-purple-900/15 dark:shadow-purple-900/20'
+                  : 'border-[var(--border-default)] bg-[var(--surface-chip)] text-[var(--text-secondary)] hover:border-[var(--border-focus)] hover:bg-[var(--surface-elevated)]'
               )}
               onClick={() => onTechnologyChange(null)}
               aria-pressed={selectedTechnology === null}
@@ -163,8 +167,8 @@ export function ProjectFilters({
                   className={cn(
                     chipBase,
                     active
-                      ? 'border-purple-500/50 bg-purple-500/20 text-white shadow-md shadow-purple-900/20'
-                      : 'border-white/10 bg-white/5 text-gray-300 hover:border-white/20 hover:bg-white/10'
+                      ? 'border-purple-500/50 bg-[var(--surface-chip-active)] text-[var(--text-primary)] shadow-md shadow-purple-900/15 dark:shadow-purple-900/20'
+                      : 'border-[var(--border-default)] bg-[var(--surface-chip)] text-[var(--text-secondary)] hover:border-[var(--border-focus)] hover:bg-[var(--surface-elevated)]'
                   )}
                   onClick={() => onTechnologyChange(tech.id)}
                   aria-pressed={active}
@@ -181,7 +185,7 @@ export function ProjectFilters({
         <div className="flex justify-start pt-1">
           <button
             type="button"
-            className="filter-chip rounded-full border border-transparent px-4 py-2 text-sm font-medium text-purple-300/90 underline-offset-4 transition-colors duration-200 hover:text-white hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-500"
+            className="filter-chip rounded-full border border-transparent px-4 py-2 text-sm font-medium text-[var(--accent-primary)] underline-offset-4 transition-colors duration-200 hover:opacity-90 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-500 dark:text-purple-300/90 dark:hover:text-white"
             onClick={() => {
               onCategoryChange(null)
               onTechnologyChange(null)

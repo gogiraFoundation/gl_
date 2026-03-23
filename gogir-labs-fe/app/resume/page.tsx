@@ -28,7 +28,7 @@ export default function ResumePage() {
   })
 
   useEffect(() => {
-    document.title = 'Resume | Emmanuel Ugbaije'
+    document.title = 'Resume | Emmanuel Ugbaje'
   }, [])
 
   if (isLoading) {

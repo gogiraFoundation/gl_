@@ -99,7 +99,7 @@ export default function BlogPostPage() {
   useEffect(() => {
     if (post) {
       // Update meta tags for SEO and social sharing
-      document.title = `${post.title} | Blog - Emmanuel Ugbaije`
+      document.title = `${post.title} | Blog - Emmanuel Ugbaje`
 
       const description: string = post.meta_description ?? post.excerpt ?? ''
 

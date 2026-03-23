@@ -42,10 +42,10 @@ export default function PortfolioPage() {
 
   // Update document title and meta description for SEO
   useEffect(() => {
-    document.title = 'Portfolio | Emmanuel Ugbaije - Infrastructure & DevOps Projects'
+    document.title = 'Portfolio | Emmanuel Ugbaje — Software Engineering & Cloud Projects'
     const metaDescription = document.querySelector('meta[name="description"]')
     const descriptionContent =
-      'Explore the portfolio of Infrastructure & DevOps Engineer Emmanuel Ugbaije. See real-world projects using Terraform, Kubernetes, CI/CD, AWS, Azure, and scalable cloud platforms.'
+      'Explore projects by Emmanuel Ugbaje: Python, Django, cloud infrastructure, CI/CD, data platforms, and scalable backends.'
     if (metaDescription) {
       metaDescription.setAttribute('content', descriptionContent)
     } else {
@@ -125,7 +125,7 @@ export default function PortfolioPage() {
             <h1 className="mb-5 text-5xl font-bold tracking-tight md:mb-6 md:text-6xl">
               <span className="gradient-text">Portfolio</span>
             </h1>
-            <p className="mx-auto max-w-2xl text-lg leading-relaxed text-gray-400 md:text-xl">
+            <p className="mx-auto max-w-2xl text-lg leading-relaxed text-slate-600 dark:text-gray-400 md:text-xl">
               Real‑world projects demonstrating expertise in cloud infrastructure, Infrastructure as
               Code (Terraform, Kubernetes), CI/CD automation, and scalable platform design.
             </p>
@@ -143,11 +143,13 @@ export default function PortfolioPage() {
           />
 
           {(isLoading || isFetching) && !typedProjects.length ? (
-            <div className="py-12 text-center text-gray-400">Loading projects...</div>
+            <div className="py-12 text-center text-slate-500 dark:text-gray-400">
+              Loading projects...
+            </div>
           ) : error ? (
-            <div className="py-12 text-center text-red-400">
+            <div className="py-12 text-center text-red-600 dark:text-red-400">
               <p className="mb-2">Error loading projects</p>
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-slate-600 dark:text-gray-400">
                 {error instanceof Error ? error.message : 'Unknown error'}
               </p>
             </div>
@@ -156,12 +158,12 @@ export default function PortfolioPage() {
           )}
 
           {typedProjects.length > 0 && (
-            <div className="mt-20 rounded-2xl border border-white/10 bg-white/5 p-6 text-center shadow-lg shadow-black/10 backdrop-blur-sm md:mt-24 md:p-8">
-              <p className="text-base leading-relaxed text-gray-200 md:text-lg">
+            <div className="mt-20 rounded-2xl border border-[var(--cta-border)] bg-[var(--cta-surface)] p-6 text-center shadow-lg shadow-slate-950/5 backdrop-blur-sm md:mt-24 md:p-8 dark:shadow-black/10">
+              <p className="text-base leading-relaxed text-[var(--text-secondary)] md:text-lg">
                 Interested in a custom solution or want to discuss a project?{' '}
                 <Link
                   href="/contact"
-                  className="font-medium text-purple-400 underline decoration-purple-400/40 underline-offset-4 transition-colors duration-200 hover:text-purple-300 hover:decoration-purple-300"
+                  className="font-medium text-[var(--accent-primary)] underline decoration-[var(--accent-primary)]/40 underline-offset-4 transition-colors duration-200 hover:opacity-90 dark:text-purple-400 dark:decoration-purple-400/40 dark:hover:text-purple-300"
                 >
                   Get in touch
                 </Link>

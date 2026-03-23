@@ -43,7 +43,7 @@ export function ProjectCard({ project, linkPrefetch = false }: ProjectCardProps)
           <Icon className="h-7 w-7 text-white md:h-8 md:w-8" />
         </div>
         {project.featured_image && (
-          <div className="relative h-28 flex-1 overflow-hidden rounded-2xl shadow-md ring-1 ring-white/10 md:h-32">
+          <div className="relative h-28 flex-1 overflow-hidden rounded-2xl shadow-md ring-1 ring-slate-200/80 dark:ring-white/10 md:h-32">
             <Image
               src={project.featured_image}
               alt={`${project.title} - ${project.category?.name || 'Project'} showcase`}
@@ -59,14 +59,14 @@ export function ProjectCard({ project, linkPrefetch = false }: ProjectCardProps)
       {/* Content */}
       <div className="flex-grow">
         {project.category && (
-          <span className="text-xs font-semibold uppercase tracking-wider text-purple-400/95">
+          <span className="text-xs font-semibold uppercase tracking-wider text-purple-800 dark:text-purple-400/95">
             {project.category.name}
           </span>
         )}
-        <h3 className="mb-2 mt-2 text-xl font-bold leading-tight tracking-tight text-white md:text-[1.35rem]">
+        <h3 className="mb-2 mt-2 text-xl font-bold leading-tight tracking-tight text-[var(--text-primary)] md:text-[1.35rem]">
           {project.title}
         </h3>
-        <p className="mb-5 line-clamp-3 text-sm leading-relaxed text-gray-400 md:text-[0.9375rem]">
+        <p className="text-theme-muted mb-5 line-clamp-3 text-sm leading-relaxed md:text-[0.9375rem]">
           {project.description}
         </p>
 
@@ -76,13 +76,13 @@ export function ProjectCard({ project, linkPrefetch = false }: ProjectCardProps)
             {project.technologies.slice(0, 3).map((tech) => (
               <span
                 key={tech.id}
-                className="rounded-full bg-purple-500/15 px-3 py-1 text-xs font-medium text-purple-200/90 ring-1 ring-white/10 transition-colors duration-200 hover:bg-purple-500/25"
+                className="rounded-full bg-purple-100/90 px-3 py-1 text-xs font-medium text-purple-900 ring-1 ring-slate-200/90 transition-colors duration-200 hover:bg-purple-200/90 dark:bg-purple-500/15 dark:text-purple-200/90 dark:ring-white/10 dark:hover:bg-purple-500/25"
               >
                 {tech.name}
               </span>
             ))}
             {project.technologies.length > 3 && (
-              <span className="rounded-full bg-white/5 px-3 py-1 text-xs font-medium text-purple-200/80 ring-1 ring-white/10">
+              <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700 ring-1 ring-slate-200 dark:bg-white/5 dark:text-purple-200/80 dark:ring-white/10">
                 +{project.technologies.length - 3}
               </span>
             )}
