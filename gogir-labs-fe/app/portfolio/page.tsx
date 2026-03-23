@@ -77,14 +77,11 @@ export default function PortfolioPage() {
 
         // Ensure we return an array
         if (!Array.isArray(projectsData)) {
-          console.warn('Projects data is not an array:', projectsData)
           return []
         }
 
         return projectsData
       } catch (err: any) {
-        console.error('Error fetching projects:', err)
-        console.error('Error response:', err.response?.data)
         throw err
       }
     },
