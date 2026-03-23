@@ -82,7 +82,9 @@ export default function ContactClient() {
                   </div>
 
                   <div className="border-t border-[var(--border-default)] pt-6">
-                    <p className="mb-4 text-sm text-[var(--text-tertiary)]">Connect on Social Media</p>
+                    <p className="mb-4 text-sm text-[var(--text-tertiary)]">
+                      Connect on Social Media
+                    </p>
                     <div className="flex flex-wrap gap-4">
                       <a
                         href="https://github.com/gogiraFoundation"

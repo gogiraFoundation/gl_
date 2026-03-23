@@ -155,12 +155,12 @@ export default function PortfolioPage() {
           )}
 
           {typedProjects.length > 0 && (
-            <div className="mt-20 rounded-2xl border border-[var(--cta-border)] bg-[var(--cta-surface)] p-6 text-center shadow-lg shadow-slate-950/5 backdrop-blur-sm md:mt-24 md:p-8 dark:shadow-black/10">
+            <div className="mt-20 rounded-2xl border border-[var(--cta-border)] bg-[var(--cta-surface)] p-6 text-center shadow-lg shadow-slate-950/5 backdrop-blur-sm dark:shadow-black/10 md:mt-24 md:p-8">
               <p className="text-base leading-relaxed text-[var(--text-secondary)] md:text-lg">
                 Interested in a custom solution or want to discuss a project?{' '}
                 <Link
                   href="/contact"
-                  className="font-medium text-[var(--accent-primary)] underline decoration-[var(--accent-primary)]/40 underline-offset-4 transition-colors duration-200 hover:opacity-90 dark:text-purple-400 dark:decoration-purple-400/40 dark:hover:text-purple-300"
+                  className="decoration-[var(--accent-primary)]/40 font-medium text-[var(--accent-primary)] underline underline-offset-4 transition-colors duration-200 hover:opacity-90 dark:text-purple-400 dark:decoration-purple-400/40 dark:hover:text-purple-300"
                 >
                   Get in touch
                 </Link>

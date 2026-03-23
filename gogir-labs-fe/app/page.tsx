@@ -65,12 +65,12 @@ export default function Home() {
 
             <div className="container-content mb-10 animate-fade-in-up delay-700">
               <p className="text-lg leading-relaxed text-slate-600 dark:text-gray-300">
-                I build secure, scalable backend systems and APIs in Python—currently leading backend
-                development at Traq Authenticator (identity verification and IAM). I ship Django and
-                PostgreSQL services with strong API security: rate limiting with Redis, password
-                breach detection, file validation, and automated scanning—plus CI/CD and cloud-ready
-                deployments. I hold an MSc in Renewable Energy and bring data-pipeline experience
-                from energy analytics and research roles.
+                I build secure, scalable backend systems and APIs in Python—currently leading
+                backend development at Traq Authenticator (identity verification and IAM). I ship
+                Django and PostgreSQL services with strong API security: rate limiting with Redis,
+                password breach detection, file validation, and automated scanning—plus CI/CD and
+                cloud-ready deployments. I hold an MSc in Renewable Energy and bring data-pipeline
+                experience from energy analytics and research roles.
               </p>
             </div>
 

@@ -11,8 +11,7 @@ export const metadata: Metadata = {
     icon: [{ url: '/icon.svg', type: 'image/svg+xml' }],
   },
   title: {
-    default:
-      'Emmanuel Ugbaje | Software Engineer | Python, Django, Authentication & Cloud',
+    default: 'Emmanuel Ugbaje | Software Engineer | Python, Django, Authentication & Cloud',
     template: '%s | Emmanuel Ugbaje',
   },
   description:

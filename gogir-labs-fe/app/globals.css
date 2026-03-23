@@ -478,20 +478,31 @@ a[href^='mailto:'] {
   border: 1px solid rgba(31, 41, 55, 0.2);
 }
 
-/* Gradient Text */
+/* Gradient Text (single source: avoid stacking Tailwind bg-gradient-* on the same node) */
 .gradient-text {
+  color: transparent;
   background: var(--gradient-primary);
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-/* Light mode - ensure gradient text is dark */
+/*
+ * Light mode: use the same vibrant stops as dark mode so headings stay readable
+ * on white. (Solid buttons still use .bg-gradient-primary with deeper stops.)
+ */
 [data-theme='light'] .gradient-text {
-  background: linear-gradient(135deg, #5b21b6 0%, #1e40af 100%);
+  background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-text--secondary {
+  background: var(--gradient-secondary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 /* Ensure bg-gradient-primary and bg-gradient-secondary classes use dark gradients in light mode */
