@@ -74,7 +74,7 @@ export function ProjectFilters({
       </div>
 
       <div>
-        <p className="mb-2.5 text-left text-xs font-semibold uppercase tracking-wider text-theme-muted">
+        <p className="text-theme-muted mb-2.5 text-left text-xs font-semibold uppercase tracking-wider">
           Categories
         </p>
         <div className="-mx-1 flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -114,7 +114,7 @@ export function ProjectFilters({
       </div>
 
       <div>
-        <p className="mb-2.5 text-left text-xs font-semibold uppercase tracking-wider text-theme-muted">
+        <p className="text-theme-muted mb-2.5 text-left text-xs font-semibold uppercase tracking-wider">
           Technologies
         </p>
         {useTechSelect ? (
@@ -123,9 +123,7 @@ export function ProjectFilters({
               id="project-technology"
               name="project-technology"
               value={selectedTechnology || ''}
-              onChange={(e) =>
-                onTechnologyChange(e.target.value ? Number(e.target.value) : null)
-              }
+              onChange={(e) => onTechnologyChange(e.target.value ? Number(e.target.value) : null)}
               className={cn(
                 inputSurface,
                 'min-h-[44px] cursor-pointer appearance-none rounded-2xl py-3 pl-4 pr-11 text-[15px]'
@@ -185,7 +183,7 @@ export function ProjectFilters({
         <div className="flex justify-start pt-1">
           <button
             type="button"
-            className="filter-chip rounded-full border border-transparent px-4 py-2 text-sm font-medium text-[var(--accent-primary)] underline-offset-4 transition-colors duration-200 hover:opacity-90 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-500 dark:text-purple-300/90 dark:hover:text-white"
+            className="filter-chip rounded-full border border-transparent px-4 py-2 text-sm font-medium text-[var(--accent-primary)] underline-offset-4 transition-colors duration-200 hover:underline hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-500 dark:text-purple-300/90 dark:hover:text-white"
             onClick={() => {
               onCategoryChange(null)
               onTechnologyChange(null)

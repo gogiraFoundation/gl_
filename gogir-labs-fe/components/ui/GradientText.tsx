@@ -14,8 +14,7 @@ export function GradientText({ children, className, gradient = 'primary' }: Grad
     <span
       className={cn(
         'gradient-text font-bold',
-        gradient === 'primary' && 'bg-gradient-primary',
-        gradient === 'secondary' && 'bg-gradient-secondary',
+        gradient === 'secondary' && 'gradient-text--secondary',
         className
       )}
     >
