@@ -29,8 +29,7 @@ export function GlowCard({
         'card-glow',
         isPortfolio && 'card-glow--portfolio rounded-3xl p-6 md:p-8',
         !isPortfolio && 'rounded-lg p-5',
-        enableHoverScale &&
-          'transition-transform duration-300 hover:scale-105 active:scale-100',
+        enableHoverScale && 'transition-transform duration-300 hover:scale-105 active:scale-100',
         enableHoverScale && glowColor === 'purple' && 'hover:shadow-glow-purple',
         enableHoverScale && glowColor === 'blue' && 'hover:shadow-glow-blue',
         className

@@ -30,7 +30,6 @@ interface BlogPostClientProps {
 }
 
 export default function BlogPostClient({ slug }: BlogPostClientProps) {
-
   const {
     data: post,
     isLoading,

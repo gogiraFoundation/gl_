@@ -67,11 +67,12 @@ export default function AboutPage() {
           <section>
             <div className="glass space-y-6 rounded-2xl p-8 md:p-12">
               <p className="text-justify text-lg leading-relaxed text-gray-300 md:text-xl">
-                I&apos;m a Software Engineer with experience building secure, scalable backend systems
-                and APIs using Python frameworks. I focus on authentication systems, data pipelines,
-                and production-ready services with reliability, security, and performance in mind. I
-                hold an MSc in Renewable Energy &amp; Sustainable Technology and apply that lens
-                when building technology that supports business and environmental outcomes.
+                I&apos;m a Software Engineer with experience building secure, scalable backend
+                systems and APIs using Python frameworks. I focus on authentication systems, data
+                pipelines, and production-ready services with reliability, security, and performance
+                in mind. I hold an MSc in Renewable Energy &amp; Sustainable Technology and apply
+                that lens when building technology that supports business and environmental
+                outcomes.
               </p>
               <p className="text-justify text-lg leading-relaxed text-gray-300 md:text-xl">
                 I&apos;m currently Lead Developer at Traq Authenticator—a secure identity and access
@@ -86,8 +87,9 @@ export default function AboutPage() {
                 ISO 50001-aligned energy performance work), Product Operations Manager for a remote
                 digital startup (internal tooling and workflows that improved operational efficiency
                 by 60%), Research Analyst in tokenomics and business data (blockchain metrics,
-                Python automation that cut processing time by about 50%), and Volunteer IT &amp; Data
-                Officer for a breast cancer foundation—digitising volunteer tracking and reporting.
+                Python automation that cut processing time by about 50%), and Volunteer IT &amp;
+                Data Officer for a breast cancer foundation—digitising volunteer tracking and
+                reporting.
               </p>
               <p className="text-justify text-lg leading-relaxed text-gray-300 md:text-xl">
                 I&apos;m passionate about reliable platforms that improve how organisations work.
@@ -122,7 +124,10 @@ export default function AboutPage() {
                     Advanced security: password breach detection, Redis rate limiting, file
                     validation pipelines, external APIs for malware scanning and threat detection.
                   </li>
-                  <li>CI/CD pipelines for automated testing and deployment; scalable, high-availability services.</li>
+                  <li>
+                    CI/CD pipelines for automated testing and deployment; scalable,
+                    high-availability services.
+                  </li>
                 </ul>
                 <p className="mt-4 text-sm text-gray-500">
                   Technologies: Python, Django, Redis, PostgreSQL, Docker, Git
@@ -136,9 +141,14 @@ export default function AboutPage() {
                 <ul className="list-disc space-y-2 pl-5 text-gray-300 md:text-[17px]">
                   <li>Python ETL pipelines for operational datasets and analytics reports.</li>
                   <li>SQL queries and data models supporting energy performance dashboards.</li>
-                  <li>Automated KPI reporting; collaboration on ISO 50001 energy management frameworks.</li>
+                  <li>
+                    Automated KPI reporting; collaboration on ISO 50001 energy management
+                    frameworks.
+                  </li>
                 </ul>
-                <p className="mt-4 text-sm text-gray-500">Technologies: Python, SQL, data analysis</p>
+                <p className="mt-4 text-sm text-gray-500">
+                  Technologies: Python, SQL, data analysis
+                </p>
               </GlowCard>
 
               <GlowCard glowColor="purple" className="p-6 text-left md:p-8">
@@ -146,28 +156,42 @@ export default function AboutPage() {
                 <p className="mb-1 text-purple-300/90">Remote digital start-up</p>
                 <p className="mb-4 text-sm text-gray-400">Dec 2021 – Jan 2023</p>
                 <ul className="list-disc space-y-2 pl-5 text-gray-300 md:text-[17px]">
-                  <li>Designed internal tooling processes; improved operational efficiency by 60%.</li>
-                  <li>Automation for CRM workflows and reporting; liaison between engineering and stakeholders.</li>
+                  <li>
+                    Designed internal tooling processes; improved operational efficiency by 60%.
+                  </li>
+                  <li>
+                    Automation for CRM workflows and reporting; liaison between engineering and
+                    stakeholders.
+                  </li>
                 </ul>
               </GlowCard>
 
               <GlowCard glowColor="blue" className="p-6 text-left md:p-8">
-                <h3 className="text-xl font-semibold text-white">Research Analyst — Tokenomics &amp; Business Data</h3>
+                <h3 className="text-xl font-semibold text-white">
+                  Research Analyst — Tokenomics &amp; Business Data
+                </h3>
                 <p className="mb-1 text-blue-300/90">Digital finance sector</p>
                 <p className="mb-4 text-sm text-gray-400">Nov 2021 – Feb 2023</p>
                 <ul className="list-disc space-y-2 pl-5 text-gray-300 md:text-[17px]">
-                  <li>Analysed 1,000+ blockchain user data points for ecosystem growth patterns.</li>
+                  <li>
+                    Analysed 1,000+ blockchain user data points for ecosystem growth patterns.
+                  </li>
                   <li>Python scripts that reduced data processing time by about 50%.</li>
                   <li>Analytical reports supporting product and investment strategy.</li>
                 </ul>
               </GlowCard>
 
               <GlowCard glowColor="purple" className="p-6 text-left md:p-8">
-                <h3 className="text-xl font-semibold text-white">Volunteer IT &amp; Data Officer</h3>
+                <h3 className="text-xl font-semibold text-white">
+                  Volunteer IT &amp; Data Officer
+                </h3>
                 <p className="mb-1 text-purple-300/90">Breast Cancer Foundation (remote)</p>
                 <p className="mb-4 text-sm text-gray-400">Mar 2020 – Dec 2020</p>
                 <ul className="list-disc space-y-2 pl-5 text-gray-300 md:text-[17px]">
-                  <li>Digitised volunteer management with Excel-based tracking and automated reporting.</li>
+                  <li>
+                    Digitised volunteer management with Excel-based tracking and automated
+                    reporting.
+                  </li>
                   <li>Data visualisations to improve programme efficiency and engagement.</li>
                 </ul>
               </GlowCard>
@@ -275,7 +299,9 @@ export default function AboutPage() {
             </h2>
             <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
               <GlowCard glowColor="blue" className="p-6 text-left md:p-8">
-                <h3 className="mb-2 text-lg font-semibold text-white">UK Housing Data Automation</h3>
+                <h3 className="mb-2 text-lg font-semibold text-white">
+                  UK Housing Data Automation
+                </h3>
                 <p className="mb-3 text-sm text-gray-400">
                   Automated ETL pipeline for public housing datasets; SQL modelling; analytics
                   dashboards.
@@ -291,10 +317,12 @@ export default function AboutPage() {
                 </a>
               </GlowCard>
               <GlowCard glowColor="purple" className="p-6 text-left md:p-8">
-                <h3 className="mb-2 text-lg font-semibold text-white">Power forecasting with Python</h3>
+                <h3 className="mb-2 text-lg font-semibold text-white">
+                  Power forecasting with Python
+                </h3>
                 <p className="mb-3 text-sm text-gray-400">
-                  Academic project: regression models for solar and wind scenarios; pandas-based data
-                  prep and interactive dashboards.
+                  Academic project: regression models for solar and wind scenarios; pandas-based
+                  data prep and interactive dashboards.
                 </p>
                 <p className="text-sm text-gray-500">Python, Pandas, NumPy</p>
               </GlowCard>
@@ -314,8 +342,8 @@ export default function AboutPage() {
                     <li>Polygon Africa Bootcamp — 2022</li>
                     <li>N-agro scheme — volunteer agro-extension officer — 2018 – 2020</li>
                     <li>
-                      Award of Excellence — community agricultural programmes (NYSC-CDS), Niger State
-                      — 2017
+                      Award of Excellence — community agricultural programmes (NYSC-CDS), Niger
+                      State — 2017
                     </li>
                   </ul>
                 </div>
