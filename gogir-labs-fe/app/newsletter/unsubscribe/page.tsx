@@ -32,7 +32,6 @@ function UnsubscribeContent() {
         setStatus('success')
         setMessage(response.data.message || 'Successfully unsubscribed from newsletter.')
       } catch (error: unknown) {
-        console.error('Error unsubscribing:', error)
         setStatus('error')
 
         const axiosError = error as AxiosError<{ error?: string }>
