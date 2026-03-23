@@ -9,7 +9,6 @@ import { BlogFilters } from '@/components/blog/BlogFilters'
 import { useState } from 'react'
 import Link from 'next/link'
 import api from '@/lib/api'
-import type { AxiosError } from 'axios'
 
 interface Post {
   id: number
@@ -66,48 +65,30 @@ export default function BlogClient() {
       if (selectedTag) params.tags = selectedTag
       if (debouncedSearch) params.search = debouncedSearch
 
-      console.log('🔍 BlogClient: Fetching posts with params:', params)
-      console.log('🔍 BlogClient: API baseURL:', api.defaults.baseURL)
-
       try {
         const response = await api.get('/blog/posts/', { params })
-
-        console.log('✅ BlogClient: API Response Status:', response.status)
-        console.log('✅ BlogClient: API Response Data:', response.data)
-        console.log('✅ BlogClient: Response Data Type:', typeof response.data)
-        console.log('✅ BlogClient: Has results?', 'results' in response.data)
-        console.log('✅ BlogClient: Is Array?', Array.isArray(response.data))
 
         // Handle different response shapes
         const data = response.data
 
         // Case 1: Django REST Framework pagination { results: [...], count: ... }
         if (data.results && Array.isArray(data.results)) {
-          console.log('✅ BlogClient: Using results array, count:', data.results.length)
           return data.results
         }
 
         // Case 2: Direct array
         if (Array.isArray(data)) {
-          console.log('✅ BlogClient: Using direct array, count:', data.length)
           return data
         }
 
         // Case 3: Wrapped in data property
         if (data.data && Array.isArray(data.data)) {
-          console.log('✅ BlogClient: Using data.data array, count:', data.data.length)
           return data.data
         }
 
         // Case 4: Empty or unexpected shape
-        console.warn('⚠️ BlogClient: Unexpected response shape, returning empty array')
-        console.warn('⚠️ BlogClient: Response keys:', Object.keys(data))
         return []
       } catch (err: unknown) {
-        const error = err as AxiosError<unknown>
-        console.error('❌ BlogClient: API Error:', err)
-        console.error('❌ BlogClient: Error Response:', error.response?.data)
-        console.error('❌ BlogClient: Error Status:', error.response?.status)
         throw err
       }
     },
@@ -116,14 +97,6 @@ export default function BlogClient() {
   })
 
   const typedPosts = (posts ?? []) as Post[]
-  // Debug logging (only in development)
-  if (process.env.NODE_ENV === 'development') {
-    console.log('🔍 BlogClient: Posts data:', typedPosts)
-    console.log('🔍 BlogClient: Is loading:', isLoading)
-    console.log('🔍 BlogClient: Is fetching:', isFetching)
-    console.log('🔍 BlogClient: Error:', error)
-    console.log('🔍 BlogClient: Posts count:', typedPosts.length)
-  }
 
   const { data: categories } = useQuery<Category[]>({
     queryKey: ['blog-categories'],
