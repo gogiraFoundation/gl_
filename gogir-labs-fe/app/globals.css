@@ -57,6 +57,18 @@
   --spacing-section: 4rem; /* 64px - between major sections */
   --spacing-inner: 1.5rem; /* 24px - inner padding for cards/containers */
   --spacing-field: 1rem; /* 16px - between form fields */
+
+  /* Semantic surfaces and borders (dark) */
+  --border-default: rgba(255, 255, 255, 0.12);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-focus: rgba(139, 92, 246, 0.55);
+  --surface-elevated: rgba(255, 255, 255, 0.06);
+  --surface-input: rgba(17, 24, 39, 0.92);
+  --surface-chip: rgba(255, 255, 255, 0.06);
+  --surface-chip-active: rgba(139, 92, 246, 0.22);
+  --cta-surface: rgba(255, 255, 255, 0.06);
+  --cta-border: rgba(255, 255, 255, 0.12);
+  --link-on-surface: #c4b5fd;
 }
 
 /* Light Mode */
@@ -85,6 +97,50 @@
   --border-primary: rgba(31, 41, 55, 0.2);
   --border-secondary: rgba(31, 41, 55, 0.1);
   --border-accent: rgba(91, 33, 182, 0.3);
+
+  --border-default: rgba(15, 23, 42, 0.14);
+  --border-subtle: rgba(15, 23, 42, 0.08);
+  --border-focus: rgba(91, 33, 182, 0.45);
+  --surface-elevated: #f1f5f9;
+  --surface-input: #ffffff;
+  --surface-chip: #f1f5f9;
+  --surface-chip-active: rgba(91, 33, 182, 0.14);
+  --cta-surface: rgba(255, 255, 255, 0.95);
+  --cta-border: rgba(31, 41, 55, 0.12);
+  --link-on-surface: #5b21b6;
+}
+
+/* Theme utility helpers (use with components) */
+.text-theme-muted {
+  color: var(--text-tertiary);
+}
+
+.text-theme-secondary {
+  color: var(--text-secondary);
+}
+
+.bg-surface-input {
+  background-color: var(--surface-input);
+}
+
+.border-theme-default {
+  border-color: var(--border-default);
+}
+
+html {
+  color-scheme: dark;
+}
+
+html[data-theme='light'] {
+  color-scheme: light;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    transition:
+      color 0.2s ease,
+      background-color 0.2s ease;
+  }
 }
 
 /* Base Styles */
@@ -499,6 +555,12 @@ a[href^='mailto:'] {
 [data-theme='light'] .card-glow.card-glow--portfolio {
   border: 1px solid rgba(91, 33, 182, 0.12);
   box-shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
+  background: linear-gradient(
+    165deg,
+    rgba(255, 255, 255, 0.98) 0%,
+    rgba(241, 245, 249, 0.96) 50%,
+    rgba(248, 250, 252, 0.98) 100%
+  );
 }
 
 .card-glow.card-glow--portfolio:hover {

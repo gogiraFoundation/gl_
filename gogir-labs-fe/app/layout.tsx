@@ -11,22 +11,29 @@ export const metadata: Metadata = {
     icon: [{ url: '/icon.svg', type: 'image/svg+xml' }],
   },
   title: {
-    default: 'Emmanuel Ugbaje - Software Engineer | Building Solutions with Data Insights',
+    default:
+      'Emmanuel Ugbaje | Software Engineer | Python, Django, Authentication & Cloud',
     template: '%s | Emmanuel Ugbaje',
   },
   description:
-    'Software Engineer specializing in Python, Django, data analysis, and RESTful APIs. Building accessible, efficient digital products that deliver real public value.',
+    'Software Engineer: secure Python/Django backends, REST APIs, authentication and identity systems, Redis, PostgreSQL, Docker, CI/CD, AWS and GCP. Lead Developer at Traq Authenticator. MSc Renewable Energy; data pipelines and energy analytics background.',
   keywords: [
     'Software Engineer',
-    'Python Developer',
+    'Python',
     'Django',
-    'Data Analysis',
+    'Authentication',
     'REST APIs',
     'PostgreSQL',
-    'Agile Development',
+    'Redis',
     'CI/CD',
-    'Accessibility',
-    'User-Centered Design',
+    'Docker',
+    'AWS',
+    'GCP',
+    'API Security',
+    'Lead Developer',
+    'Renewable Energy',
+    'ETL',
+    'Agile Development',
   ],
 }
 

@@ -11,12 +11,11 @@ import { ArrowRight, Code, Zap, Users, BarChart } from 'lucide-react'
 
 export default function Home() {
   useEffect(() => {
-    // Update document title and meta description for SEO
     document.title =
-      'Emmanuel Ugbaje - Technical Project Manager & Python Developer | SaaS & Energy Innovations'
+      'Emmanuel Ugbaje | Software Engineer & Lead Developer | Python, Django, Authentication'
     const metaDescription = document.querySelector('meta[name="description"]')
     const descriptionContent =
-      'Technical Project Manager and Python Developer specializing in scalable SaaS platforms, renewable energy systems, and digital transformation. MSc in Renewable Energy & Sustainable Technology.'
+      'Software Engineer: secure Python/Django backends, authentication, Redis, PostgreSQL, CI/CD, AWS/GCP. Lead Developer at Traq Authenticator. MSc Renewable Energy; prior energy analytics and data automation.'
     if (metaDescription) {
       metaDescription.setAttribute('content', descriptionContent)
     } else {
@@ -51,27 +50,27 @@ export default function Home() {
             {/* Main Headline - SEO Optimized */}
             <h1 className="mb-4 animate-fade-in-up text-2xl font-bold delay-200 sm:text-3xl md:text-4xl lg:text-5xl">
               <span className="text-slate-900 dark:text-white">
-                Technical Project Manager & Python Developer
+                Software Engineer · Lead Developer
               </span>
             </h1>
             <br></br>
             <br></br>
             <hr className="delay-250 mb-6 animate-fade-in-up border-slate-200 dark:border-gray-700" />
             <p className="mb-6 animate-fade-in-up text-2xl delay-300 md:text-3xl">
-              <GradientText>Building Scalable Digital Products</GradientText>
+              <GradientText>Secure backends &amp; authentication platforms</GradientText>
             </p>
             <p className="text-md mb-4 animate-fade-in-up text-slate-500 delay-500 dark:text-gray-400 md:text-lg">
-              SaaS | Energy Innovations | Clean Tech
+              Python · Django · PostgreSQL · Redis · CI/CD · AWS / GCP
             </p>
 
-            {/* About Paragraph - SEO Optimized */}
             <div className="container-content mb-10 animate-fade-in-up delay-700">
               <p className="text-lg leading-relaxed text-slate-600 dark:text-gray-300">
-                Technical Project Manager and Python Developer with an MSc in Renewable Energy &
-                Sustainable Technology. I specialise in building scalable digital products, leading
-                cross-functional teams, and optimising energy systems using Python, Agile, and
-                data-driven insights. My work bridges software development, digital transformation,
-                and sustainability—delivering measurable impact in SaaS, clean tech, and blockchain.
+                I build secure, scalable backend systems and APIs in Python—currently leading backend
+                development at Traq Authenticator (identity verification and IAM). I ship Django and
+                PostgreSQL services with strong API security: rate limiting with Redis, password
+                breach detection, file validation, and automated scanning—plus CI/CD and cloud-ready
+                deployments. I hold an MSc in Renewable Energy and bring data-pipeline experience
+                from energy analytics and research roles.
               </p>
             </div>
 
@@ -118,38 +117,37 @@ export default function Home() {
             </h2>
             <div className="container-content mb-8">
               <p className="text-center text-slate-500 dark:text-gray-400">
-                Combining technical depth with project leadership to deliver impactful solutions
-                across:
+                Backend engineering, platform delivery, and data systems—grounded in your stack:
               </p>
             </div>
 
             <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4 lg:gap-10">
               {[
                 {
-                  title: 'Software Development',
-                  skills: 'Python, Django, Django REST Framework, API Integration, Redis, SQL',
+                  title: 'Backend & security',
+                  skills:
+                    'Python, Django, REST APIs, Authentication Systems, API Security, Microservices, Rate Limiting, System Design',
                   icon: Code,
-                  alt: 'Software Development Icon',
+                  alt: 'Backend and security Icon',
                 },
                 {
-                  title: 'Project Management',
-                  skills:
-                    'Agile (Scrum/Kanban), SDLC, Technical Documentation, Stakeholder Management, Product Operations',
+                  title: 'Platform & DevOps',
+                  skills: 'Docker, Redis, CI/CD Pipelines, Git, Linux, AWS, GCP',
                   icon: Users,
-                  alt: 'Project Management Icon',
+                  alt: 'Platform and DevOps Icon',
                 },
                 {
-                  title: 'Data & Analytics',
-                  skills: 'Power BI, Excel Macros, Performance Monitoring, Data Visualisation, ETL',
+                  title: 'Data & databases',
+                  skills: 'PostgreSQL, SQL, Data Modelling, Pandas, ETL Pipelines, Data Automation',
                   icon: BarChart,
-                  alt: 'Data Analytics Icon',
+                  alt: 'Data and databases Icon',
                 },
                 {
-                  title: 'Energy & Sustainability',
+                  title: 'Delivery & practices',
                   skills:
-                    'Renewable Energy Systems, ISO 50001, Energy Audits, BESS, Blockchain Tokenisation',
+                    'Automated Testing, Version Control (Git), Agile Development, Code Reviews',
                   icon: Zap,
-                  alt: 'Energy and Sustainability Icon',
+                  alt: 'Delivery and practices Icon',
                 },
               ].map((item, index) => {
                 const Icon = item.icon
@@ -177,19 +175,19 @@ export default function Home() {
 
             {/* Optional: Key Achievements Teaser */}
             <div className="mt-16 text-center">
-              <p className="mb-4 text-slate-500 dark:text-gray-400">Key achievements include:</p>
-              <div className="flex flex-wrap justify-center gap-4 text-sm text-slate-800 dark:text-gray-300">
-                <span className="rounded-full bg-slate-100 px-3 py-1 dark:bg-white/5">
-                  ↑ 15% SaaS efficiency gain
+              <p className="mb-4 text-slate-500 dark:text-gray-400">Selected impact:</p>
+              <div className="flex flex-wrap justify-center gap-3 text-sm text-slate-800 dark:text-gray-300">
+                <span className="rounded-full bg-slate-100 px-3 py-1.5 dark:bg-white/5">
+                  IAM: rate limiting, breach detection, file validation
                 </span>
-                <span className="rounded-full bg-slate-100 px-3 py-1 dark:bg-white/5">
-                  🔗 Blockchain tokenization research
+                <span className="rounded-full bg-slate-100 px-3 py-1.5 dark:bg-white/5">
+                  Product ops: ~60% internal efficiency improvement
                 </span>
-                <span className="rounded-full bg-slate-100 px-3 py-1 dark:bg-white/5">
-                  ⚡ ISO 50001 energy audits
+                <span className="rounded-full bg-slate-100 px-3 py-1.5 dark:bg-white/5">
+                  Research: ~50% faster blockchain data processing
                 </span>
-                <span className="rounded-full bg-slate-100 px-3 py-1 dark:bg-white/5">
-                  🐍 Django + CI/CD systems
+                <span className="rounded-full bg-slate-100 px-3 py-1.5 dark:bg-white/5">
+                  Energy: ISO 50001-aligned analytics &amp; ETL
                 </span>
               </div>
             </div>

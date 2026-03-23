@@ -10,10 +10,10 @@ import { Mail } from 'lucide-react'
 export default function NewsletterSubscribePage() {
   useEffect(() => {
     // Update document title and meta description for SEO
-    document.title = 'Newsletter | Emmanuel Ugbaije - Infrastructure & DevOps Insights'
+    document.title = 'Newsletter | Emmanuel Ugbaje — Software Engineering & Platform Insights'
     const metaDescription = document.querySelector('meta[name="description"]')
     const descriptionContent =
-      'Subscribe to the newsletter of Infrastructure & DevOps Engineer Emmanuel Ugbaije. Get insights on Terraform, Kubernetes, CI/CD, cloud architecture, and scalable platforms delivered to your inbox.'
+      'Subscribe for updates from Emmanuel Ugbaje on Python, Django, backends, CI/CD, cloud, and data—practical notes for engineers and builders.'
     if (metaDescription) {
       metaDescription.setAttribute('content', descriptionContent)
     } else {

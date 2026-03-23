@@ -1,9 +1,9 @@
 import BlogClient from './BlogClient'
 
 export const metadata = {
-  title: 'Blog | Emmanuel Ugbaje - Infrastructure & DevOps Insights',
+  title: 'Blog | Emmanuel Ugbaje — Software Engineering & Platform Insights',
   description:
-    'Explore insights on infrastructure, DevOps, cloud technologies, and software engineering from Emmanuel Ugbaije. Articles on Terraform, Kubernetes, CI/CD, and scalable cloud platforms.',
+    'Articles on software engineering, backends, DevOps, cloud, and data from Emmanuel Ugbaje—Python, Django, CI/CD, and scalable systems.',
   keywords: [
     'Infrastructure Engineering',
     'DevOps',
