@@ -56,7 +56,7 @@ export default function ProjectPage() {
 
   useEffect(() => {
     if (project) {
-      document.title = `${project.title} | Portfolio - Emmanuel Ugbaije`
+      document.title = `${project.title} | Portfolio - Emmanuel Ugbaje`
       const metaDescription = document.querySelector('meta[name="description"]')
       if (metaDescription) {
         metaDescription.setAttribute('content', project.description)

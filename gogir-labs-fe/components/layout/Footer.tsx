@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Github, Linkedin, Mail } from 'lucide-react'
+import { Github, Linkedin, Mail, BookOpen } from 'lucide-react'
 import { NewsletterForm } from '@/components/newsletter/NewsletterForm'
 import { useAnalyticsEvent } from '@/hooks/useAnalyticsEvent'
 
@@ -15,24 +15,25 @@ export function Footer() {
           {/* About Section */}
           <div>
             <h3 className="mb-4 text-lg font-bold text-slate-900 dark:text-white">
-              Emmanuel Ugbaije
+              Emmanuel Ugbaje
             </h3>
             <p className="mb-4 text-sm text-slate-600 dark:text-gray-400">
-              Software Engineer building solutions using Data Insights
+              Software Engineer building secure, scalable backends and APIs—authentication, data
+              pipelines, and cloud-ready delivery.
             </p>
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-4">
               <a
-                href="https://github.com/gogiraFoundation"
+                href="https://medium.com/@aigbemanuel"
                 target="_blank"
                 rel="me noopener noreferrer"
-                onClick={() => trackClick('social_github', { platform: 'github' })}
+                onClick={() => trackClick('social_medium', { platform: 'medium' })}
                 className="text-slate-500 transition-colors hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
-                aria-label="GitHub"
+                aria-label="Medium"
               >
-                <Github className="h-8 w-8" />
+                <BookOpen className="h-8 w-8" />
               </a>
               <a
-                href="https://www.linkedin.com/in/emmanuel-ugbaije"
+                href="https://www.linkedin.com/in/emmanuel-ugbaje-b19227161/"
                 target="_blank"
                 rel="me noopener noreferrer"
                 onClick={() => trackClick('social_linkedin', { platform: 'linkedin' })}
@@ -42,14 +43,22 @@ export function Footer() {
                 <Linkedin className="h-8 w-8" />
               </a>
               <a
-                href="https://medium.com/@aigbemanuel"
-                target="_blank"
-                rel="me noopener noreferrer"
-                onClick={() => trackClick('social_medium', { platform: 'medium' })}
+                href="mailto:dev@gogirlabs.uk"
+                onClick={() => trackClick('social_email', { platform: 'email' })}
                 className="text-slate-500 transition-colors hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
-                aria-label="Medium"
+                aria-label="Email"
               >
                 <Mail className="h-8 w-8" />
+              </a>
+              <a
+                href="https://github.com/gogiraFoundation"
+                target="_blank"
+                rel="me noopener noreferrer"
+                onClick={() => trackClick('social_github', { platform: 'github' })}
+                className="text-slate-500 transition-colors hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
+                aria-label="GitHub"
+              >
+                <Github className="h-8 w-8" />
               </a>
             </div>
           </div>
@@ -118,7 +127,7 @@ export function Footer() {
 
         <div className="mt-8 border-t border-slate-200 pt-8 text-center dark:border-gray-700/30">
           <p className="text-sm text-slate-600 dark:text-gray-400">
-            © {new Date().getFullYear()} Emmanuel Ugbaije. All rights reserved.
+            © {new Date().getFullYear()} Emmanuel Ugbaje. All rights reserved.
           </p>
         </div>
       </div>
