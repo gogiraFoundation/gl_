@@ -172,6 +172,7 @@ export function SearchBar() {
                             <Link
                               key={project.id}
                               href={`/portfolio/${project.slug}`}
+                              prefetch={false}
                               onClick={() =>
                                 handleResultClick('project', project.id, project.title)
                               }

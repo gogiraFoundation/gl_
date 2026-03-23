@@ -112,16 +112,20 @@ export default function PortfolioPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="relative flex-grow px-4 py-20">
-        {/* Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-mesh opacity-30"></div>
+      <main className="relative flex-grow px-4 py-20 sm:px-6">
+        {/* Background */}
+        <div className="absolute inset-0 bg-gradient-mesh opacity-40" aria-hidden />
+        <div
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(139,92,246,0.18),transparent_55%)]"
+          aria-hidden
+        />
 
         <div className="relative z-10 mx-auto max-w-7xl">
-          <div className="mb-12 animate-fade-in-up text-center">
-            <h1 className="mb-4 text-5xl font-bold md:text-6xl">
+          <div className="mb-14 animate-fade-in-up text-center md:mb-16">
+            <h1 className="mb-5 text-5xl font-bold tracking-tight md:mb-6 md:text-6xl">
               <span className="gradient-text">Portfolio</span>
             </h1>
-            <p className="mx-auto max-w-2xl text-lg text-gray-400">
+            <p className="mx-auto max-w-2xl text-lg leading-relaxed text-gray-400 md:text-xl">
               Real‑world projects demonstrating expertise in cloud infrastructure, Infrastructure as
               Code (Terraform, Kubernetes), CI/CD automation, and scalable platform design.
             </p>
@@ -151,12 +155,14 @@ export default function PortfolioPage() {
             <ProjectGrid projects={typedProjects} />
           )}
 
-          {/* Optional CTA */}
           {typedProjects.length > 0 && (
-            <div className="mt-16 text-center">
-              <p className="text-gray-300">
+            <div className="mt-20 rounded-2xl border border-white/10 bg-white/5 p-6 text-center shadow-lg shadow-black/10 backdrop-blur-sm md:mt-24 md:p-8">
+              <p className="text-base leading-relaxed text-gray-200 md:text-lg">
                 Interested in a custom solution or want to discuss a project?{' '}
-                <Link href="/contact" className="text-purple-400 underline hover:text-purple-300">
+                <Link
+                  href="/contact"
+                  className="font-medium text-purple-400 underline decoration-purple-400/40 underline-offset-4 transition-colors duration-200 hover:text-purple-300 hover:decoration-purple-300"
+                >
                   Get in touch
                 </Link>
                 .
