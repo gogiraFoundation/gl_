@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
-  // Browsers request /favicon.ico by default; app/icon.svg is served at /icon.svg
+  // Browsers request /favicon.ico by default; public/icon.svg is served at /icon.svg
   async redirects() {
     return [{ source: '/favicon.ico', destination: '/icon.svg', permanent: false }]
   },
