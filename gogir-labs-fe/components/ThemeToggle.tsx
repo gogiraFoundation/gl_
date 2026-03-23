@@ -26,18 +26,13 @@ export function ThemeToggle() {
   }, [context])
 
   const handleToggle = () => {
+    const nextTheme = theme === 'dark' ? 'light' : 'dark'
+    setTheme(nextTheme)
     if (context?.toggleTheme) {
       context.toggleTheme()
-      setTheme(context.theme === 'dark' ? 'light' : 'dark')
-    } else {
-      // Fallback if provider not available
-      const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark'
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark'
-      document.documentElement.setAttribute('data-theme', newTheme)
-      setTheme(newTheme)
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('theme', newTheme)
-      }
+    } else if (typeof window !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', nextTheme)
+      localStorage.setItem('theme', nextTheme)
     }
   }
 

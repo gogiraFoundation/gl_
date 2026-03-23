@@ -32,7 +32,7 @@ export default function TestimonialsPage() {
   })
 
   useEffect(() => {
-    document.title = 'Testimonials | Emmanuel Ugbaije'
+    document.title = 'Testimonials | Emmanuel Ugbaje'
   }, [])
 
   return (
