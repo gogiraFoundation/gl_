@@ -121,6 +121,10 @@ jobs:
   security-scan:
     name: Security Scan
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Required for github/codeql-action/upload-sarif (same-repo PRs and pushes only).
+      security-events: write
 
     steps:
       - name: Checkout code
@@ -134,8 +138,10 @@ jobs:
           format: 'sarif'
           output: 'trivy-results.sarif'
 
+      # Fork PRs cannot upload SARIF to the base repo's Security tab (token limitation).
       - name: Upload Trivy results to GitHub Security
-        uses: github/codeql-action/upload-sarif@v3
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: 'trivy-results.sarif'
 
@@ -167,7 +173,7 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/gogir-labs-backend:latest
             ${{ secrets.DOCKER_USERNAME }}/gogir-labs-backend:${{ github.sha }}
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/gogir-labs-backend:buildcache
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/gogir-labs-backend:buildcache,ignore-error=true
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/gogir-labs-backend:buildcache,mode=max
 
       - name: Build and push frontend image
@@ -179,5 +185,5 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/gogir-labs-frontend:latest
             ${{ secrets.DOCKER_USERNAME }}/gogir-labs-frontend:${{ github.sha }}
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/gogir-labs-frontend:buildcache
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/gogir-labs-frontend:buildcache,ignore-error=true
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/gogir-labs-frontend:buildcache,mode=max

@@ -2,8 +2,11 @@
 const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
+  // Browsers request /favicon.ico by default; app/icon.svg is served at /icon.svg
+  async redirects() {
+    return [{ source: '/favicon.ico', destination: '/icon.svg', permanent: false }]
+  },
   images: {
-    domains: ['localhost', '127.0.0.1', 'api.gogirlabs.uk'],
     remotePatterns: [
       {
         protocol: 'http',

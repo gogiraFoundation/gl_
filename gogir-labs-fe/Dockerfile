@@ -25,6 +25,9 @@ COPY . .
 # Build the application
 RUN npm run build
 
+# Ensure /app/public exists after build (some Next versions omit empty public from standalone; COPY needs this path)
+RUN mkdir -p public && touch public/.gitkeep
+
 # Production stage
 FROM node:25.8.1-alpine AS runner
 RUN apk update && apk upgrade --no-cache && npm install -g npm@latest
