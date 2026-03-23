@@ -22,11 +22,11 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-# Standalone runner copies /app/public; Next.js may omit the folder if empty — create it so COPY succeeds
-RUN mkdir -p public
-
 # Build the application
 RUN npm run build
+
+# Ensure /app/public exists after build (some Next versions omit empty public from standalone; COPY needs this path)
+RUN mkdir -p public && touch public/.gitkeep
 
 # Production stage
 FROM node:25.8.1-alpine AS runner
