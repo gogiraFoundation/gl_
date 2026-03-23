@@ -29,4 +29,6 @@ isort --check-only .
 
 When you open a PR, use the checklist in `.github/pull_request_template.md`.
 
+**Cloudflare:** Deploy the Next.js app with **Pages** (`gogir-labs-fe`). Avoid **Workers Builds** + `wrangler versions upload` without a Worker in the repo—see [docs/CLOUDFLARE_PAGES.md](docs/CLOUDFLARE_PAGES.md#pages-vs-workers-builds-important).
+
 **Security Scan (Trivy → SARIF):** Pull requests **from forks** cannot upload results to the base repo’s Code Scanning UI (GitHub token limitation). The workflow still runs Trivy; only the upload step is skipped. Same-repo PRs and pushes upload when `security-events: write` is allowed.
