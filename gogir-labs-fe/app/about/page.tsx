@@ -64,11 +64,11 @@ export default function AboutPage() {
       <Header />
       <main className="relative flex-grow px-4 py-20 md:py-32 lg:py-40">
         <div className="relative z-10 mx-auto max-w-5xl space-y-24">
-          <header className="animate-fade-in-up text-center">
+          <header className="animate-fade-in-up mx-auto my-0 w-full max-w-3xl text-center">
             <h1 className="mb-3 text-4xl font-bold text-brutal-ink md:text-5xl">
               <GradientText>What I Do</GradientText>
             </h1>
-            <p className="mx-auto max-w-3xl text-sm leading-relaxed text-brutal-muted md:text-base">
+            <p className="mx-auto my-0 max-w-3xl text-sm leading-relaxed text-brutal-muted md:text-base">
               Building secure, scalable backends and APIs with a focus on{' '}
               <strong className="font-medium text-brutal-ink">authentication</strong>,{' '}
               <strong className="font-medium text-brutal-ink">data pipelines</strong>, and{' '}
@@ -76,12 +76,15 @@ export default function AboutPage() {
             </p>
           </header>
 
-          <section aria-labelledby="what-i-do-body" className="!mt-6 md:!mt-8">
+          <section
+            aria-labelledby="what-i-do-body"
+            className="mx-auto my-0 w-full max-w-3xl !mt-6 md:!mt-8"
+          >
             <h2 id="what-i-do-body" className="sr-only">
               Professional summary
             </h2>
-            <div className="group/summary mx-auto my-0 flex max-w-3xl flex-col gap-4 rounded-sm bg-brutal-bg p-6 shadow-[0_4px_16px_rgba(0,0,0,0.07),0_1px_0_rgba(255,255,255,0.04)_inset] transition-[transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-[0_10px_28px_rgba(0,0,0,0.1)] motion-reduce:transition-none motion-reduce:hover:translate-y-0 md:p-8 [&_p]:m-0">
-              <p className="text-justify text-sm leading-relaxed text-brutal-muted md:text-[15px]">
+            <div className="group/summary mx-auto my-0 flex w-full max-w-3xl flex-col gap-4 rounded-sm bg-brutal-bg p-6 shadow-[0_4px_16px_rgba(0,0,0,0.07),0_1px_0_rgba(255,255,255,0.04)_inset] transition-[transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-[0_10px_28px_rgba(0,0,0,0.1)] motion-reduce:transition-none motion-reduce:hover:translate-y-0 md:p-8 [&_p]:m-0">
+              <p className="text-center text-sm leading-relaxed text-brutal-muted md:text-justify md:text-[15px]">
                 As a <strong className="font-medium text-brutal-ink">Software Engineer</strong> and{' '}
                 <strong className="font-medium text-brutal-ink">Lead Developer</strong>, I build
                 secure, scalable backend systems and APIs, specialising in{' '}
@@ -97,7 +100,7 @@ export default function AboutPage() {
                 <strong className="font-medium text-brutal-ink">secure</strong>, and{' '}
                 <strong className="font-medium text-brutal-ink">scalable</strong>.
               </p>
-              <p className="text-justify text-sm leading-relaxed text-brutal-muted md:text-[15px]">
+              <p className="text-center text-sm leading-relaxed text-brutal-muted md:text-justify md:text-[15px]">
                 I hold a{' '}
                 <strong className="font-medium text-brutal-ink">
                   Master&apos;s in Renewable Energy &amp; Sustainable Technology
@@ -106,7 +109,7 @@ export default function AboutPage() {
                 both <strong className="font-medium text-brutal-ink">business</strong> and{' '}
                 <strong className="font-medium text-brutal-ink">environmental</strong> outcomes.
               </p>
-              <p className="text-justify text-sm leading-relaxed text-brutal-muted md:text-[15px]">
+              <p className="text-center text-sm leading-relaxed text-brutal-muted md:text-justify md:text-[15px]">
                 Currently, I serve as the{' '}
                 <strong className="font-medium text-brutal-ink">Lead Developer</strong> at{' '}
                 <strong className="font-medium text-brutal-ink">Traq Authenticator</strong>, a
@@ -127,7 +130,7 @@ export default function AboutPage() {
                 <strong className="font-medium text-brutal-ink">CI/CD</strong> automation for
                 seamless testing, deployment, and continuous integration.
               </p>
-              <p className="text-justify text-sm leading-relaxed text-brutal-muted md:text-[15px]">
+              <p className="text-center text-sm leading-relaxed text-brutal-muted md:text-justify md:text-[15px]">
                 I&apos;ve worked across a broad range of industries, including{' '}
                 <strong className="font-medium text-brutal-ink">energy</strong>,{' '}
                 <strong className="font-medium text-brutal-ink">blockchain</strong>, and{' '}
@@ -138,7 +141,7 @@ export default function AboutPage() {
                 I&apos;ve honed a versatile skill set that adapts to modern, high-impact technology
                 challenges.
               </p>
-              <p className="text-justify text-sm leading-relaxed text-brutal-muted md:text-[15px]">
+              <p className="text-center text-sm leading-relaxed text-brutal-muted md:text-justify md:text-[15px]">
                 I&apos;m deeply passionate about building technology that empowers organisations,
                 reduces operational friction, and contributes to environmental sustainability. You
                 can explore my{' '}
@@ -164,12 +167,14 @@ export default function AboutPage() {
           </section>
 
           <section aria-labelledby="expertise-heading">
-            <h2
-              id="expertise-heading"
-              className="mb-12 text-center text-3xl font-bold text-brutal-ink md:text-4xl"
-            >
-              <GradientText>Core Expertise &amp; Tech Stack</GradientText>
-            </h2>
+            <div className="mx-auto my-0 w-full max-w-3xl px-1 text-center sm:px-0">
+              <h2
+                id="expertise-heading"
+                className="mb-12 text-balance text-3xl font-bold text-brutal-ink md:text-4xl"
+              >
+                <GradientText>Core Expertise &amp; Tech Stack</GradientText>
+              </h2>
+            </div>
 
             <OrbitingIcons
               centerIcon={<Code className="h-12 w-12 text-brutal-ink" aria-label="Code Icon" />}
