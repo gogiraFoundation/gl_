@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ThemeProvider } from '@/contexts/ThemeContext'
 import { AnalyticsProvider } from '@/contexts/AnalyticsContext'
 import { ScrollProgress } from '@/components/ui/ScrollProgress'
-import { CustomCursor } from '@/components/ui/CustomCursor'
 import { useState } from 'react'
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -23,7 +22,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider>
       <ScrollProgress />
-      <CustomCursor />
       <AnalyticsProvider>
         <QueryClientProvider client={queryClient}>
           {children}
