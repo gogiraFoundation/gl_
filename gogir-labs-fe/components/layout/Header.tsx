@@ -176,7 +176,10 @@ export function Header() {
             className="fixed inset-y-0 right-0 z-[70] flex w-[min(100%,20rem)] flex-col border-l border-brutal-ink/15 bg-brutal-bg shadow-[var(--shadow-subtle)] transition-transform duration-300 ease-out"
           >
             <div className="flex items-center justify-between border-b border-brutal-ink/15 px-6 py-4">
-              <span id="mobile-menu-title" className="font-serif text-sm font-semibold text-brutal-ink">
+              <span
+                id="mobile-menu-title"
+                className="font-serif text-sm font-semibold text-brutal-ink"
+              >
                 Menu
               </span>
               <button
