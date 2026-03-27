@@ -13,10 +13,8 @@ export const ThemeContext = createContext<ThemeContextType | undefined>(undefine
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>('light')
-  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
     // Brutalist Elegance: single light, high-contrast palette sitewide
     if (typeof window !== 'undefined') {
       setTheme('light')

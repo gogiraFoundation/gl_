@@ -81,7 +81,9 @@ export default function PortfolioProjectClient() {
         <Header />
         <main className="flex-grow px-4 py-12">
           <div className="mx-auto max-w-4xl text-center">
-            <h1 className="mb-4 font-serif text-2xl font-semibold text-brutal-ink">Project not found</h1>
+            <h1 className="mb-4 font-serif text-2xl font-semibold text-brutal-ink">
+              Project not found
+            </h1>
             <p className="text-brutal-muted">
               The project you&apos;re looking for doesn&apos;t exist or has been removed.
             </p>

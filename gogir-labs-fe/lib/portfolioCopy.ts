@@ -52,7 +52,7 @@ export const PORTFOLIO_CARD_COPY: Record<string, PortfolioCardCopy> = {
 
 const SLUG_ALIASES: Record<string, string> = {
   'ecommerce-analytics-platform': 'e-commerce-analytics-platform',
-  'pipe_pop': 'pipe-pop',
+  pipe_pop: 'pipe-pop',
 }
 
 export function getPortfolioCardCopy(slug: string): PortfolioCardCopy | undefined {

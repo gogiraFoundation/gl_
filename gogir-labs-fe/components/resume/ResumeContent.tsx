@@ -66,7 +66,10 @@ export function ResumeContent() {
       </header>
 
       <section aria-labelledby="experience-heading">
-        <h2 id="experience-heading" className="mb-6 font-serif text-2xl font-semibold text-brutal-ink md:mb-8 md:text-3xl">
+        <h2
+          id="experience-heading"
+          className="mb-6 font-serif text-2xl font-semibold text-brutal-ink md:mb-8 md:text-3xl"
+        >
           Experience
         </h2>
         <div className="space-y-6">
@@ -108,7 +111,10 @@ export function ResumeContent() {
       </section>
 
       <section aria-labelledby="education-heading">
-        <h2 id="education-heading" className="mb-6 font-serif text-2xl font-semibold text-brutal-ink md:mb-8 md:text-3xl">
+        <h2
+          id="education-heading"
+          className="mb-6 font-serif text-2xl font-semibold text-brutal-ink md:mb-8 md:text-3xl"
+        >
           Education
         </h2>
         <div className="space-y-6">
@@ -117,7 +123,9 @@ export function ResumeContent() {
               <div className="mb-4 flex flex-col gap-1 border-b border-brutal-ink/10 pb-4 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
                 <div>
                   <h3 className="text-lg font-semibold text-brutal-ink md:text-xl">{edu.degree}</h3>
-                  <p className="text-sm font-medium text-brutal-ink md:text-base">{edu.institution}</p>
+                  <p className="text-sm font-medium text-brutal-ink md:text-base">
+                    {edu.institution}
+                  </p>
                 </div>
                 <p className="shrink-0 text-sm font-medium text-brutal-muted">{edu.dateRange}</p>
               </div>
@@ -134,13 +142,18 @@ export function ResumeContent() {
       </section>
 
       <section aria-labelledby="skills-heading">
-        <h2 id="skills-heading" className="mb-6 font-serif text-2xl font-semibold text-brutal-ink md:mb-8 md:text-3xl">
+        <h2
+          id="skills-heading"
+          className="mb-6 font-serif text-2xl font-semibold text-brutal-ink md:mb-8 md:text-3xl"
+        >
           Skills
         </h2>
         <div className="space-y-8">
           {resumeSkillCategories.map((group) => (
             <div key={group.category}>
-              <h3 className="mb-3 text-lg font-semibold text-brutal-ink md:text-xl">{group.category}</h3>
+              <h3 className="mb-3 text-lg font-semibold text-brutal-ink md:text-xl">
+                {group.category}
+              </h3>
               <div className="flex flex-wrap gap-2 md:gap-3">
                 {group.items.map((skill) => (
                   <span
@@ -157,15 +170,20 @@ export function ResumeContent() {
       </section>
 
       <section aria-labelledby="why-heading">
-        <h2 id="why-heading" className="mb-4 font-serif text-2xl font-semibold text-brutal-ink md:text-3xl">
+        <h2
+          id="why-heading"
+          className="mb-4 font-serif text-2xl font-semibold text-brutal-ink md:text-3xl"
+        >
           Why I excel
         </h2>
         <GlowCard className="p-6 md:p-8">
-          <p className="text-justify text-sm leading-relaxed text-brutal-muted md:text-[15px]">{resumeWhyIExcel}</p>
+          <p className="text-justify text-sm leading-relaxed text-brutal-muted md:text-[15px]">
+            {resumeWhyIExcel}
+          </p>
           <p className="mt-6 text-center text-sm md:text-[15px]">
             <Link
               href="/contact"
-              className="mx-auto inline-flex w-fit px-[15px] py-[7px] text-xs font-medium text-brutal-ink [text-shadow:0_1px_2px_rgba(107,114,128,0.45)] no-underline decoration-transparent visited:text-brutal-ink [text-decoration-line:none] [text-underline-offset:0] transition-[opacity,box-shadow] duration-250 hover:opacity-85 hover:no-underline hover:shadow-[0_0_0_0.5px_#ff4500,0_6px_14px_rgba(0,0,0,0.14)] active:shadow-[0_0_0_0.5px_rgba(144,238,144,0.95),0_5px_12px_rgba(144,238,144,0.24)] visited:no-underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ink/25"
+              className="duration-250 mx-auto inline-flex w-fit px-[15px] py-[7px] text-xs font-medium text-brutal-ink no-underline decoration-transparent transition-[opacity,box-shadow] [text-decoration-line:none] [text-shadow:0_1px_2px_rgba(107,114,128,0.45)] [text-underline-offset:0] visited:text-brutal-ink visited:no-underline hover:no-underline hover:opacity-85 hover:shadow-[0_0_0_0.5px_#ff4500,0_6px_14px_rgba(0,0,0,0.14)] focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ink/25 active:shadow-[0_0_0_0.5px_rgba(144,238,144,0.95),0_5px_12px_rgba(144,238,144,0.24)]"
             >
               Contact me
             </Link>

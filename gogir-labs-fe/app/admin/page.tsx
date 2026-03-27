@@ -8,8 +8,7 @@ export default function AdminPage() {
   const router = useRouter()
 
   useEffect(() => {
-    const token =
-      sessionStorage.getItem('access_token') ?? localStorage.getItem('access_token')
+    const token = sessionStorage.getItem('access_token') ?? localStorage.getItem('access_token')
     if (!token) {
       router.push('/admin/login')
     }

@@ -112,7 +112,7 @@ export function SearchBar() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search blog posts, projects..."
-                className="w-full rounded-sm border border-brutal-ink/20 bg-brutal-bg py-2 pl-10 pr-10 text-brutal-ink placeholder:text-brutal-muted transition-[box-shadow,border-color] duration-300 focus:border-[orangered] focus:outline-none focus:ring-1 focus:ring-[orangered]/40"
+                className="w-full rounded-sm border border-brutal-ink/20 bg-brutal-bg py-2 pl-10 pr-10 text-brutal-ink transition-[box-shadow,border-color] duration-300 placeholder:text-brutal-muted focus:border-[orangered] focus:outline-none focus:ring-1 focus:ring-[orangered]/40"
                 autoFocus
               />
               {query && (
@@ -152,9 +152,11 @@ export function SearchBar() {
                               key={post.id}
                               href={`/blog/${post.slug}`}
                               onClick={() => handleResultClick('blog', post.id, post.title)}
-                              className="block rounded-sm p-2 transition-[transform,box-shadow,opacity] duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(0,0,0,0.08)] hover:opacity-90 motion-reduce:hover:translate-y-0"
+                              className="block rounded-sm p-2 transition-[transform,box-shadow,opacity] duration-300 hover:-translate-y-0.5 hover:opacity-90 hover:shadow-[0_8px_20px_rgba(0,0,0,0.08)] motion-reduce:hover:translate-y-0"
                             >
-                              <div className="text-sm font-medium text-brutal-ink">{post.title}</div>
+                              <div className="text-sm font-medium text-brutal-ink">
+                                {post.title}
+                              </div>
                               {post.category && (
                                 <div className="mt-1 text-xs text-brutal-muted">
                                   {post.category.name}
@@ -184,7 +186,7 @@ export function SearchBar() {
                               onClick={() =>
                                 handleResultClick('project', project.id, project.title)
                               }
-                              className="block rounded-sm p-2 transition-[transform,box-shadow,opacity] duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(0,0,0,0.08)] hover:opacity-90 motion-reduce:hover:translate-y-0"
+                              className="block rounded-sm p-2 transition-[transform,box-shadow,opacity] duration-300 hover:-translate-y-0.5 hover:opacity-90 hover:shadow-[0_8px_20px_rgba(0,0,0,0.08)] motion-reduce:hover:translate-y-0"
                             >
                               <div className="text-sm font-medium text-brutal-ink">
                                 {project.title}

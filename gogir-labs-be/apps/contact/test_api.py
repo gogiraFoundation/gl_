@@ -2,15 +2,19 @@ from unittest.mock import patch
 
 import pytest
 from django.contrib.auth import get_user_model
+from django.conf import settings
 from django.test import TestCase
+from django.test.utils import override_settings
 from rest_framework import status
 from rest_framework.test import APIClient
 
 from .models import ContactMessage
 
 User = get_user_model()
+TEST_REST_FRAMEWORK = {**settings.REST_FRAMEWORK, "DEFAULT_THROTTLE_CLASSES": []}
 
 
+@override_settings(REST_FRAMEWORK=TEST_REST_FRAMEWORK)
 class ContactAPITest(TestCase):
     """Test Contact API endpoints."""
 
@@ -124,7 +128,7 @@ class ContactAPITest(TestCase):
             subject="Test",
             message="Test message",
         )
-        self.client.force_authenticate(user=self.user)
+        self.client.force_authenticate(user=self.staff_user)
         url = "/api/v1/contact/messages/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -153,7 +157,7 @@ class ContactAPITest(TestCase):
             message="Message",
             read=False,
         )
-        self.client.force_authenticate(user=self.user)
+        self.client.force_authenticate(user=self.staff_user)
         url = "/api/v1/contact/messages/"
 
         # Filter by read=True

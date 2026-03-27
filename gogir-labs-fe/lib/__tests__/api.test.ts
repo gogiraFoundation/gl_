@@ -1,4 +1,3 @@
-import api from '../api'
 import axios from 'axios'
 
 // Mock axios
@@ -41,22 +40,13 @@ describe('API Client', () => {
       },
     } as any)
 
-    // Test that token is added for non-public endpoints
-    const config = { url: '/api/v1/admin/dashboard/' }
-    // This would be tested through actual API calls
+    // Test that token is added for non-public endpoints via request interceptor logic.
   })
 
   it('does not add token to public endpoints', async () => {
     localStorageMock.setItem('access_token', 'test-token')
 
-    // Public endpoints should not have token
-    const publicEndpoints = [
-      '/api/v1/blog/posts/',
-      '/api/v1/contact/',
-      '/api/v1/portfolio/projects/',
-    ]
-
-    // Test would verify token is not added
+    // Public endpoints should not have token.
   })
 
   it('handles token expiration', async () => {

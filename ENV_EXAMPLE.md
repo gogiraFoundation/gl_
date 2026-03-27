@@ -1,4 +1,4 @@
-# Environment variables – copy & paste reference
+# Environment Variables Reference
 
 Use these blocks in `.env` files or your deployment platform. Replace placeholder values with your own.
 

@@ -23,11 +23,7 @@ const expertise = [
   },
   {
     title: 'Data & Databases',
-    lines: [
-      'PostgreSQL, SQL, data modelling',
-      'Pandas, ETL pipelines',
-      'Data automation',
-    ],
+    lines: ['PostgreSQL, SQL, data modelling', 'Pandas, ETL pipelines', 'Data automation'],
   },
   {
     title: 'Delivery & Practices',
@@ -56,8 +52,7 @@ const impacts = [
 
 export default function Home() {
   useEffect(() => {
-    document.title =
-      'Emmanuel Ugbaje | Software | Data Engineer'
+    document.title = 'Emmanuel Ugbaje | Software | Data Engineer'
     const metaDescription = document.querySelector('meta[name="description"]')
     const descriptionContent =
       'Software Engineer and Lead Developer building secure, scalable backend systems and APIs. Currently leading backend development at Traq Authenticator, specialising in identity verification and Identity Access Management (IAM).'
@@ -139,7 +134,7 @@ export default function Home() {
             >
               Core expertise & toolchain
             </h2>
-            <p className="text-meta mb-14 mx-auto max-w-xl text-justify font-sans text-brutal-muted">
+            <p className="text-meta mx-auto mb-14 max-w-xl text-justify font-sans text-brutal-muted">
               I specialise in backend engineering, platform delivery, and data systems, working with
               the same stack that powers your production environment.
             </p>
@@ -148,7 +143,10 @@ export default function Home() {
                 <div
                   key={block.title}
                   className="group w-full max-w-[240px] border border-brutal-ink/15 bg-brutal-bg/70 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-brutal-ink/35 hover:shadow-[0_12px_28px_rgba(0,0,0,0.08)]"
-                  style={{ animation: `fadeIn 0.55s ease-out both`, animationDelay: `${idx * 120}ms` }}
+                  style={{
+                    animation: `fadeIn 0.55s ease-out both`,
+                    animationDelay: `${idx * 120}ms`,
+                  }}
                 >
                   <h3 className="mb-4 text-center font-sans text-xs font-semibold uppercase tracking-[0.14em] text-brutal-muted transition-colors duration-300 group-hover:text-brutal-ink">
                     {block.title}
@@ -160,7 +158,10 @@ export default function Home() {
                         key={line}
                         className="flex items-start gap-2 rounded-sm px-1 py-0.5 transition-colors duration-200 hover:bg-brutal-ink/5"
                       >
-                        <span className="mt-[1px] text-brutal-muted transition-colors duration-200 group-hover:text-brutal-ink/70" aria-hidden>
+                        <span
+                          className="mt-[1px] text-brutal-muted transition-colors duration-200 group-hover:text-brutal-ink/70"
+                          aria-hidden
+                        >
                           —
                         </span>
                         <span>{line}</span>
@@ -222,7 +223,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-
       </main>
       <Footer />
     </div>

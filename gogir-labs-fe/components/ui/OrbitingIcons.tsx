@@ -40,7 +40,7 @@ export function OrbitingIcons({
           }}
         />
         <div
-          className="absolute rounded-full border border-[#ff7f50]/12"
+          className="border-[#ff7f50]/12 absolute rounded-full border"
           style={{ width: ring3, height: ring3 }}
         />
       </div>
@@ -60,7 +60,7 @@ export function OrbitingIcons({
       {/* Orbiting satellites */}
       <div className="pointer-events-none absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
         <div
-          className="animate-solar-orbit origin-center motion-reduce:animate-none"
+          className="origin-center animate-solar-orbit motion-reduce:animate-none"
           style={{
             width: 0,
             height: 0,

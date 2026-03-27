@@ -15,13 +15,6 @@ export default function NewsletterVerifyClient() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
   const [message, setMessage] = useState('')
 
-  useEffect(() => {
-    if (token) {
-      verifyEmail(token)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token])
-
   const verifyEmail = async (verificationToken: string) => {
     try {
       const response = await api.get(`/newsletter/verify/${verificationToken}/`)
@@ -39,6 +32,12 @@ export default function NewsletterVerifyClient() {
       }
     }
   }
+
+  useEffect(() => {
+    if (token) {
+      verifyEmail(token)
+    }
+  }, [token])
 
   return (
     <div className="flex min-h-screen flex-col">

@@ -2,17 +2,18 @@ name: CD Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, dev ]
   workflow_dispatch:
 
 jobs:
-  deploy-backend-image:
-    name: Build and Push Backend Image (CD)
+  deploy-images:
+    name: Build and Push Docker Images (CD)
     runs-on: ubuntu-latest
 
     env:
       REGISTRY: docker.io
       BACKEND_IMAGE: ${{ secrets.DOCKER_USERNAME }}/gogir-labs-backend
+      FRONTEND_IMAGE: ${{ secrets.DOCKER_USERNAME }}/gogir-labs-frontend
 
     steps:
       - name: Checkout code
@@ -38,4 +39,16 @@ jobs:
             ${{ env.BACKEND_IMAGE }}:${{ github.sha }}
           cache-from: type=registry,ref=${{ env.BACKEND_IMAGE }}:buildcache
           cache-to: type=registry,ref=${{ env.BACKEND_IMAGE }}:buildcache,mode=max
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./gogir-labs-fe
+          file: ./gogir-labs-fe/Dockerfile
+          push: true
+          tags: |
+            ${{ env.FRONTEND_IMAGE }}:latest
+            ${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
+          cache-from: type=registry,ref=${{ env.FRONTEND_IMAGE }}:buildcache,ignore-error=true
+          cache-to: type=registry,ref=${{ env.FRONTEND_IMAGE }}:buildcache,mode=max
 
