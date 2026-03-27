@@ -162,7 +162,7 @@ export default function BlogClient() {
 
           {/* Optional: Newsletter or Follow CTA */}
           <div className="mt-16 flex justify-center px-4">
-            <p className="w-full text-center text-xs leading-relaxed text-brutal-muted sm:text-sm md:mx-auto md:w-[40%]">
+            <p className="w-full max-w-2xl text-center text-xs leading-relaxed text-brutal-muted sm:text-sm md:mx-auto md:max-w-xl">
               Like what you're reading? Follow me on{' '}
               <Link
                 href="https://www.linkedin.com/in/emmanuel-ugbaje-b19227161/"

@@ -45,14 +45,14 @@ export function ResumeContent() {
   return (
     <article className="space-y-14 md:space-y-16">
       <header>
-        <div className="mb-4 flex min-h-[3rem] flex-row flex-nowrap items-center justify-between gap-3 sm:min-h-0 sm:gap-4">
-          <h1 className="min-w-0 font-serif text-3xl font-bold text-brutal-ink sm:text-4xl md:text-5xl">
+        <div className="mb-4 flex min-h-[3rem] flex-wrap items-center justify-between gap-3 sm:min-h-0 sm:flex-nowrap sm:gap-4">
+          <h1 className="w-full min-w-0 font-serif text-3xl font-bold text-brutal-ink sm:w-auto sm:text-4xl md:text-5xl">
             <GradientText>Resume</GradientText>
           </h1>
           <button
             type="button"
             onClick={handleDownload}
-            className="inline-flex shrink-0 items-center gap-2 bg-transparent px-3 py-2 text-xs font-medium text-brutal-ink shadow-[0_0_0_0.5px_rgb(156,163,175)] transition-shadow duration-200 hover:shadow-[0_0_0_0.5px_rgb(0,0,0)] active:shadow-[0_0_0_0.5px_#ff4500] sm:px-4 sm:text-sm"
+            className="inline-flex w-full items-center justify-center gap-2 bg-transparent px-3 py-2 text-xs font-medium text-brutal-ink shadow-[0_0_0_0.5px_rgb(156,163,175)] transition-shadow duration-200 hover:shadow-[0_0_0_0.5px_rgb(0,0,0)] active:shadow-[0_0_0_0.5px_#ff4500] sm:w-auto sm:shrink-0 sm:justify-start sm:px-4 sm:text-sm"
             aria-label="Download resume as PDF"
           >
             <Download className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" aria-hidden />

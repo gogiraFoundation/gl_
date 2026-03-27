@@ -1,6 +1,7 @@
 import pytest
-from django.contrib.auth import get_user_model
 from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.test import TestCase
 from django.test.utils import override_settings
 from rest_framework import status
@@ -8,7 +9,23 @@ from rest_framework.test import APIClient
 from rest_framework_simplejwt.tokens import RefreshToken
 
 User = get_user_model()
-TEST_REST_FRAMEWORK = {**settings.REST_FRAMEWORK, "DEFAULT_THROTTLE_CLASSES": []}
+TEST_REST_FRAMEWORK = {
+    **settings.REST_FRAMEWORK,
+    "DEFAULT_THROTTLE_CLASSES": [],
+    "DEFAULT_THROTTLE_RATES": {
+        **settings.REST_FRAMEWORK.get("DEFAULT_THROTTLE_RATES", {}),
+        "auth": "100000/minute",
+        "contact": "100000/minute",
+        "newsletter_subscribe": "100000/minute",
+        "newsletter_verify": "100000/minute",
+        "newsletter_unsubscribe": "100000/minute",
+        "analytics_track": "100000/minute",
+        "search": "100000/minute",
+        "comments": "100000/minute",
+        "anon": "100000/minute",
+        "user": "100000/minute",
+    },
+}
 
 
 @override_settings(REST_FRAMEWORK=TEST_REST_FRAMEWORK)
@@ -16,6 +33,7 @@ class AuthenticationAPITest(TestCase):
     """Test Authentication API endpoints."""
 
     def setUp(self):
+        cache.clear()
         self.client = APIClient()
         self.user = User.objects.create_user(
             username="testuser", password="testpass123", email="test@example.com"
