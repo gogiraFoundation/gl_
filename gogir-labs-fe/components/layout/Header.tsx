@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Github, Linkedin, BookOpen, Menu, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAnalyticsEvent } from '@/hooks/useAnalyticsEvent'
@@ -27,8 +28,13 @@ export function Header() {
   const firstLinkRef = useRef<HTMLAnchorElement>(null)
   const closeBtnRef = useRef<HTMLButtonElement>(null)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
+  const [mounted, setMounted] = useState(false)
 
   const closeMenu = useCallback(() => setMobileMenuOpen(false), [])
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     if (!mobileMenuOpen) return
@@ -158,102 +164,105 @@ export function Header() {
         </div>
       </nav>
 
-      {/* Mobile drawer: overlay + panel from right */}
-      {mobileMenuOpen ? (
-        <>
-          <button
-            type="button"
-            className="fixed inset-0 z-[60] bg-black/45 backdrop-blur-sm"
-            aria-label="Close menu"
-            onClick={closeMenu}
-          />
-          <div
-            id="mobile-drawer"
-            ref={panelRef}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="mobile-menu-title"
-            className="fixed inset-y-0 right-0 z-[70] flex w-[min(100%,20rem)] flex-col border-l border-brutal-ink/15 bg-brutal-bg shadow-[var(--shadow-subtle)] transition-transform duration-300 ease-out"
-          >
-            <div className="flex items-center justify-between border-b border-brutal-ink/15 px-6 py-4">
-              <span
-                id="mobile-menu-title"
-                className="font-serif text-sm font-semibold text-brutal-ink"
-              >
-                Menu
-              </span>
+      {/* Mobile drawer: portal to body so overlay stacks above page content (header z-50 was capping fixed children). */}
+      {mounted && mobileMenuOpen
+        ? createPortal(
+            <>
               <button
-                ref={closeBtnRef}
                 type="button"
-                onClick={closeMenu}
-                className="text-brutal-ink transition-opacity hover:opacity-70"
+                className="fixed inset-0 z-[9998] bg-black/45 backdrop-blur-sm"
                 aria-label="Close menu"
+                onClick={closeMenu}
+              />
+              <div
+                id="mobile-drawer"
+                ref={panelRef}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="mobile-menu-title"
+                className="fixed inset-y-0 right-0 z-[9999] flex w-[min(100%,20rem)] flex-col border-l border-brutal-ink/15 bg-brutal-bg shadow-[var(--shadow-subtle)] transition-transform duration-300 ease-out"
               >
-                <X className="h-6 w-6" />
-              </button>
-            </div>
-            <div className="border-b border-brutal-ink/15 px-6 py-4">
-              <SearchBar />
-            </div>
-            <div className="flex flex-col gap-1 px-6 py-6">
-              {navigation.map((item, i) => {
-                const isActive =
-                  pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))
-                return (
-                  <Link
-                    key={item.name}
-                    ref={i === 0 ? firstLinkRef : undefined}
-                    href={item.href}
-                    onClick={() => {
-                      setMobileMenuOpen(false)
-                      trackClick('nav_link', {
-                        link: item.name,
-                        href: item.href,
-                        location: 'mobile',
-                      })
-                    }}
-                    className={cn(
-                      'py-3 font-sans text-sm font-semibold uppercase tracking-wider text-brutal-ink transition-opacity hover:opacity-70',
-                      isActive && 'border-b-2 border-brutal-ink'
-                    )}
+                <div className="flex items-center justify-between border-b border-brutal-ink/15 px-6 py-4">
+                  <span
+                    id="mobile-menu-title"
+                    className="font-serif text-sm font-semibold text-brutal-ink"
                   >
-                    {item.name}
-                  </Link>
-                )
-              })}
-            </div>
-            <div className="mt-auto flex gap-6 border-t border-brutal-ink/15 px-6 py-6">
-              <a
-                href="https://github.com/gogiraFoundation"
-                target="_blank"
-                rel="me noopener noreferrer"
-                className="text-brutal-muted transition-opacity hover:opacity-70"
-                aria-label="GitHub"
-              >
-                <Github className="h-7 w-7" />
-              </a>
-              <a
-                href="https://www.linkedin.com/in/emmanuel-ugbaje-b19227161/"
-                target="_blank"
-                rel="me noopener noreferrer"
-                className="text-brutal-muted transition-opacity hover:opacity-70"
-                aria-label="LinkedIn"
-              >
-                <Linkedin className="h-7 w-7" />
-              </a>
-              <a
-                href="https://medium.com/@aigbemanuel"
-                target="_blank"
-                rel="me noopener noreferrer"
-                className="text-brutal-muted transition-opacity hover:opacity-70"
-                aria-label="Medium"
-              >
-                <BookOpen className="h-7 w-7" />
-              </a>
-            </div>
-          </div>
-        </>
-      ) : null}
+                    Menu
+                  </span>
+                  <button
+                    ref={closeBtnRef}
+                    type="button"
+                    onClick={closeMenu}
+                    className="text-brutal-ink transition-opacity hover:opacity-70"
+                    aria-label="Close menu"
+                  >
+                    <X className="h-6 w-6" />
+                  </button>
+                </div>
+                <div className="border-b border-brutal-ink/15 px-6 py-4">
+                  <SearchBar />
+                </div>
+                <div className="flex flex-col gap-1 px-6 py-6">
+                  {navigation.map((item, i) => {
+                    const isActive =
+                      pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))
+                    return (
+                      <Link
+                        key={item.name}
+                        ref={i === 0 ? firstLinkRef : undefined}
+                        href={item.href}
+                        onClick={() => {
+                          setMobileMenuOpen(false)
+                          trackClick('nav_link', {
+                            link: item.name,
+                            href: item.href,
+                            location: 'mobile',
+                          })
+                        }}
+                        className={cn(
+                          'py-3 font-sans text-sm font-semibold uppercase tracking-wider text-brutal-ink transition-opacity hover:opacity-70',
+                          isActive && 'border-b-2 border-brutal-ink'
+                        )}
+                      >
+                        {item.name}
+                      </Link>
+                    )
+                  })}
+                </div>
+                <div className="mt-auto flex gap-6 border-t border-brutal-ink/15 px-6 py-6">
+                  <a
+                    href="https://github.com/gogiraFoundation"
+                    target="_blank"
+                    rel="me noopener noreferrer"
+                    className="text-brutal-muted transition-opacity hover:opacity-70"
+                    aria-label="GitHub"
+                  >
+                    <Github className="h-7 w-7" />
+                  </a>
+                  <a
+                    href="https://www.linkedin.com/in/emmanuel-ugbaje-b19227161/"
+                    target="_blank"
+                    rel="me noopener noreferrer"
+                    className="text-brutal-muted transition-opacity hover:opacity-70"
+                    aria-label="LinkedIn"
+                  >
+                    <Linkedin className="h-7 w-7" />
+                  </a>
+                  <a
+                    href="https://medium.com/@aigbemanuel"
+                    target="_blank"
+                    rel="me noopener noreferrer"
+                    className="text-brutal-muted transition-opacity hover:opacity-70"
+                    aria-label="Medium"
+                  >
+                    <BookOpen className="h-7 w-7" />
+                  </a>
+                </div>
+              </div>
+            </>,
+            document.body
+          )
+        : null}
     </header>
   )
 }
