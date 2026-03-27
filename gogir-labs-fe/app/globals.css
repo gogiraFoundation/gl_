@@ -496,31 +496,6 @@ html[data-design='brutalist'] .container-content {
   transform: scaleX(1);
 }
 
-/* Custom cursor: desktop fine pointer only */
-.custom-cursor-dot {
-  display: none;
-}
-
-@media (pointer: fine) and (hover: hover) {
-  html.has-custom-cursor:not(.reduce-motion) .custom-cursor-dot {
-    display: block;
-  }
-
-  html.has-custom-cursor:not(.reduce-motion) {
-    cursor: none;
-  }
-}
-
-@media (pointer: coarse), (hover: none) {
-  html.has-custom-cursor .custom-cursor-dot {
-    display: none !important;
-  }
-
-  html.has-custom-cursor {
-    cursor: auto !important;
-  }
-}
-
 /* Text wrapping utilities */
 p,
 .text-content,
