@@ -70,37 +70,36 @@ export function TestimonialCarousel() {
   }
 
   return (
-    <div className="relative rounded-lg border border-slate-200 bg-slate-50/90 p-8 dark:border-gray-700 dark:bg-gray-900/50">
-      <div className="mb-6 flex items-center gap-2">
-        <Quote className="h-6 w-6 text-purple-600 dark:text-purple-400" />
-        <h2 className="text-2xl font-bold text-slate-900 dark:text-white">What People Say</h2>
+    <div className="relative border border-brutal-ink/15 bg-brutal-bg p-8 md:p-10">
+      <div className="mb-6 flex items-center gap-3">
+        <Quote className="h-6 w-6 text-brutal-ink" />
+        <h2 className="font-serif text-2xl font-semibold text-brutal-ink md:text-[2rem]">
+          What people say
+        </h2>
       </div>
 
       <div className="relative min-h-[200px]">
-        <div className="text-center">
-          {/* Rating */}
-          <div className="mb-4 flex justify-center gap-1">
+        <div className="text-left md:text-center">
+          <div className="mb-4 flex justify-start gap-1 md:justify-center">
             {[...Array(5)].map((_, i) => (
               <Star
                 key={i}
                 className={`h-5 w-5 ${
                   i < currentTestimonial.rating
-                    ? 'fill-yellow-400 text-yellow-400'
-                    : 'text-slate-300 dark:text-gray-600'
+                    ? 'fill-brutal-ink text-brutal-ink'
+                    : 'text-brutal-ink/25'
                 }`}
               />
             ))}
           </div>
 
-          {/* Content */}
-          <blockquote className="mb-6 text-lg leading-relaxed text-slate-600 dark:text-gray-300">
+          <blockquote className="mb-6 font-sans text-lg leading-relaxed text-brutal-ink">
             &quot;{currentTestimonial.content}&quot;
           </blockquote>
 
-          {/* Author */}
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-center">
             {currentTestimonial.client_image && (
-              <div className="relative h-16 w-16 overflow-hidden rounded-full">
+              <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full border border-brutal-ink/15">
                 <Image
                   src={currentTestimonial.client_image}
                   alt={currentTestimonial.client_name}
@@ -109,11 +108,9 @@ export function TestimonialCarousel() {
                 />
               </div>
             )}
-            <div>
-              <div className="font-semibold text-slate-900 dark:text-white">
-                {currentTestimonial.client_name}
-              </div>
-              <div className="text-sm text-slate-500 dark:text-gray-400">
+            <div className="text-left md:text-center">
+              <div className="font-semibold text-brutal-ink">{currentTestimonial.client_name}</div>
+              <div className="text-sm text-brutal-muted">
                 {currentTestimonial.client_role}
                 {currentTestimonial.company && ` at ${currentTestimonial.company}`}
               </div>
@@ -121,34 +118,32 @@ export function TestimonialCarousel() {
           </div>
         </div>
 
-        {/* Navigation */}
         {featuredTestimonials.length > 1 && (
           <>
             <button
               onClick={goToPrevious}
-              className="absolute left-0 top-1/2 -translate-y-1/2 transform rounded-full border border-slate-200 bg-white p-2 text-slate-700 shadow-sm transition-colors hover:bg-slate-100 dark:border-transparent dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
+              className="absolute left-0 top-1/2 hidden -translate-y-1/2 border border-brutal-ink/20 bg-brutal-bg p-2 text-brutal-ink transition-opacity hover:opacity-70 md:block"
               aria-label="Previous testimonial"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
             <button
               onClick={goToNext}
-              className="absolute right-0 top-1/2 -translate-y-1/2 transform rounded-full border border-slate-200 bg-white p-2 text-slate-700 shadow-sm transition-colors hover:bg-slate-100 dark:border-transparent dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
+              className="absolute right-0 top-1/2 hidden -translate-y-1/2 border border-brutal-ink/20 bg-brutal-bg p-2 text-brutal-ink transition-opacity hover:opacity-70 md:block"
               aria-label="Next testimonial"
             >
               <ChevronRight className="h-5 w-5" />
             </button>
 
-            {/* Dots */}
-            <div className="mt-6 flex justify-center gap-2">
+            <div className="mt-8 flex justify-start gap-2 md:justify-center">
               {featuredTestimonials.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => goToSlide(index)}
-                  className={`h-2 w-2 rounded-full transition-all ${
+                  className={`h-1.5 transition-all ${
                     index === currentIndex
-                      ? 'w-8 bg-purple-600 dark:bg-purple-400'
-                      : 'bg-slate-300 hover:bg-slate-400 dark:bg-gray-600 dark:hover:bg-gray-500'
+                      ? 'w-8 bg-brutal-ink'
+                      : 'w-1.5 bg-brutal-ink/25 hover:bg-brutal-ink/45'
                   }`}
                   aria-label={`Go to testimonial ${index + 1}`}
                 />

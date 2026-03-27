@@ -65,7 +65,7 @@ export function PostList({ posts, isLoading }: PostListProps) {
       {/* Featured Posts */}
       {hasFeatured && (
         <section aria-label="Featured Posts" className="space-y-6">
-          <div className="mb-4">
+          <div className="mb-4 text-center">
             <span className="text-sm font-semibold uppercase tracking-wide text-blue-400">
               Featured Post{featuredPosts.length > 1 ? 's' : ''}
             </span>
@@ -90,7 +90,7 @@ export function PostList({ posts, isLoading }: PostListProps) {
       {hasRegular && (
         <section aria-label="All Posts" className="space-y-6">
           {hasFeatured && (
-            <div className="mb-4">
+            <div className="mb-4 text-center">
               <span className="text-sm font-semibold uppercase tracking-wide text-purple-400">
                 All Posts
               </span>

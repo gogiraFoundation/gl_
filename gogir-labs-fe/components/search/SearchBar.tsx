@@ -91,32 +91,34 @@ export function SearchBar() {
       {/* Search Button/Input */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 text-gray-300 transition-colors hover:text-white"
+        className="group flex items-center gap-2 rounded-sm bg-brutal-ink/[0.05] px-2.5 py-2 text-brutal-muted shadow-[0_2px_10px_rgba(0,0,0,0.05),0_1px_0_rgba(255,255,255,0.06)_inset] transition-[transform,box-shadow,color,background-color,opacity] duration-300 hover:-translate-y-0.5 hover:bg-brutal-ink/[0.08] hover:text-[orangered] hover:shadow-[0_10px_24px_rgba(0,0,0,0.1)] motion-reduce:hover:translate-y-0"
         aria-label="Search"
       >
-        <Search className="h-5 w-5" />
-        <span className="hidden md:inline">Search</span>
+        <Search className="h-5 w-5 transition-transform duration-300 group-hover:scale-105" />
+        <span className="hidden text-xs font-semibold uppercase tracking-wider md:inline">
+          Search
+        </span>
       </button>
 
       {/* Search Modal */}
       {isOpen && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-96 max-w-[90vw] rounded-lg border border-gray-700 bg-gray-900 shadow-xl">
+        <div className="absolute right-0 top-full z-50 mt-2 w-96 max-w-[90vw] animate-fade-in-up rounded-sm border border-brutal-ink/15 bg-brutal-bg shadow-[0_16px_36px_rgba(0,0,0,0.12)]">
           {/* Search Input */}
-          <div className="border-b border-gray-700 p-4">
+          <div className="border-b border-brutal-ink/15 p-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-gray-400" />
+              <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-brutal-muted" />
               <input
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search blog posts, projects..."
-                className="w-full rounded-lg border border-gray-600 bg-gray-800 py-2 pl-10 pr-10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full rounded-sm border border-brutal-ink/20 bg-brutal-bg py-2 pl-10 pr-10 text-brutal-ink placeholder:text-brutal-muted transition-[box-shadow,border-color] duration-300 focus:border-[orangered] focus:outline-none focus:ring-1 focus:ring-[orangered]/40"
                 autoFocus
               />
               {query && (
                 <button
                   onClick={() => setQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 transform text-gray-400 hover:text-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 transform text-brutal-muted transition-colors hover:text-[orangered]"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -126,35 +128,39 @@ export function SearchBar() {
 
           {/* Results */}
           <div className="max-h-96 overflow-y-auto">
-            {isLoading && <div className="p-4 text-center text-gray-400">Searching...</div>}
+            {isLoading && (
+              <div className="p-4 text-center font-sans text-brutal-muted">Searching…</div>
+            )}
 
             {!isLoading && debouncedQuery && results && (
               <>
                 {results.total === 0 ? (
-                  <div className="p-4 text-center text-gray-400">
+                  <div className="p-4 text-center font-sans text-brutal-muted">
                     No results found for &quot;{debouncedQuery}&quot;
                   </div>
                 ) : (
                   <>
                     {/* Blog Posts */}
                     {results.blog_posts.length > 0 && (
-                      <div className="border-b border-gray-700 p-4">
-                        <h3 className="mb-2 text-sm font-semibold text-gray-400">Blog Posts</h3>
+                      <div className="border-b border-brutal-ink/10 p-4">
+                        <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-brutal-muted">
+                          Blog posts
+                        </h3>
                         <div className="space-y-2">
                           {results.blog_posts.map((post) => (
                             <Link
                               key={post.id}
                               href={`/blog/${post.slug}`}
                               onClick={() => handleResultClick('blog', post.id, post.title)}
-                              className="block rounded p-2 transition-colors hover:bg-gray-800"
+                              className="block rounded-sm p-2 transition-[transform,box-shadow,opacity] duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(0,0,0,0.08)] hover:opacity-90 motion-reduce:hover:translate-y-0"
                             >
-                              <div className="text-sm font-medium text-white">{post.title}</div>
+                              <div className="text-sm font-medium text-brutal-ink">{post.title}</div>
                               {post.category && (
-                                <div className="mt-1 text-xs text-purple-400">
+                                <div className="mt-1 text-xs text-brutal-muted">
                                   {post.category.name}
                                 </div>
                               )}
-                              <div className="mt-1 line-clamp-1 text-xs text-gray-400">
+                              <div className="mt-1 line-clamp-1 text-xs text-brutal-muted">
                                 {post.excerpt}
                               </div>
                             </Link>
@@ -166,7 +172,9 @@ export function SearchBar() {
                     {/* Projects */}
                     {results.projects.length > 0 && (
                       <div className="p-4">
-                        <h3 className="mb-2 text-sm font-semibold text-gray-400">Projects</h3>
+                        <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-brutal-muted">
+                          Projects
+                        </h3>
                         <div className="space-y-2">
                           {results.projects.map((project) => (
                             <Link
@@ -176,15 +184,17 @@ export function SearchBar() {
                               onClick={() =>
                                 handleResultClick('project', project.id, project.title)
                               }
-                              className="block rounded p-2 transition-colors hover:bg-gray-800"
+                              className="block rounded-sm p-2 transition-[transform,box-shadow,opacity] duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(0,0,0,0.08)] hover:opacity-90 motion-reduce:hover:translate-y-0"
                             >
-                              <div className="text-sm font-medium text-white">{project.title}</div>
+                              <div className="text-sm font-medium text-brutal-ink">
+                                {project.title}
+                              </div>
                               {project.category && (
-                                <div className="mt-1 text-xs text-purple-400">
+                                <div className="mt-1 text-xs text-brutal-muted">
                                   {project.category.name}
                                 </div>
                               )}
-                              <div className="mt-1 line-clamp-1 text-xs text-gray-400">
+                              <div className="mt-1 line-clamp-1 text-xs text-brutal-muted">
                                 {project.description}
                               </div>
                             </Link>
@@ -195,11 +205,11 @@ export function SearchBar() {
 
                     {/* View All Results */}
                     {results.total > 5 && (
-                      <div className="border-t border-gray-700 p-4">
+                      <div className="border-t border-brutal-ink/10 p-4">
                         <Link
                           href={`/search?q=${encodeURIComponent(debouncedQuery)}`}
                           onClick={() => setIsOpen(false)}
-                          className="block text-center text-sm font-medium text-purple-400 hover:text-purple-300"
+                          className="block text-center text-sm font-medium text-brutal-ink transition-colors hover:text-[orangered]"
                         >
                           View all {results.total} results →
                         </Link>
@@ -211,7 +221,9 @@ export function SearchBar() {
             )}
 
             {!debouncedQuery && (
-              <div className="p-4 text-center text-gray-400">Start typing to search...</div>
+              <div className="p-4 text-center font-sans text-brutal-muted">
+                Start typing to search…
+              </div>
             )}
           </div>
         </div>

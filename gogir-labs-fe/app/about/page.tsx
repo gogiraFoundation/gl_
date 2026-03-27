@@ -1,432 +1,371 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
-import { useEffect } from 'react'
 import Link from 'next/link'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
-import { TestimonialCard } from '@/components/testimonials/TestimonialCard'
+import type { Testimonial } from '@/components/testimonials/TestimonialCard'
+import { TestimonialsCarousel } from '@/components/testimonials/TestimonialsCarousel'
 import { Github, Linkedin, BookOpen, Code, Users, BarChart, Zap, Mail } from 'lucide-react'
 import { GradientText } from '@/components/ui/GradientText'
 import { OrbitingIcons } from '@/components/ui/OrbitingIcons'
 import { GlowCard } from '@/components/ui/GlowCard'
-import { SkillChips } from '@/components/ui/SkillChips'
-import api from '@/lib/api'
 
-interface Testimonial {
-  id: number
-  client_name: string
-  client_role: string
-  company: string
-  content: string
-  rating: number
-  client_image: string | null
-  company_logo: string | null
-  featured: boolean
-  created_at: string
-}
+const STATIC_TESTIMONIALS: Testimonial[] = [
+  {
+    id: 1,
+    client_name: 'Emily Rodriguez',
+    client_role: 'Founder',
+    company: 'GreenEnergy Co',
+    content:
+      "Emmanuel's expertise in renewable energy systems and software development helped us build a cutting-edge platform. Outstanding work!",
+    rating: 5,
+    client_image: null,
+    company_logo: null,
+    featured: true,
+    created_at: '',
+  },
+  {
+    id: 2,
+    client_name: 'Michael Chen',
+    client_role: 'Product Manager',
+    company: 'DataFlow Systems',
+    content:
+      'Working with Emmanuel was a pleasure. He transformed our data pipeline and improved performance significantly. Highly recommended!',
+    rating: 5,
+    client_image: null,
+    company_logo: null,
+    featured: true,
+    created_at: '',
+  },
+  {
+    id: 3,
+    client_name: 'Sarah Johnson',
+    client_role: 'CTO',
+    company: 'TechStart Inc',
+    content:
+      'Emmanuel delivered an exceptional Django application that exceeded our expectations. His attention to detail and technical expertise made the project a huge success.',
+    rating: 5,
+    client_image: null,
+    company_logo: null,
+    featured: true,
+    created_at: '',
+  },
+]
+
+const CONNECT_LINK_CLASS =
+  'connect-social-link group inline-flex shrink-0 flex-row flex-nowrap items-center gap-1.5 rounded-sm px-2 py-1 text-sm font-medium text-brutal-ink whitespace-nowrap transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-brutal-ink/[0.06] hover:shadow-[0_4px_14px_rgba(0,0,0,0.07)] motion-reduce:hover:translate-y-0'
+
+const CONNECT_ICON_CLASS =
+  'block h-3.5 w-3.5 shrink-0 leading-none transition-transform duration-300 group-hover:scale-105 sm:h-4 sm:w-4'
 
 export default function AboutPage() {
-  useEffect(() => {
-    document.title =
-      'About | Emmanuel Ugbaje — Software Engineer & Lead Developer | Python, Django, Auth'
-    const metaDescription = document.querySelector('meta[name="description"]')
-    const descriptionContent =
-      'Software Engineer building secure Python/Django backends and authentication systems. Lead Developer at Traq Authenticator; MSc Renewable Energy; experience in energy analytics, product operations, and data-driven delivery.'
-    if (metaDescription) {
-      metaDescription.setAttribute('content', descriptionContent)
-    } else {
-      const meta = document.createElement('meta')
-      meta.name = 'description'
-      meta.content = descriptionContent
-      document.getElementsByTagName('head')[0].appendChild(meta)
-    }
-  }, [])
-
-  const { data: testimonials } = useQuery<Testimonial[]>({
-    queryKey: ['testimonials'],
-    queryFn: async () => {
-      const response = await api.get('/testimonials/')
-      return response.data.results || response.data
-    },
-  })
-
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-brutal-bg">
       <Header />
       <main className="relative flex-grow px-4 py-20 md:py-32 lg:py-40">
-        <div className="absolute inset-0 bg-gradient-mesh opacity-20"></div>
-
         <div className="relative z-10 mx-auto max-w-5xl space-y-24">
-          <div className="animate-fade-in-up text-center">
-            <h1 className="mb-8 text-5xl font-bold md:text-6xl">
+          <header className="animate-fade-in-up text-center">
+            <h1 className="mb-3 text-4xl font-bold text-brutal-ink md:text-5xl">
               <GradientText>What I Do</GradientText>
             </h1>
-          </div>
+            <p className="mx-auto max-w-3xl text-sm leading-relaxed text-brutal-muted md:text-base">
+              Building secure, scalable backends and APIs with a focus on{' '}
+              <strong className="font-medium text-brutal-ink">authentication</strong>,{' '}
+              <strong className="font-medium text-brutal-ink">data pipelines</strong>, and{' '}
+              <strong className="font-medium text-brutal-ink">cloud-native solutions</strong>.
+            </p>
+          </header>
 
-          <section>
-            <div className="glass space-y-6 rounded-2xl p-8 md:p-12">
-              <p className="text-justify text-lg leading-relaxed text-gray-300 md:text-xl">
-                I&apos;m a Software Engineer with experience building secure, scalable backend
-                systems and APIs using Python frameworks. I focus on authentication systems, data
-                pipelines, and production-ready services with reliability, security, and performance
-                in mind. I hold an MSc in Renewable Energy &amp; Sustainable Technology and apply
-                that lens when building technology that supports business and environmental
-                outcomes.
+          <section aria-labelledby="what-i-do-body" className="!mt-6 md:!mt-8">
+            <h2 id="what-i-do-body" className="sr-only">
+              Professional summary
+            </h2>
+            <div
+              className="group/summary mx-auto my-0 flex max-w-3xl flex-col gap-4 rounded-sm bg-brutal-bg p-6 shadow-[0_4px_16px_rgba(0,0,0,0.07),0_1px_0_rgba(255,255,255,0.04)_inset] transition-[transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none hover:-translate-y-0.5 hover:shadow-[0_10px_28px_rgba(0,0,0,0.1)] motion-reduce:hover:translate-y-0 md:p-8 [&_p]:m-0"
+            >
+              <p className="text-justify text-sm leading-relaxed text-brutal-muted md:text-[15px]">
+                As a <strong className="font-medium text-brutal-ink">Software Engineer</strong> and{' '}
+                <strong className="font-medium text-brutal-ink">Lead Developer</strong>, I build
+                secure, scalable backend systems and APIs, specialising in{' '}
+                <strong className="font-medium text-brutal-ink">Python</strong>,{' '}
+                <strong className="font-medium text-brutal-ink">Django</strong>, and{' '}
+                <strong className="font-medium text-brutal-ink">cloud-native technologies</strong>
+                . With a strong foundation in{' '}
+                <strong className="font-medium text-brutal-ink">authentication systems</strong>,{' '}
+                <strong className="font-medium text-brutal-ink">data pipelines</strong>, and{' '}
+                <strong className="font-medium text-brutal-ink">production-grade services</strong>, I
+                focus on delivering high-performing solutions that are{' '}
+                <strong className="font-medium text-brutal-ink">reliable</strong>,{' '}
+                <strong className="font-medium text-brutal-ink">secure</strong>, and{' '}
+                <strong className="font-medium text-brutal-ink">scalable</strong>.
               </p>
-              <p className="text-justify text-lg leading-relaxed text-gray-300 md:text-xl">
-                I&apos;m currently Lead Developer at Traq Authenticator—a secure identity and access
-                management platform for identity verification and supply chain traceability. I lead
-                backend development with Django and PostgreSQL, ship secure REST APIs, and implement
-                protections including password breach detection, Redis-backed rate limiting, file
-                validation, and integrations for malware scanning and threat detection, alongside
-                CI/CD automation for testing and deployment.
+              <p className="text-justify text-sm leading-relaxed text-brutal-muted md:text-[15px]">
+                I hold a{' '}
+                <strong className="font-medium text-brutal-ink">
+                  Master&apos;s in Renewable Energy &amp; Sustainable Technology
+                </strong>
+                , and I apply this multidisciplinary approach to designing systems that optimise both{' '}
+                <strong className="font-medium text-brutal-ink">business</strong> and{' '}
+                <strong className="font-medium text-brutal-ink">environmental</strong> outcomes.
               </p>
-              <p className="text-justify text-lg leading-relaxed text-gray-300 md:text-xl">
-                Earlier roles include Energy Analyst in manufacturing (Python ETL, SQL dashboards,
-                ISO 50001-aligned energy performance work), Product Operations Manager for a remote
-                digital startup (internal tooling and workflows that improved operational efficiency
-                by 60%), Research Analyst in tokenomics and business data (blockchain metrics,
-                Python automation that cut processing time by about 50%), and Volunteer IT &amp;
-                Data Officer for a breast cancer foundation—digitising volunteer tracking and
-                reporting.
+              <p className="text-justify text-sm leading-relaxed text-brutal-muted md:text-[15px]">
+                Currently, I serve as the <strong className="font-medium text-brutal-ink">Lead Developer</strong> at{' '}
+                <strong className="font-medium text-brutal-ink">Traq Authenticator</strong>, a cutting-edge{' '}
+                <strong className="font-medium text-brutal-ink">
+                  Identity and Access Management (IAM)
+                </strong>{' '}
+                platform. Here, I architect backend solutions using{' '}
+                <strong className="font-medium text-brutal-ink">Django</strong> and{' '}
+                <strong className="font-medium text-brutal-ink">PostgreSQL</strong>, developing secure{' '}
+                <strong className="font-medium text-brutal-ink">REST APIs</strong> while embedding advanced security features such as{' '}
+                <strong className="font-medium text-brutal-ink">password breach detection</strong>,{' '}
+                <strong className="font-medium text-brutal-ink">rate limiting with Redis</strong>, and{' '}
+                <strong className="font-medium text-brutal-ink">file validation pipelines</strong>. My role also involves driving{' '}
+                <strong className="font-medium text-brutal-ink">CI/CD</strong> automation for seamless testing, deployment, and continuous integration.
               </p>
-              <p className="text-justify text-lg leading-relaxed text-gray-300 md:text-xl">
-                I&apos;m passionate about reliable platforms that improve how organisations work.
-                Explore my{' '}
-                <Link href="/portfolio" className="text-purple-400 underline hover:text-purple-300">
+              <p className="text-justify text-sm leading-relaxed text-brutal-muted md:text-[15px]">
+                I&apos;ve worked across a broad range of industries, including{' '}
+                <strong className="font-medium text-brutal-ink">energy</strong>,{' '}
+                <strong className="font-medium text-brutal-ink">blockchain</strong>, and{' '}
+                <strong className="font-medium text-brutal-ink">digital startups</strong>. From building{' '}
+                <strong className="font-medium text-brutal-ink">data pipelines</strong> and{' '}
+                <strong className="font-medium text-brutal-ink">energy performance systems</strong> to optimising blockchain research tools and streamlining operational workflows, I&apos;ve honed a versatile skill set that adapts to modern, high-impact technology challenges.
+              </p>
+              <p className="text-justify text-sm leading-relaxed text-brutal-muted md:text-[15px]">
+                I&apos;m deeply passionate about building technology that empowers organisations, reduces operational friction, and contributes to environmental sustainability. You can explore my{' '}
+                <Link
+                  href="/portfolio"
+                  className="font-medium text-brutal-ink underline underline-offset-4 transition-opacity duration-200 ease-out hover:opacity-75"
+                >
                   portfolio
                 </Link>{' '}
                 or read my{' '}
-                <Link href="/blog" className="text-purple-400 underline hover:text-purple-300">
+                <Link
+                  href="/blog"
+                  className="font-medium text-brutal-ink underline underline-offset-4 transition-opacity duration-200 ease-out hover:opacity-75"
+                >
                   blog
                 </Link>{' '}
-                for more on software development, energy systems, and digital transformation.
+                to learn more about my work in{' '}
+                <strong className="font-medium text-brutal-ink">software development</strong>,{' '}
+                <strong className="font-medium text-brutal-ink">energy systems</strong>, and{' '}
+                <strong className="font-medium text-brutal-ink">digital transformation</strong>.
               </p>
             </div>
           </section>
 
-          <section>
-            <h2 className="mb-10 text-center text-3xl font-bold text-white md:text-4xl">
-              <GradientText>Experience</GradientText>
-            </h2>
-            <div className="space-y-8">
-              <GlowCard glowColor="purple" className="p-6 text-left md:p-8">
-                <h3 className="text-xl font-semibold text-white">Lead Developer</h3>
-                <p className="mb-1 text-purple-300/90">Traq Authenticator — Secure IAM platform</p>
-                <p className="mb-4 text-sm text-gray-400">2024 – Present</p>
-                <ul className="list-disc space-y-2 pl-5 text-gray-300 md:text-[17px]">
-                  <li>
-                    Modular Django + PostgreSQL architecture for authentication, identity
-                    verification, and document validation APIs.
-                  </li>
-                  <li>
-                    Advanced security: password breach detection, Redis rate limiting, file
-                    validation pipelines, external APIs for malware scanning and threat detection.
-                  </li>
-                  <li>
-                    CI/CD pipelines for automated testing and deployment; scalable,
-                    high-availability services.
-                  </li>
-                </ul>
-                <p className="mt-4 text-sm text-gray-500">
-                  Technologies: Python, Django, Redis, PostgreSQL, Docker, Git
-                </p>
-              </GlowCard>
-
-              <GlowCard glowColor="blue" className="p-6 text-left md:p-8">
-                <h3 className="text-xl font-semibold text-white">Energy Analyst</h3>
-                <p className="mb-1 text-blue-300/90">Manufacturing sector</p>
-                <p className="mb-4 text-sm text-gray-400">Mar 2021 – Dec 2022</p>
-                <ul className="list-disc space-y-2 pl-5 text-gray-300 md:text-[17px]">
-                  <li>Python ETL pipelines for operational datasets and analytics reports.</li>
-                  <li>SQL queries and data models supporting energy performance dashboards.</li>
-                  <li>
-                    Automated KPI reporting; collaboration on ISO 50001 energy management
-                    frameworks.
-                  </li>
-                </ul>
-                <p className="mt-4 text-sm text-gray-500">
-                  Technologies: Python, SQL, data analysis
-                </p>
-              </GlowCard>
-
-              <GlowCard glowColor="purple" className="p-6 text-left md:p-8">
-                <h3 className="text-xl font-semibold text-white">Product Operations Manager</h3>
-                <p className="mb-1 text-purple-300/90">Remote digital start-up</p>
-                <p className="mb-4 text-sm text-gray-400">Dec 2021 – Jan 2023</p>
-                <ul className="list-disc space-y-2 pl-5 text-gray-300 md:text-[17px]">
-                  <li>
-                    Designed internal tooling processes; improved operational efficiency by 60%.
-                  </li>
-                  <li>
-                    Automation for CRM workflows and reporting; liaison between engineering and
-                    stakeholders.
-                  </li>
-                </ul>
-              </GlowCard>
-
-              <GlowCard glowColor="blue" className="p-6 text-left md:p-8">
-                <h3 className="text-xl font-semibold text-white">
-                  Research Analyst — Tokenomics &amp; Business Data
-                </h3>
-                <p className="mb-1 text-blue-300/90">Digital finance sector</p>
-                <p className="mb-4 text-sm text-gray-400">Nov 2021 – Feb 2023</p>
-                <ul className="list-disc space-y-2 pl-5 text-gray-300 md:text-[17px]">
-                  <li>
-                    Analysed 1,000+ blockchain user data points for ecosystem growth patterns.
-                  </li>
-                  <li>Python scripts that reduced data processing time by about 50%.</li>
-                  <li>Analytical reports supporting product and investment strategy.</li>
-                </ul>
-              </GlowCard>
-
-              <GlowCard glowColor="purple" className="p-6 text-left md:p-8">
-                <h3 className="text-xl font-semibold text-white">
-                  Volunteer IT &amp; Data Officer
-                </h3>
-                <p className="mb-1 text-purple-300/90">Breast Cancer Foundation (remote)</p>
-                <p className="mb-4 text-sm text-gray-400">Mar 2020 – Dec 2020</p>
-                <ul className="list-disc space-y-2 pl-5 text-gray-300 md:text-[17px]">
-                  <li>
-                    Digitised volunteer management with Excel-based tracking and automated
-                    reporting.
-                  </li>
-                  <li>Data visualisations to improve programme efficiency and engagement.</li>
-                </ul>
-              </GlowCard>
-            </div>
-          </section>
-
-          <section>
-            <h2 className="mb-12 text-center text-3xl font-bold text-white md:text-4xl">
-              <GradientText>Core Expertise & Toolchain</GradientText>
+          <section aria-labelledby="expertise-heading">
+            <h2 id="expertise-heading" className="mb-12 text-center text-3xl font-bold text-brutal-ink md:text-4xl">
+              <GradientText>Core Expertise &amp; Tech Stack</GradientText>
             </h2>
 
             <OrbitingIcons
-              centerIcon={<Code className="h-12 w-12 text-white" aria-label="Code Icon" />}
+              centerIcon={<Code className="h-12 w-12 text-brutal-ink" aria-label="Code Icon" />}
               icons={[
                 {
-                  icon: <Code className="h-6 w-6 text-purple-400" aria-label="Development Icon" />,
+                  icon: <Code className="h-6 w-6 text-brutal-ink" aria-label="Development Icon" />,
                 },
                 {
                   icon: (
-                    <Users className="h-6 w-6 text-blue-400" aria-label="Project Management Icon" />
+                    <Users className="h-6 w-6 text-brutal-ink" aria-label="Project Management Icon" />
                   ),
                 },
                 {
                   icon: (
                     <BarChart
-                      className="h-6 w-6 text-purple-400"
+                      className="h-6 w-6 text-brutal-ink"
                       aria-label="Data Analytics Icon"
                     />
                   ),
                 },
-                { icon: <Zap className="h-6 w-6 text-blue-400" aria-label="Energy Icon" /> },
+                { icon: <Zap className="h-6 w-6 text-brutal-ink" aria-label="Energy Icon" /> },
                 {
-                  icon: <Code className="h-6 w-6 text-purple-400" aria-label="Programming Icon" />,
+                  icon: <Code className="h-6 w-6 text-brutal-ink" aria-label="Programming Icon" />,
                 },
-                { icon: <Users className="h-6 w-6 text-blue-400" aria-label="Team Icon" /> },
+                { icon: <Users className="h-6 w-6 text-brutal-ink" aria-label="Team Icon" /> },
               ]}
               radius={120}
               className="mb-12"
             />
 
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4 lg:gap-12">
-              <GlowCard glowColor="purple" className="p-6 text-center md:p-8">
-                <h3 className="mb-3 text-lg font-semibold text-white">Backend &amp; security</h3>
-                <SkillChips
-                  skills="Python, Django, REST APIs, Authentication Systems, API Security, Microservices, Rate Limiting, Asynchronous Processing, System Design"
-                  className="justify-center"
-                />
+            <div className="mx-auto my-0 grid w-[80%] max-w-full min-w-0 grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-4 xl:gap-3">
+              <GlowCard className="min-w-0 overflow-hidden p-3 text-left sm:p-4 md:p-4">
+                <h3 className="mb-2 text-sm font-semibold leading-tight text-brutal-ink sm:text-base">
+                  Backend &amp; Security
+                </h3>
+                <ul className="list-inside list-disc space-y-1 overflow-hidden break-words text-xs leading-snug text-brutal-muted max-h-28 sm:max-h-32 xl:max-h-36 sm:text-[13px] md:text-[14px]">
+                  <li>
+                    <strong className="text-brutal-ink">Python</strong>, <strong className="text-brutal-ink">Django</strong>, <strong className="text-brutal-ink">Flask</strong>, <strong className="text-brutal-ink">FastAPI</strong>
+                  </li>
+                  <li>
+                    <strong className="text-brutal-ink">RESTful APIs</strong>, <strong className="text-brutal-ink">GraphQL</strong>
+                  </li>
+                  <li>
+                    <strong className="text-brutal-ink">Authentication Systems</strong> (OAuth, JWT, SSO)
+                  </li>
+                  <li>
+                    <strong className="text-brutal-ink">API Security</strong> (Rate Limiting, Breach Detection, File Validation)
+                  </li>
+                  <li>
+                    <strong className="text-brutal-ink">Microservices</strong> architecture, <strong className="text-brutal-ink">Asynchronous Processing</strong>
+                  </li>
+                  <li>
+                    <strong className="text-brutal-ink">Containerisation</strong> (Docker, Kubernetes)
+                  </li>
+                  <li>
+                    <strong className="text-brutal-ink">Redis</strong>, <strong className="text-brutal-ink">Celery</strong> (Task Queues)
+                  </li>
+                  <li>
+                    <strong className="text-brutal-ink">System Design</strong> &amp; <strong className="text-brutal-ink">Architecture</strong>
+                  </li>
+                </ul>
               </GlowCard>
-              <GlowCard glowColor="blue" className="p-6 text-center md:p-8">
-                <h3 className="mb-3 text-lg font-semibold text-white">Platform &amp; DevOps</h3>
-                <SkillChips
-                  skills="Docker, Redis, CI/CD Pipelines, Git, Linux, AWS, GCP"
-                  className="justify-center"
-                />
+
+              <GlowCard className="min-w-0 overflow-hidden p-3 text-left sm:p-4 md:p-4">
+                <h3 className="mb-2 text-sm font-semibold leading-tight text-brutal-ink sm:text-base">
+                  Cloud Infrastructure &amp; DevOps
+                </h3>
+                <ul className="list-inside list-disc space-y-1 overflow-hidden break-words text-xs leading-snug text-brutal-muted max-h-28 sm:max-h-32 xl:max-h-36 sm:text-[13px] md:text-[14px]">
+                  <li>
+                    <strong className="text-brutal-ink">AWS</strong>, <strong className="text-brutal-ink">GCP</strong>, <strong className="text-brutal-ink">Azure</strong>
+                  </li>
+                  <li>
+                    <strong className="text-brutal-ink">CI/CD</strong> Pipelines (GitHub Actions, Jenkins, CircleCI)
+                  </li>
+                  <li>
+                    <strong className="text-brutal-ink">Infrastructure as Code (IaC)</strong> (Terraform, CloudFormation)
+                  </li>
+                  <li>
+                    <strong className="text-brutal-ink">Linux</strong>, <strong className="text-brutal-ink">Git</strong>, <strong className="text-brutal-ink">Docker</strong>
+                  </li>
+                </ul>
               </GlowCard>
-              <GlowCard glowColor="purple" className="p-6 text-center md:p-8">
-                <h3 className="mb-3 text-lg font-semibold text-white">Data &amp; databases</h3>
-                <SkillChips
-                  skills="PostgreSQL, SQL, Data Modelling, Pandas, ETL Pipelines, Data Automation"
-                  className="justify-center"
-                />
+
+              <GlowCard className="min-w-0 overflow-hidden p-3 text-left sm:p-4 md:p-4">
+                <h3 className="mb-2 text-sm font-semibold leading-tight text-brutal-ink sm:text-base">
+                  Data Engineering &amp; Analytics
+                </h3>
+                <ul className="list-inside list-disc space-y-1 overflow-hidden break-words text-xs leading-snug text-brutal-muted max-h-28 sm:max-h-32 xl:max-h-36 sm:text-[13px] md:text-[14px]">
+                  <li>
+                    <strong className="text-brutal-ink">PostgreSQL</strong>, <strong className="text-brutal-ink">MySQL</strong>, <strong className="text-brutal-ink">SQL Server</strong>
+                  </li>
+                  <li>
+                    <strong className="text-brutal-ink">Data Modelling</strong>, <strong className="text-brutal-ink">ETL Pipelines</strong>, <strong className="text-brutal-ink">Data Warehousing</strong>
+                  </li>
+                  <li>
+                    <strong className="text-brutal-ink">Pandas</strong>, <strong className="text-brutal-ink">NumPy</strong>, <strong className="text-brutal-ink">Apache Spark</strong>
+                  </li>
+                  <li>
+                    <strong className="text-brutal-ink">Data Automation</strong> (Airflow, Prefect)
+                  </li>
+                </ul>
               </GlowCard>
-              <GlowCard glowColor="blue" className="p-6 text-center md:p-8">
-                <h3 className="mb-3 text-lg font-semibold text-white">Delivery &amp; practices</h3>
-                <SkillChips
-                  skills="Automated Testing, Version Control (Git), Agile Development, Code Reviews"
-                  className="justify-center"
-                />
+
+              <GlowCard className="min-w-0 overflow-hidden p-3 text-left sm:p-4 md:p-4">
+                <h3 className="mb-2 text-sm font-semibold leading-tight text-brutal-ink sm:text-base">
+                  Agile Development &amp; Best Practices
+                </h3>
+                <ul className="list-inside list-disc space-y-1 overflow-hidden break-words text-xs leading-snug text-brutal-muted max-h-28 sm:max-h-32 xl:max-h-36 sm:text-[13px] md:text-[14px]">
+                  <li>
+                    <strong className="text-brutal-ink">Agile Methodologies</strong> (Scrum, Kanban)
+                  </li>
+                  <li>
+                    <strong className="text-brutal-ink">Automated Testing</strong> (Unit, Integration, End-to-End)
+                  </li>
+                  <li>
+                    <strong className="text-brutal-ink">Code Reviews</strong>, <strong className="text-brutal-ink">Test-Driven Development (TDD)</strong>
+                  </li>
+                  <li>
+                    <strong className="text-brutal-ink">Version Control</strong> (Git)
+                  </li>
+                </ul>
               </GlowCard>
             </div>
           </section>
 
-          <section>
-            <h2 className="mb-8 text-3xl font-bold text-white md:mb-12 md:text-4xl">
-              Education &amp; Research
+          <section aria-labelledby="awards-heading">
+            <h2 id="awards-heading" className="mb-8 text-3xl font-bold text-brutal-ink md:mb-12 md:text-4xl">
+              Awards &amp; Certifications
             </h2>
-            <GlowCard glowColor="purple" className="p-8 md:p-12">
-              <h3 className="mb-3 text-2xl font-semibold text-white md:text-3xl">
-                MSc in Renewable Energy &amp; Sustainable Technology
-              </h3>
-              <p className="mb-6 text-lg text-gray-400 md:text-xl">
-                University of South Wales, UK · 2023 – 2024
-              </p>
-              <div className="space-y-6">
-                <div>
-                  <p className="mb-1 font-semibold text-gray-300">Dissertation:</p>
-                  <p className="text-justify text-lg leading-relaxed text-gray-300 md:text-xl">
-                    Applied Python to model policy-driven shifts in renewable energy adoption,
-                    combining data analysis, systems modelling, and research methods.
-                  </p>
-                </div>
-                <div>
-                  <p className="mb-1 font-semibold text-gray-300">Key modules:</p>
-                  <p className="text-justify text-lg leading-relaxed text-gray-300 md:text-xl">
-                    Data &amp; Decision Analysis, Systems Modelling, Research Methods
-                  </p>
-                </div>
-              </div>
-            </GlowCard>
-          </section>
-
-          <section>
-            <h2 className="mb-8 text-3xl font-bold text-white md:mb-12 md:text-4xl">
-              Highlight projects
-            </h2>
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-              <GlowCard glowColor="blue" className="p-6 text-left md:p-8">
-                <h3 className="mb-2 text-lg font-semibold text-white">
-                  UK Housing Data Automation
-                </h3>
-                <p className="mb-3 text-sm text-gray-400">
-                  Automated ETL pipeline for public housing datasets; SQL modelling; analytics
-                  dashboards.
-                </p>
-                <p className="mb-4 text-sm text-gray-500">Python, SQL, Power BI</p>
-                <a
-                  href="https://github.com/gogiraFoundation"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-purple-400 underline hover:text-purple-300"
-                >
-                  GitHub
-                </a>
-              </GlowCard>
-              <GlowCard glowColor="purple" className="p-6 text-left md:p-8">
-                <h3 className="mb-2 text-lg font-semibold text-white">
-                  Power forecasting with Python
-                </h3>
-                <p className="mb-3 text-sm text-gray-400">
-                  Academic project: regression models for solar and wind scenarios; pandas-based
-                  data prep and interactive dashboards.
-                </p>
-                <p className="text-sm text-gray-500">Python, Pandas, NumPy</p>
-              </GlowCard>
-            </div>
-          </section>
-
-          <section>
-            <h2 className="mb-8 text-3xl font-bold text-white md:mb-12 md:text-4xl">
-              Awards &amp; certifications
-            </h2>
-            <GlowCard glowColor="purple" className="p-8 md:p-12">
+            <GlowCard className="p-8 md:p-12">
               <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
                 <div>
-                  <h3 className="mb-3 text-lg font-semibold text-white">Awards &amp; volunteer</h3>
-                  <ul className="list-disc space-y-2 pl-5 text-gray-300">
+                  <h3 className="mb-3 text-lg font-semibold text-brutal-ink">Awards &amp; volunteer work</h3>
+                  <ul className="list-disc space-y-2 pl-5 text-brutal-muted">
                     <li>Google Africa Developer Scholarship — 2022</li>
                     <li>Polygon Africa Bootcamp — 2022</li>
-                    <li>N-agro scheme — volunteer agro-extension officer — 2018 – 2020</li>
+                    <li>N-agro Scheme — Volunteer Agro-Extension Officer (2018 – 2020)</li>
                     <li>
-                      Award of Excellence — community agricultural programmes (NYSC-CDS), Niger
-                      State — 2017
+                      Award of Excellence — Community Agricultural Programmes (NYSC-CDS), Niger State — 2017
                     </li>
                   </ul>
                 </div>
                 <div>
-                  <h3 className="mb-3 text-lg font-semibold text-white">Certifications</h3>
-                  <ul className="list-disc space-y-2 pl-5 text-gray-300">
+                  <h3 className="mb-3 text-lg font-semibold text-brutal-ink">Certifications</h3>
+                  <ul className="list-disc space-y-2 pl-5 text-brutal-muted">
                     <li>University of London (Coursera): Understanding Research Methods</li>
                     <li>Google Project Management Foundations</li>
                     <li>Google Cloud Platform</li>
+                    <li>AWS Certified Solutions Architect (In Progress)</li>
                   </ul>
                 </div>
               </div>
             </GlowCard>
           </section>
 
-          <section>
-            <h2 className="mb-8 text-3xl font-bold text-white md:mb-12 md:text-4xl">
-              Beyond the Code
+          <section aria-labelledby="testimonials-heading">
+            <h2 id="testimonials-heading" className="mb-8 text-center font-serif text-3xl font-semibold text-brutal-ink md:mb-12 md:text-4xl">
+              <GradientText>Testimonials</GradientText>
             </h2>
-            <div className="glass space-y-6 rounded-2xl p-8 md:p-12">
-              <p className="text-justify text-lg leading-relaxed text-gray-300 md:text-xl">
-                Renewable energy modelling and software engineering together shape how I think about
-                robust, measurable systems—whether optimising energy use or shipping secure APIs. I
-                care about accessible technology and products that organisations can rely on day to
-                day.
-              </p>
-            </div>
+            <TestimonialsCarousel testimonials={STATIC_TESTIMONIALS} />
           </section>
 
-          <section>
-            <h2 className="mb-8 text-3xl font-bold text-white md:mb-12 md:text-4xl">
-              Connect With Me
+          <section
+            aria-labelledby="connect-heading"
+            className="mx-auto w-full max-w-[40%] text-center"
+          >
+            <h2
+              id="connect-heading"
+              className="mb-6 text-center font-serif text-3xl font-semibold text-brutal-ink md:mb-8 md:text-4xl"
+            >
+              Connect with me
             </h2>
-            <div className="mt-6 flex flex-wrap justify-center gap-4 md:gap-6">
+            <div className="flex w-full justify-center overflow-x-auto [-webkit-overflow-scrolling:touch]">
+              <div className="inline-flex w-max translate-x-[calc(10px-1.25rem)] flex-nowrap items-center justify-center gap-2 sm:translate-x-[calc(10px-2rem)] sm:gap-3">
               <a
                 href="https://medium.com/@aigbemanuel"
                 target="_blank"
                 rel="me noopener noreferrer"
-                className="glass group flex items-center gap-2 rounded-lg border border-purple-500/20 px-5 py-2 font-semibold text-white transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-transparent"
+                className={CONNECT_LINK_CLASS}
               >
-                <BookOpen className="h-5 w-5" />
+                <BookOpen className={CONNECT_ICON_CLASS} aria-hidden />
                 <span>Medium</span>
               </a>
               <a
                 href="https://www.linkedin.com/in/emmanuel-ugbaje-b19227161/"
                 target="_blank"
                 rel="me noopener noreferrer"
-                className="group flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2 font-semibold text-white transition-all duration-300 hover:scale-105 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-transparent"
+                className={CONNECT_LINK_CLASS}
               >
-                <Linkedin className="h-5 w-5" />
+                <Linkedin className={CONNECT_ICON_CLASS} aria-hidden />
                 <span>LinkedIn</span>
               </a>
-              <a
-                href="mailto:dev@gogirlabs.uk"
-                className="group flex items-center gap-2 rounded-lg border border-gray-500/40 bg-white/5 px-5 py-2 font-semibold text-white transition-all duration-300 hover:scale-105 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-transparent"
-              >
-                <Mail className="h-5 w-5" />
+              <a href="mailto:dev@gogirlabs.uk" className={CONNECT_LINK_CLASS}>
+                <Mail className={CONNECT_ICON_CLASS} aria-hidden />
                 <span>Email</span>
               </a>
               <a
                 href="https://github.com/gogiraFoundation"
                 target="_blank"
                 rel="me noopener noreferrer"
-                className="group flex items-center gap-2 rounded-lg bg-gradient-primary px-5 py-2 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-glow-purple focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-transparent"
+                className={CONNECT_LINK_CLASS}
               >
-                <Github className="h-5 w-5" />
+                <Github className={CONNECT_ICON_CLASS} aria-hidden />
                 <span>GitHub</span>
               </a>
+              </div>
             </div>
           </section>
-
-          {testimonials && testimonials.length > 0 && (
-            <section>
-              <h2 className="mb-8 text-center text-3xl font-bold text-white md:mb-12 md:text-4xl">
-                <GradientText>Testimonials</GradientText>
-              </h2>
-              <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:gap-12">
-                {testimonials.slice(0, 4).map((testimonial) => (
-                  <TestimonialCard key={testimonial.id} testimonial={testimonial} />
-                ))}
-              </div>
-            </section>
-          )}
         </div>
       </main>
       <Footer />

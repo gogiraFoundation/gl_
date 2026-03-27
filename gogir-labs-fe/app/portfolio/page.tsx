@@ -45,7 +45,7 @@ export default function PortfolioPage() {
     document.title = 'Portfolio | Emmanuel Ugbaje — Software Engineering & Cloud Projects'
     const metaDescription = document.querySelector('meta[name="description"]')
     const descriptionContent =
-      'Explore projects by Emmanuel Ugbaje: Python, Django, cloud infrastructure, CI/CD, data platforms, and scalable backends.'
+      'Real-world projects demonstrating expertise in cloud infrastructure, infrastructure as code, CI/CD automation, and scalable platform design.'
     if (metaDescription) {
       metaDescription.setAttribute('content', descriptionContent)
     } else {
@@ -107,24 +107,17 @@ export default function PortfolioPage() {
   })
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="animate-page-fade flex min-h-screen flex-col bg-brutal-bg">
       <Header />
-      <main className="relative flex-grow px-4 py-20 sm:px-6">
-        {/* Background */}
-        <div className="absolute inset-0 bg-gradient-mesh opacity-40" aria-hidden />
-        <div
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(139,92,246,0.18),transparent_55%)]"
-          aria-hidden
-        />
-
-        <div className="relative z-10 mx-auto max-w-7xl">
-          <div className="mb-14 animate-fade-in-up text-center md:mb-16">
-            <h1 className="mb-5 text-5xl font-bold tracking-tight md:mb-6 md:text-6xl">
-              <span className="gradient-text">Portfolio</span>
+      <main className="relative flex-grow border-b border-brutal-ink/10 py-20">
+        <div className="container-content relative z-10">
+          <div className="mb-14 text-left md:mb-16">
+            <h1 className="mb-5 font-serif text-5xl font-semibold tracking-tight text-brutal-ink md:mb-6 md:text-6xl">
+              Portfolio
             </h1>
-            <p className="mx-auto max-w-2xl text-lg leading-relaxed text-slate-600 dark:text-gray-400 md:text-xl">
-              Real‑world projects demonstrating expertise in cloud infrastructure, Infrastructure as
-              Code (Terraform, Kubernetes), CI/CD automation, and scalable platform design.
+            <p className="max-w-2xl text-lg leading-relaxed text-brutal-muted md:text-xl">
+              Real-world projects demonstrating expertise in cloud infrastructure, infrastructure as
+              code, CI/CD automation, and scalable platform design.
             </p>
           </div>
 
@@ -140,13 +133,11 @@ export default function PortfolioPage() {
           />
 
           {(isLoading || isFetching) && !typedProjects.length ? (
-            <div className="py-12 text-center text-slate-500 dark:text-gray-400">
-              Loading projects...
-            </div>
+            <div className="py-12 text-center font-sans text-brutal-muted">Loading projects…</div>
           ) : error ? (
-            <div className="py-12 text-center text-red-600 dark:text-red-400">
-              <p className="mb-2">Error loading projects</p>
-              <p className="text-sm text-slate-600 dark:text-gray-400">
+            <div className="py-12 text-center text-red-700">
+              <p className="mb-2 font-medium">Error loading projects</p>
+              <p className="text-sm text-brutal-muted">
                 {error instanceof Error ? error.message : 'Unknown error'}
               </p>
             </div>
@@ -154,20 +145,18 @@ export default function PortfolioPage() {
             <ProjectGrid projects={typedProjects} />
           )}
 
-          {typedProjects.length > 0 && (
-            <div className="mt-20 rounded-2xl border border-[var(--cta-border)] bg-[var(--cta-surface)] p-6 text-center shadow-lg shadow-slate-950/5 backdrop-blur-sm dark:shadow-black/10 md:mt-24 md:p-8">
-              <p className="text-base leading-relaxed text-[var(--text-secondary)] md:text-lg">
-                Interested in a custom solution or want to discuss a project?{' '}
-                <Link
-                  href="/contact"
-                  className="decoration-[var(--accent-primary)]/40 font-medium text-[var(--accent-primary)] underline underline-offset-4 transition-colors duration-200 hover:opacity-90 dark:text-purple-400 dark:decoration-purple-400/40 dark:hover:text-purple-300"
-                >
-                  Get in touch
-                </Link>
-                .
-              </p>
-            </div>
-          )}
+          <div className="mt-20 mx-auto w-full max-w-3xl bg-brutal-bg p-6 text-center opacity-0 transition-all duration-500 ease-out [animation:fadeIn_0.55s_ease-out_forwards] md:mt-24 md:w-[40%] md:p-8">
+            <p className="text-center text-base leading-relaxed text-brutal-ink md:text-lg">
+              Interested in a custom solution or planning your next platform build?{' '}
+              <Link
+                href="/contact"
+                className="font-medium text-brutal-ink underline underline-offset-4 transition-all duration-300 ease-out hover:opacity-70"
+              >
+                Get in touch
+              </Link>
+              .
+            </p>
+          </div>
         </div>
       </main>
       <Footer />

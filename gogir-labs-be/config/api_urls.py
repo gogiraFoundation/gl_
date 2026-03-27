@@ -4,6 +4,7 @@ API URL routing configuration.
 
 from django.urls import include, path
 from rest_framework.permissions import AllowAny
+from rest_framework.throttling import ScopedRateThrottle
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -13,10 +14,14 @@ from rest_framework_simplejwt.views import (
 # Create custom views that explicitly allow unauthenticated access
 class PublicTokenObtainPairView(TokenObtainPairView):
     permission_classes = [AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "auth"
 
 
 class PublicTokenRefreshView(TokenRefreshView):
     permission_classes = [AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "auth"
 
 
 urlpatterns = [

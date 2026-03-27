@@ -19,13 +19,12 @@ const contactSchema = z.object({
 type ContactFormData = z.infer<typeof contactSchema>
 
 const fieldClass = cn(
-  'w-full min-h-[48px] rounded-xl border px-4 py-3 text-[var(--text-primary)] transition-all duration-200',
-  'border-[var(--border-default)] bg-[var(--surface-input)]',
-  'placeholder:text-[var(--text-tertiary)]',
-  'focus:border-[var(--border-focus)] focus:outline-none focus:ring-2 focus:ring-[var(--border-focus)]'
+  'contact-input w-full min-h-[48px] border border-[orangered] bg-brutal-bg px-4 py-3 text-brutal-ink transition-[opacity,box-shadow] duration-200 hover:shadow-[0_8px_20px_rgba(107,114,128,0.25),0_4px_10px_rgba(0,0,0,0.25)]',
+  'placeholder:text-brutal-muted',
+  'focus:border-[orangered] focus:outline-none'
 )
 
-const labelClass = 'mb-1.5 block text-sm font-semibold text-[var(--text-primary)]'
+const labelClass = 'mb-1.5 block text-sm font-semibold text-brutal-ink'
 
 export function ContactForm() {
   const { trackFormSubmit } = useAnalyticsEvent()
@@ -95,9 +94,7 @@ export function ContactForm() {
           placeholder="Your name"
           autoComplete="name"
         />
-        {errors.name && (
-          <p className="text-sm text-red-600 dark:text-red-400">{errors.name.message}</p>
-        )}
+        {errors.name && <p className="text-sm text-red-700">{errors.name.message}</p>}
       </div>
 
       <div className="space-y-2">
@@ -112,9 +109,7 @@ export function ContactForm() {
           placeholder="your.email@example.com"
           autoComplete="email"
         />
-        {errors.email && (
-          <p className="text-sm text-red-600 dark:text-red-400">{errors.email.message}</p>
-        )}
+        {errors.email && <p className="text-sm text-red-700">{errors.email.message}</p>}
       </div>
 
       <div className="space-y-2">
@@ -126,12 +121,10 @@ export function ContactForm() {
           id="subject"
           {...register('subject')}
           className={fieldClass}
-          placeholder="What's this about?"
+          placeholder="What’s this regarding?"
           autoComplete="off"
         />
-        {errors.subject && (
-          <p className="text-sm text-red-600 dark:text-red-400">{errors.subject.message}</p>
-        )}
+        {errors.subject && <p className="text-sm text-red-700">{errors.subject.message}</p>}
       </div>
 
       <div className="space-y-2">
@@ -143,22 +136,20 @@ export function ContactForm() {
           rows={6}
           {...register('message')}
           className={cn(fieldClass, 'min-h-[140px] resize-none')}
-          placeholder="Tell me about your project or opportunity..."
+          placeholder="Tell me about your project, requirements, or opportunity…"
           autoComplete="off"
         />
-        {errors.message && (
-          <p className="text-sm text-red-600 dark:text-red-400">{errors.message.message}</p>
-        )}
+        {errors.message && <p className="text-sm text-red-700">{errors.message.message}</p>}
       </div>
 
       {submitStatus === 'success' && (
-        <div className="rounded-xl border border-green-600/40 bg-green-500/10 p-4 text-green-800 dark:border-green-500/50 dark:bg-green-500/20 dark:text-green-300">
+        <div className="border border-brutal-ink/20 p-4 text-brutal-ink">
           Thank you for your message! We will get back to you soon.
         </div>
       )}
 
       {submitStatus === 'error' && (
-        <div className="rounded-xl border border-red-600/40 bg-red-500/10 p-4 text-red-800 dark:border-red-500/50 dark:bg-red-500/20 dark:text-red-300">
+        <div className="border border-brutal-ink/20 p-4 text-red-700">
           There was an error submitting your message. Please try again.
         </div>
       )}
@@ -166,7 +157,7 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="mt-2 inline-flex min-h-[44px] w-full items-center justify-center rounded-full bg-gradient-primary px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-200 ease-out hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-900/25 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100 dark:hover:shadow-purple-900/35"
+        className="mx-auto mt-[10px] flex min-h-[38px] w-[72%] items-center justify-center border border-brutal-ink bg-transparent px-3 py-2 text-[11px] font-bold text-brutal-ink shadow-[0_10px_24px_rgba(255,69,0,0.24),0_4px_12px_rgba(112,128,144,0.34),0_1px_0_rgba(255,255,255,0.35)_inset] transition-[color,box-shadow,border-color] hover:cursor-default hover:text-[orangered] hover:shadow-[0_12px_28px_rgba(255,69,0,0.3),0_6px_16px_rgba(112,128,144,0.4),0_1px_0_rgba(255,255,255,0.4)_inset] active:border-[lightgreen] sm:w-[34%] disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isSubmitting ? 'Sending...' : 'Discuss Your Project'}
       </button>

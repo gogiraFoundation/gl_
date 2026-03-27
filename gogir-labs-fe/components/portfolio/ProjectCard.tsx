@@ -2,9 +2,10 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight, Code, Globe, Star } from 'lucide-react'
-import { GlowCard } from '@/components/ui/GlowCard'
+import { ArrowRight } from 'lucide-react'
 import { useAnalyticsEvent } from '@/hooks/useAnalyticsEvent'
+import { cn } from '@/lib/utils'
+import { getPortfolioCardCopy } from '@/lib/portfolioCopy'
 
 interface Project {
   id: number
@@ -22,92 +23,74 @@ interface Project {
 
 interface ProjectCardProps {
   project: Project
-  /** Default false: avoids Next.js RSC prefetch noise (and occasional CDN 404s) on dynamic /portfolio/[slug] */
   linkPrefetch?: boolean
+}
+
+function projectImageSrc(project: Project): string {
+  if (project.featured_image) return project.featured_image
+  return `https://picsum.photos/seed/gogir-${project.id}/800/500`
 }
 
 export function ProjectCard({ project, linkPrefetch = false }: ProjectCardProps) {
   const { trackClick } = useAnalyticsEvent()
-
-  const Icon = project.category?.name.toLowerCase().includes('web')
-    ? Globe
-    : project.category?.name.toLowerCase().includes('mobile')
-      ? Code
-      : Star
+  const src = projectImageSrc(project)
+  const animationDelay = `${(project.id % 6) * 70}ms`
+  const editorial = getPortfolioCardCopy(project.slug)
+  const description = editorial?.description ?? project.description
+  const categoryLine = editorial
+    ? `Category: ${editorial.categoryLabel}`
+    : project.category?.name
 
   return (
-    <GlowCard variant="portfolio" glowColor="purple" className="group flex h-full flex-col">
-      {/* Icon and Image Section */}
-      <div className="mb-5 flex items-start gap-4">
-        <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-primary shadow-lg shadow-purple-900/30 md:h-16 md:w-16">
-          <Icon className="h-7 w-7 text-white md:h-8 md:w-8" />
+    <article
+      className="project-card-brutal group flex h-full flex-col border border-brutal-ink/10 bg-brutal-bg/55 p-2 opacity-0 transition-all duration-500 ease-out [animation:fadeIn_0.55s_ease-out_forwards] hover:-translate-y-0.5 hover:border-brutal-ink/20 hover:shadow-[0_8px_18px_rgba(0,0,0,0.06)]"
+      style={{ animationDelay }}
+    >
+      <Link
+        href={`/portfolio/${project.slug}`}
+        prefetch={linkPrefetch}
+        onClick={() =>
+          trackClick('project_view', {
+            projectId: project.id,
+            projectTitle: project.title,
+            category: project.category?.name,
+          })
+        }
+        className="flex flex-1 flex-col focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brutal-ink"
+      >
+        <div className="relative aspect-[16/9] w-full overflow-hidden bg-brutal-ink/05">
+          <Image
+            src={src}
+            alt={`${project.title} preview`}
+            fill
+            className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.02]"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 16vw"
+            loading="lazy"
+          />
         </div>
-        {project.featured_image && (
-          <div className="relative h-28 flex-1 overflow-hidden rounded-2xl shadow-md ring-1 ring-slate-200/80 dark:ring-white/10 md:h-32">
-            <Image
-              src={project.featured_image}
-              alt={`${project.title} - ${project.category?.name || 'Project'} showcase`}
-              fill
-              className="object-cover transition-transform duration-300 ease-out group-hover:scale-[1.03]"
-              loading="lazy"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            />
-          </div>
-        )}
-      </div>
-
-      {/* Content */}
-      <div className="flex-grow">
-        {project.category && (
-          <span className="text-xs font-semibold uppercase tracking-wider text-purple-800 dark:text-purple-400/95">
-            {project.category.name}
-          </span>
-        )}
-        <h3 className="mb-2 mt-2 text-xl font-bold leading-tight tracking-tight text-[var(--text-primary)] md:text-[1.35rem]">
-          {project.title}
-        </h3>
-        <p className="text-theme-muted mb-5 line-clamp-3 text-sm leading-relaxed md:text-[0.9375rem]">
-          {project.description}
-        </p>
-
-        {/* Technologies */}
-        {project.technologies.length > 0 && (
-          <div className="mb-6 flex flex-wrap gap-2">
-            {project.technologies.slice(0, 3).map((tech) => (
-              <span
-                key={tech.id}
-                className="rounded-full bg-purple-100/90 px-3 py-1 text-xs font-medium text-purple-900 ring-1 ring-slate-200/90 transition-colors duration-200 hover:bg-purple-200/90 dark:bg-purple-500/15 dark:text-purple-200/90 dark:ring-white/10 dark:hover:bg-purple-500/25"
-              >
-                {tech.name}
-              </span>
-            ))}
-            {project.technologies.length > 3 && (
-              <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700 ring-1 ring-slate-200 dark:bg-white/5 dark:text-purple-200/80 dark:ring-white/10">
-                +{project.technologies.length - 3}
-              </span>
+        <div className="flex flex-1 flex-col pt-4">
+          {categoryLine && (
+            <span className="text-meta mb-2 block text-center text-[10px] font-sans font-normal uppercase tracking-[0.1em] text-brutal-muted/80">
+              {categoryLine}
+            </span>
+          )}
+          <h3
+            className={cn(
+              'text-center font-sans text-base font-semibold leading-tight text-brutal-ink transition-[border-color] duration-300 md:text-lg',
+              'border-b-2 border-transparent pb-1 group-hover:border-brutal-ink'
             )}
-          </div>
-        )}
-      </div>
-
-      {/* Action Button */}
-      <div className="mt-auto pt-1">
-        <Link
-          href={`/portfolio/${project.slug}`}
-          prefetch={linkPrefetch}
-          onClick={() =>
-            trackClick('project_view', {
-              projectId: project.id,
-              projectTitle: project.title,
-              category: project.category?.name,
-            })
-          }
-          className="group inline-flex w-fit items-center gap-2 rounded-full bg-gradient-primary px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple-900/25 transition-all duration-200 ease-out hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-900/35 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-400"
-        >
-          <span>Learn more</span>
-          <ArrowRight className="h-4 w-4 transition-transform duration-200 ease-out group-hover:translate-x-1" />
-        </Link>
-      </div>
-    </GlowCard>
+          >
+            {project.title}
+          </h3>
+          <p className="text-meta mt-2 mx-auto line-clamp-5 flex-1 text-center font-sans leading-relaxed text-brutal-muted">
+            {description}
+          </p>
+          <span className="mt-4 inline-flex w-full items-center justify-center gap-2 text-center font-sans text-sm font-semibold text-brutal-ink transition-all duration-500 ease-out group-hover:translate-x-0.5 group-hover:opacity-75">
+            View Case Study
+            <ArrowRight className="h-4 w-4 transition-transform duration-500 ease-out group-hover:translate-x-0.5" aria-hidden />
+          </span>
+        </div>
+      </Link>
+    </article>
   )
 }

@@ -1,6 +1,6 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 
 from .models import Testimonial
 from .serializers import TestimonialListSerializer, TestimonialSerializer
@@ -12,7 +12,7 @@ class TestimonialViewSet(viewsets.ModelViewSet):
     """
 
     queryset = Testimonial.objects.filter(published=True)
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_fields = ["featured", "published", "rating"]
     ordering_fields = ["order", "created_at"]

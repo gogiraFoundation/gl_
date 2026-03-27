@@ -16,18 +16,24 @@ const config: Config = {
         md: '768px',
         lg: '1024px',
         xl: '1280px',
-        '2xl': '1200px', // Custom max-width for content
+        '2xl': '1400px',
       },
     },
     extend: {
       maxWidth: {
         content: '1200px',
+        shell: '1400px',
       },
       spacing: {
         section: '4rem', // 64px for section spacing
         inner: '1.5rem', // 24px for inner padding
       },
       colors: {
+        brutal: {
+          bg: '#FFFFFF',
+          ink: '#111111',
+          muted: '#4A4A4A',
+        },
         primary: {
           50: '#faf5ff',
           100: '#f3e8ff',
@@ -55,6 +61,23 @@ const config: Config = {
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        serif: [
+          'var(--font-serif)',
+          'Times New Roman',
+          'Garamond',
+          'Georgia',
+          'serif',
+        ],
+        mono: [
+          'ui-monospace',
+          'SFMono-Regular',
+          'Menlo',
+          'Monaco',
+          'Consolas',
+          'Liberation Mono',
+          'Courier New',
+          'monospace',
+        ],
       },
       backgroundImage: {
         'gradient-primary': 'linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%)',
@@ -68,6 +91,10 @@ const config: Config = {
         'glow-purple': '0 0 20px rgba(139, 92, 246, 0.5), 0 0 40px rgba(139, 92, 246, 0.3)',
         'glow-blue': '0 0 20px rgba(59, 130, 246, 0.5), 0 0 40px rgba(59, 130, 246, 0.3)',
         'glow-white': '0 0 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(255, 255, 255, 0.1)',
+        'glow-orange':
+          '0 0 18px rgba(255, 69, 0, 0.45), 0 0 36px rgba(255, 99, 71, 0.25)',
+        'glow-orange-lg':
+          '0 0 28px rgba(255, 69, 0, 0.55), 0 0 52px rgba(255, 140, 0, 0.3)',
       },
       animation: {
         float: 'float 6s ease-in-out infinite',
@@ -77,6 +104,11 @@ const config: Config = {
         'slide-in-left': 'slideInLeft 0.6s ease-out',
         'slide-in-right': 'slideInRight 0.6s ease-out',
         'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
+        'solar-orbit': 'solarOrbit 80s linear infinite',
+        'solar-counter': 'solarCounter 80s linear infinite',
+        'solar-pulse': 'solarPulse 3.5s ease-in-out infinite',
+        'solar-ring': 'solarRing 20s linear infinite',
+        'testimonial-marquee': 'testimonialMarquee 42s linear infinite',
       },
       keyframes: {
         float: {
@@ -105,6 +137,32 @@ const config: Config = {
         slideInRight: {
           from: { opacity: '0', transform: 'translateX(50px)' },
           to: { opacity: '1', transform: 'translateX(0)' },
+        },
+        solarOrbit: {
+          from: { transform: 'rotate(0deg)' },
+          to: { transform: 'rotate(360deg)' },
+        },
+        solarCounter: {
+          from: { transform: 'translate(-50%, -50%) rotate(0deg)' },
+          to: { transform: 'translate(-50%, -50%) rotate(-360deg)' },
+        },
+        solarPulse: {
+          '0%, 100%': {
+            boxShadow:
+              '0 0 22px rgba(255, 69, 0, 0.5), 0 0 44px rgba(255, 99, 71, 0.22)',
+          },
+          '50%': {
+            boxShadow:
+              '0 0 36px rgba(255, 69, 0, 0.7), 0 0 58px rgba(255, 140, 0, 0.32)',
+          },
+        },
+        solarRing: {
+          from: { transform: 'rotate(0deg)' },
+          to: { transform: 'rotate(360deg)' },
+        },
+        testimonialMarquee: {
+          from: { transform: 'translateX(0)' },
+          to: { transform: 'translateX(-50%)' },
         },
       },
     },

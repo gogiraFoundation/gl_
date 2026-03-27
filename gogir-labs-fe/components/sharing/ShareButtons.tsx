@@ -62,13 +62,13 @@ export function ShareButtons({ url, title, description = '', type = 'blog' }: Sh
 
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <span className="text-sm text-gray-400">Share:</span>
+      <span className="text-sm text-brutal-muted">Share:</span>
 
       {/* Native Share (Mobile) */}
       {typeof navigator !== 'undefined' && typeof navigator.share === 'function' && (
         <button
           onClick={() => handleShare('native', '')}
-          className="flex items-center gap-2 rounded-lg bg-gray-800 px-4 py-2 text-white transition-colors hover:bg-gray-700"
+          className="flex items-center gap-2 rounded-sm border border-brutal-ink/20 bg-brutal-bg px-4 py-2 text-brutal-ink transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(0,0,0,0.1)]"
           aria-label="Share"
         >
           <Share2 className="h-4 w-4" />
@@ -79,7 +79,7 @@ export function ShareButtons({ url, title, description = '', type = 'blog' }: Sh
       {/* Twitter */}
       <button
         onClick={() => handleShare('twitter', shareLinks.twitter)}
-        className="flex items-center gap-2 rounded-lg bg-gray-800 px-4 py-2 text-white transition-colors hover:bg-blue-500"
+        className="flex items-center gap-2 rounded-sm border border-brutal-ink/20 bg-brutal-bg px-4 py-2 text-brutal-ink transition-[transform,box-shadow,color] duration-300 hover:-translate-y-0.5 hover:text-[orangered] hover:shadow-[0_10px_24px_rgba(0,0,0,0.1)]"
         aria-label="Share on Twitter"
       >
         <Twitter className="h-4 w-4" />
@@ -89,7 +89,7 @@ export function ShareButtons({ url, title, description = '', type = 'blog' }: Sh
       {/* LinkedIn */}
       <button
         onClick={() => handleShare('linkedin', shareLinks.linkedin)}
-        className="flex items-center gap-2 rounded-lg bg-gray-800 px-4 py-2 text-white transition-colors hover:bg-blue-600"
+        className="flex items-center gap-2 rounded-sm border border-brutal-ink/20 bg-brutal-bg px-4 py-2 text-brutal-ink transition-[transform,box-shadow,color] duration-300 hover:-translate-y-0.5 hover:text-[orangered] hover:shadow-[0_10px_24px_rgba(0,0,0,0.1)]"
         aria-label="Share on LinkedIn"
       >
         <Linkedin className="h-4 w-4" />
@@ -99,7 +99,7 @@ export function ShareButtons({ url, title, description = '', type = 'blog' }: Sh
       {/* Facebook */}
       <button
         onClick={() => handleShare('facebook', shareLinks.facebook)}
-        className="flex items-center gap-2 rounded-lg bg-gray-800 px-4 py-2 text-white transition-colors hover:bg-blue-700"
+        className="flex items-center gap-2 rounded-sm border border-brutal-ink/20 bg-brutal-bg px-4 py-2 text-brutal-ink transition-[transform,box-shadow,color] duration-300 hover:-translate-y-0.5 hover:text-[orangered] hover:shadow-[0_10px_24px_rgba(0,0,0,0.1)]"
         aria-label="Share on Facebook"
       >
         <Facebook className="h-4 w-4" />
@@ -109,7 +109,7 @@ export function ShareButtons({ url, title, description = '', type = 'blog' }: Sh
       {/* Copy Link */}
       <button
         onClick={handleCopyLink}
-        className="flex items-center gap-2 rounded-lg bg-gray-800 px-4 py-2 text-white transition-colors hover:bg-gray-700"
+        className="flex items-center gap-2 rounded-sm border border-brutal-ink/20 bg-brutal-bg px-4 py-2 text-brutal-ink transition-[transform,box-shadow,color] duration-300 hover:-translate-y-0.5 hover:text-[orangered] hover:shadow-[0_10px_24px_rgba(0,0,0,0.1)]"
         aria-label="Copy link"
       >
         {copied ? (
