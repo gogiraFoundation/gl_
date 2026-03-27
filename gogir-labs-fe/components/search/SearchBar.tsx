@@ -90,7 +90,10 @@ export function SearchBar() {
     <div ref={searchRef} className="relative">
       {/* Search Button/Input */}
       <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
+        aria-haspopup="dialog"
         className="group flex items-center gap-2 rounded-sm bg-brutal-ink/[0.05] px-2.5 py-2 text-brutal-muted shadow-[0_2px_10px_rgba(0,0,0,0.05),0_1px_0_rgba(255,255,255,0.06)_inset] transition-[transform,box-shadow,color,background-color,opacity] duration-300 hover:-translate-y-0.5 hover:bg-brutal-ink/[0.08] hover:text-[orangered] hover:shadow-[0_10px_24px_rgba(0,0,0,0.1)] motion-reduce:hover:translate-y-0"
         aria-label="Search"
       >
@@ -102,11 +105,18 @@ export function SearchBar() {
 
       {/* Search Modal */}
       {isOpen && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-[min(24rem,90vw)] max-w-full animate-fade-in-up rounded-sm border border-brutal-ink/15 bg-brutal-bg shadow-[0_16px_36px_rgba(0,0,0,0.12)]">
+        <div
+          role="dialog"
+          aria-label="Search"
+          className="absolute right-0 top-full z-50 mt-2 w-[min(24rem,90vw)] max-w-full animate-fade-in-up rounded-sm border border-brutal-ink/15 bg-brutal-bg shadow-[0_16px_36px_rgba(0,0,0,0.12)]"
+        >
           {/* Search Input */}
           <div className="border-b border-brutal-ink/15 p-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-brutal-muted" />
+              <Search
+                aria-hidden
+                className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-brutal-muted"
+              />
               <input
                 type="text"
                 value={query}
@@ -117,8 +127,10 @@ export function SearchBar() {
               />
               {query && (
                 <button
+                  type="button"
                   onClick={() => setQuery('')}
                   className="absolute right-3 top-1/2 -translate-y-1/2 transform text-brutal-muted transition-colors hover:text-[orangered]"
+                  aria-label="Clear search"
                 >
                   <X className="h-4 w-4" />
                 </button>
