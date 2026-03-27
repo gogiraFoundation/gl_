@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status, views
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 
 from .models import NewsletterSubscriber
@@ -22,6 +22,7 @@ class NewsletterSubscribeView(generics.CreateAPIView):
 
     serializer_class = NewsletterSubscribeSerializer
     permission_classes = [AllowAny]
+    throttle_scope = "newsletter_subscribe"
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -50,6 +51,7 @@ class NewsletterVerifyView(views.APIView):
     """
 
     permission_classes = [AllowAny]
+    throttle_scope = "newsletter_verify"
 
     def get(self, request, token):
         try:
@@ -81,6 +83,7 @@ class NewsletterUnsubscribeView(views.APIView):
     """
 
     permission_classes = [AllowAny]
+    throttle_scope = "newsletter_unsubscribe"
 
     def post(self, request):
         serializer = NewsletterUnsubscribeSerializer(data=request.data)
@@ -88,25 +91,22 @@ class NewsletterUnsubscribeView(views.APIView):
 
         token = serializer.validated_data.get("token")
         email = serializer.validated_data.get("email")
+        generic_message = (
+            "If a matching subscription exists, it has been unsubscribed successfully."
+        )
 
         if token:
             try:
                 subscriber = NewsletterSubscriber.objects.get(unsubscribe_token=token)
             except NewsletterSubscriber.DoesNotExist:
-                return Response(
-                    {"error": "Invalid unsubscribe token."},
-                    status=status.HTTP_404_NOT_FOUND,
-                )
+                return Response({"message": generic_message}, status=status.HTTP_200_OK)
         elif email:
             try:
                 subscriber = NewsletterSubscriber.objects.get(
                     email=email.lower().strip()
                 )
             except NewsletterSubscriber.DoesNotExist:
-                return Response(
-                    {"error": "Email not found in our newsletter list."},
-                    status=status.HTTP_404_NOT_FOUND,
-                )
+                return Response({"message": generic_message}, status=status.HTTP_200_OK)
         else:
             return Response(
                 {"error": "Either token or email must be provided."},
@@ -114,17 +114,12 @@ class NewsletterUnsubscribeView(views.APIView):
             )
 
         if not subscriber.is_active:
-            return Response(
-                {"message": "You are already unsubscribed."}, status=status.HTTP_200_OK
-            )
+            return Response({"message": generic_message}, status=status.HTTP_200_OK)
 
         subscriber.unsubscribe()
         NewsletterService.send_unsubscribe_confirmation(subscriber)
 
-        return Response(
-            {"message": "Successfully unsubscribed from newsletter."},
-            status=status.HTTP_200_OK,
-        )
+        return Response({"message": generic_message}, status=status.HTTP_200_OK)
 
 
 class NewsletterSubscriberListView(generics.ListAPIView):
@@ -134,7 +129,7 @@ class NewsletterSubscriberListView(generics.ListAPIView):
 
     queryset = NewsletterSubscriber.objects.all()
     serializer_class = NewsletterSubscriberSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -162,7 +157,7 @@ class NewsletterStatsView(views.APIView):
     Get newsletter subscription statistics (admin only).
     """
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
 
     def get(self, request):
         total = NewsletterSubscriber.objects.count()
@@ -188,7 +183,7 @@ class NewsletterSendView(views.APIView):
     Send newsletter to subscribers (admin only).
     """
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
 
     def post(self, request):
         serializer = NewsletterSendSerializer(data=request.data)

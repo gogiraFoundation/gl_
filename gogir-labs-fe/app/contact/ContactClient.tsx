@@ -4,121 +4,145 @@ import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { ContactForm } from '@/components/contact/ContactForm'
 import { GradientText } from '@/components/ui/GradientText'
-import { Mail, Github, Linkedin, BookOpen } from 'lucide-react'
 import Script from 'next/script'
 
 export default function ContactClient() {
   const contactSchema = {
     '@context': 'https://schema.org',
     '@type': 'ContactPoint',
-    email: 'aigbemanuel@gmail.com',
+    email: 'gogiraFoundation@gmail.com',
     contactType: 'Professional service',
     areaServed: 'Worldwide',
     availableLanguage: ['English'],
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-brutal-bg">
       <Header />
 
       <main className="relative flex-grow px-4 py-16 sm:px-6 sm:py-20">
-        <div className="absolute inset-0 bg-gradient-mesh opacity-30" />
-
         <div className="relative z-10 mx-auto max-w-6xl">
-          <div className="mb-12 animate-fade-in-up text-center md:mb-16">
-            <h1 className="mb-4 text-4xl font-bold sm:text-5xl md:text-6xl">
-              <span className="text-[var(--text-primary)]">Hi </span>
-              <span className="text-[var(--text-tertiary)]">...</span>{' '}
+          <div className="mb-12 text-center md:mb-16">
+            <h1 className="mb-4 font-sans text-4xl font-semibold text-brutal-ink sm:text-5xl md:text-6xl">
               <GradientText>Let&apos;s Chat</GradientText>
             </h1>
 
-            <div className="container-content mx-auto max-w-2xl space-y-4 text-left md:text-center">
-              <p className="text-xl text-[var(--text-secondary)]">
-                Interested in collaborating or have a scalable cloud project in mind? Let&apos;s
+            <div className="container-content mx-auto mt-[20px] max-w-3xl space-y-4 text-center">
+              <p className="mx-auto text-justify text-xl text-brutal-ink">
+                Interested in collaborating or building a scalable, cloud-native solution? Let&apos;s
                 connect.
               </p>
-              <p className="text-lg text-[var(--text-tertiary)]">
-                Ready to discuss how technology can improve the overall outlook of your business?
-                Whether you have a project in mind or want to explore how I can contribute to your
-                cross-functional team, I&apos;d love to hear from you.
+              <p className="mx-auto text-justify text-lg text-brutal-muted">
+                If you&apos;re looking to improve your platform, scale your infrastructure, or build
+                secure backend systems, I&apos;d be glad to discuss how I can help. Whether you have
+                a defined project or are exploring ideas, I bring experience across backend
+                engineering, DevOps, and data systems to deliver practical, production-ready
+                solutions.
+              </p>
+              <p className="mx-auto text-justify text-lg text-brutal-muted">
+                I also work effectively within cross-functional teams, aligning engineering outcomes
+                with business and product goals.
               </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-10">
-            <div>
-              <div className="glass h-full rounded-3xl p-6 shadow-sm md:p-8">
-                <h2 className="mb-6 text-left text-2xl font-bold text-[var(--text-primary)]">
-                  Send a Message
-                </h2>
-                <ContactForm />
-              </div>
+          <section
+            aria-labelledby="start-conversation-heading"
+            className="relative mb-10 flex min-h-[76vh] items-center justify-center overflow-hidden bg-[rgba(255,69,0,0.66)] p-4 sm:p-6"
+          >
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,0,0,0.26),transparent_58%),radial-gradient(circle_at_bottom_left,rgba(0,0,0,0.2),transparent_52%)]" />
+            <div className="relative z-10 w-full max-w-2xl rounded-xl border border-black/20 bg-brutal-bg p-6 shadow-[0_20px_50px_rgba(0,0,0,0.28)] transition-[background-color,box-shadow] duration-300 hover:bg-white hover:shadow-[0_18px_40px_rgba(107,114,128,0.28),0_10px_24px_rgba(0,0,0,0.28)] md:p-8">
+              <h2
+                id="start-conversation-heading"
+                className="mb-2 text-left font-serif text-2xl font-semibold text-brutal-ink"
+              >
+                Start a Conversation
+              </h2>
+              <p className="mb-6 text-left text-sm text-brutal-muted">
+                Fill in the form below and I&apos;ll get back to you as soon as possible.
+              </p>
+              <ContactForm />
             </div>
+          </section>
 
-            <div>
-              <div className="glass flex h-full flex-col rounded-3xl p-6 shadow-sm md:p-8">
-                <h2 className="mb-4 text-left text-2xl font-bold text-[var(--text-primary)]">
-                  Get in Touch
-                </h2>
-                <p className="mb-8 text-left text-[var(--text-secondary)]">
-                  Prefer direct contact? Reach out via email or connect on social media for the
-                  latest on cloud infrastructure, DevOps, and scalable platforms.
-                </p>
+          <section aria-labelledby="get-in-touch-heading" className="mx-auto max-w-4xl">
+            <div className="flex h-full flex-col border border-brutal-ink/15 bg-brutal-bg p-6 md:p-8">
+              <h2
+                id="get-in-touch-heading"
+                className="mb-4 text-left font-serif text-2xl font-semibold text-brutal-ink"
+              >
+                Get in Touch
+              </h2>
+              <p className="mb-8 w-full px-0 text-left text-brutal-muted md:w-[80%] [margin:0_auto]">
+                Prefer direct contact? You can reach me via email or connect with me online to stay
+                updated on my work in cloud infrastructure, DevOps, and scalable systems.
+              </p>
 
-                <div className="space-y-6">
-                  <div className="flex items-start gap-4">
-                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-primary">
-                      <Mail className="h-6 w-6 text-white" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="mb-1 text-sm text-[var(--text-tertiary)]">Email</p>
-                      <a
-                        href="mailto:gogiraFoundation@gmail.com"
-                        className="block break-all text-[var(--accent-primary)] transition-colors hover:opacity-90 dark:text-purple-400 dark:hover:text-purple-300"
-                      >
-                        gogiraFoundation@gmail.com
-                      </a>
-                    </div>
+              <div className="mx-auto w-full space-y-6 text-center md:w-[75%]">
+                <div className="mt-[60px] w-full border-t border-brutal-ink/15 pt-6 md:w-[70%] [margin:0_auto]">
+                  <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-brutal-ink">
+                    Professional Links
+                  </h3>
+                  <div className="flex w-full flex-wrap items-center justify-center gap-3 px-0 text-sm animate-fade-in-up sm:w-fit sm:flex-nowrap sm:gap-6 [margin:0_auto]">
+                    <a
+                      href="mailto:gogiraFoundation@gmail.com"
+                      aria-label="Email"
+                      className="whitespace-nowrap rounded-sm px-3 py-1 font-medium text-brutal-ink transition-all duration-300 ease-out hover:-translate-y-0.5 hover:text-[orangered] hover:shadow-[0_8px_20px_rgba(107,114,128,0.24),0_4px_12px_rgba(0,0,0,0.2)]"
+                    >
+                      Email
+                    </a>
+                    <a
+                      href="https://github.com/gogiraFoundation"
+                      target="_blank"
+                      rel="me noopener noreferrer"
+                      aria-label="GitHub"
+                      className="whitespace-nowrap rounded-sm px-3 py-1 font-medium text-brutal-ink transition-all duration-300 ease-out hover:-translate-y-0.5 hover:text-[orangered] hover:shadow-[0_8px_20px_rgba(107,114,128,0.24),0_4px_12px_rgba(0,0,0,0.2)]"
+                    >
+                      GitHub
+                    </a>
+                    <a
+                      href="https://www.linkedin.com/in/emmanuel-ugbaje-b19227161/"
+                      target="_blank"
+                      rel="me noopener noreferrer"
+                      aria-label="LinkedIn"
+                      className="whitespace-nowrap rounded-sm px-3 py-1 font-medium text-brutal-ink transition-all duration-300 ease-out hover:-translate-y-0.5 hover:text-[orangered] hover:shadow-[0_8px_20px_rgba(107,114,128,0.24),0_4px_12px_rgba(0,0,0,0.2)]"
+                    >
+                      LinkedIn
+                    </a>
+                    <a
+                      href="https://medium.com/@aigbemanuel"
+                      target="_blank"
+                      rel="me noopener noreferrer"
+                      aria-label="Medium"
+                      className="whitespace-nowrap rounded-sm px-3 py-1 font-medium text-brutal-ink transition-all duration-300 ease-out hover:-translate-y-0.5 hover:text-[orangered] hover:shadow-[0_8px_20px_rgba(107,114,128,0.24),0_4px_12px_rgba(0,0,0,0.2)]"
+                    >
+                      Medium
+                    </a>
                   </div>
+                </div>
 
-                  <div className="border-t border-[var(--border-default)] pt-6">
-                    <p className="mb-4 text-sm text-[var(--text-tertiary)]">
-                      Connect on Social Media
-                    </p>
-                    <div className="flex flex-wrap gap-4">
-                      <a
-                        href="https://github.com/gogiraFoundation"
-                        target="_blank"
-                        rel="me noopener noreferrer"
-                        aria-label="GitHub"
-                        className="text-slate-700 transition-colors hover:text-slate-900 dark:text-white dark:hover:text-purple-200"
-                      >
-                        <Github className="h-8 w-8" />
-                      </a>
-                      <a
-                        href="https://www.linkedin.com/in/emmanuel-ugbaje-b19227161/"
-                        target="_blank"
-                        rel="me noopener noreferrer"
-                        aria-label="LinkedIn"
-                        className="text-slate-700 transition-colors hover:text-slate-900 dark:text-white dark:hover:text-purple-200"
-                      >
-                        <Linkedin className="h-8 w-8" />
-                      </a>
-                      <a
-                        href="https://medium.com/@aigbemanuel"
-                        target="_blank"
-                        rel="me noopener noreferrer"
-                        aria-label="Medium"
-                        className="text-slate-700 transition-colors hover:text-slate-900 dark:text-white dark:hover:text-purple-200"
-                      >
-                        <BookOpen className="h-8 w-8" />
-                      </a>
-                    </div>
-                  </div>
+                <div className="w-full border-t border-brutal-ink/15 pt-6 md:w-[70%] [margin:0_auto]">
+                  <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-brutal-ink">
+                    What You Can Expect
+                  </h3>
+                  <ul className="mx-auto list-inside list-disc space-y-2 text-center text-sm leading-relaxed text-brutal-muted marker:text-brutal-ink md:translate-x-2">
+                    <li className="animate-fade-in-up transition-all duration-300 hover:translate-x-1 hover:text-brutal-ink">
+                      Clear, timely communication
+                    </li>
+                    <li className="animate-fade-in-up transition-all duration-300 hover:translate-x-1 hover:text-brutal-ink">
+                      A practical, engineering-first approach
+                    </li>
+                    <li className="animate-fade-in-up transition-all duration-300 hover:translate-x-1 hover:text-brutal-ink">
+                      Secure, scalable, and maintainable solutions
+                    </li>
+                    <li className="animate-fade-in-up transition-all duration-300 hover:translate-x-1 hover:text-brutal-ink">
+                      Alignment with modern cloud-native and DevOps best practices
+                    </li>
+                  </ul>
                 </div>
               </div>
             </div>
-          </div>
+          </section>
         </div>
       </main>
 

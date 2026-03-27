@@ -3,7 +3,7 @@ from datetime import timedelta
 from django.db.models import Count, Q
 from django.utils import timezone
 from rest_framework import generics, status
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 
 from apps.notifications.models import NotificationType
@@ -27,6 +27,7 @@ class PageViewTrackView(generics.CreateAPIView):
     queryset = PageView.objects.all()
     serializer_class = PageViewCreateSerializer
     permission_classes = [AllowAny]
+    throttle_scope = "analytics_track"
 
     def create(self, request, *args, **kwargs):
         # Extract IP address from request if not provided
@@ -77,7 +78,7 @@ class PageViewStatsView(generics.GenericAPIView):
     Get page view statistics (admin only).
     """
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
 
     def get(self, request):
         # Get date range from query params
@@ -131,6 +132,7 @@ class EventTrackView(generics.CreateAPIView):
     queryset = Event.objects.all()
     serializer_class = EventCreateSerializer
     permission_classes = [AllowAny]
+    throttle_scope = "analytics_track"
 
     def create(self, request, *args, **kwargs):
         # Extract IP address from request if not provided
@@ -155,7 +157,7 @@ class EventStatsView(generics.GenericAPIView):
     Get event statistics (admin only).
     """
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
 
     def get(self, request):
         # Get date range from query params

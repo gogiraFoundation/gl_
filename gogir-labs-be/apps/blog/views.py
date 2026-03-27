@@ -3,7 +3,7 @@ from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 from apps.notifications.models import NotificationType
@@ -32,7 +32,7 @@ class PostViewSet(viewsets.ModelViewSet):
         .select_related("author", "category")
         .prefetch_related("tags", "comments")
     )
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
@@ -42,7 +42,6 @@ class PostViewSet(viewsets.ModelViewSet):
     search_fields = ["title", "excerpt", "content"]
     ordering_fields = ["created_at", "published_at", "views"]
     ordering = ["-published_at", "-created_at"]
-
     def get_serializer_class(self):
         if self.action == "list":
             return PostListSerializer
@@ -200,7 +199,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_fields = ["post", "approved"]
     ordering_fields = ["created_at"]

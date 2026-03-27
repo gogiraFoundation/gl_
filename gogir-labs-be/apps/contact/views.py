@@ -1,6 +1,6 @@
 from django.conf import settings
 from rest_framework import generics, status
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 
 from apps.notifications.models import NotificationType
@@ -19,6 +19,7 @@ class ContactMessageCreateView(generics.CreateAPIView):
     queryset = ContactMessage.objects.all()
     serializer_class = ContactMessageSerializer
     permission_classes = [AllowAny]
+    throttle_scope = "contact"
 
     def perform_create(self, serializer):
         message = serializer.save()
@@ -56,7 +57,7 @@ class ContactMessageListView(generics.ListAPIView):
 
     queryset = ContactMessage.objects.all()
     serializer_class = ContactMessageListSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
 
     def get_queryset(self):
         queryset = super().get_queryset()

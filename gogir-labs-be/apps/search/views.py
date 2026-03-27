@@ -17,6 +17,7 @@ class SearchViewSet(viewsets.ViewSet):
     """
 
     permission_classes = [AllowAny]
+    throttle_scope = "search"
 
     @action(detail=False, methods=["get"], url_path="")
     def search(self, request):
