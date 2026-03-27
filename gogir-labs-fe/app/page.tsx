@@ -138,11 +138,11 @@ export default function Home() {
               I specialise in backend engineering, platform delivery, and data systems, working with
               the same stack that powers your production environment.
             </p>
-            <div className="mx-auto grid w-full max-w-5xl grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4 lg:justify-items-center">
+            <div className="mx-auto grid w-full max-w-5xl grid-cols-1 justify-items-center gap-10 md:grid-cols-2 lg:grid-cols-4">
               {expertise.map((block, idx) => (
                 <div
                   key={block.title}
-                  className="group w-full max-w-[240px] border border-brutal-ink/15 bg-brutal-bg/70 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-brutal-ink/35 hover:shadow-[0_12px_28px_rgba(0,0,0,0.08)]"
+                  className="group w-full max-w-[min(100%,240px)] border border-brutal-ink/15 bg-brutal-bg/70 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-brutal-ink/35 hover:shadow-[0_12px_28px_rgba(0,0,0,0.08)]"
                   style={{
                     animation: `fadeIn 0.55s ease-out both`,
                     animationDelay: `${idx * 120}ms`,
@@ -151,7 +151,7 @@ export default function Home() {
                   <h3 className="mb-4 text-center font-sans text-xs font-semibold uppercase tracking-[0.14em] text-brutal-muted transition-colors duration-300 group-hover:text-brutal-ink">
                     {block.title}
                   </h3>
-                  <div className="mb-4 h-px w-10 bg-brutal-ink/20 transition-all duration-300 group-hover:w-14 group-hover:bg-brutal-ink/40" />
+                  <div className="mx-auto mb-4 h-px w-10 bg-brutal-ink/20 transition-all duration-300 group-hover:w-14 group-hover:bg-brutal-ink/40" />
                   <ul className="space-y-2 font-sans text-sm leading-relaxed text-brutal-ink">
                     {block.lines.map((line) => (
                       <li
