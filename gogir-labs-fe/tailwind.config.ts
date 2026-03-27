@@ -61,13 +61,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
-        serif: [
-          'var(--font-serif)',
-          'Times New Roman',
-          'Garamond',
-          'Georgia',
-          'serif',
-        ],
+        serif: ['var(--font-serif)', 'Times New Roman', 'Garamond', 'Georgia', 'serif'],
         mono: [
           'ui-monospace',
           'SFMono-Regular',
@@ -91,10 +85,8 @@ const config: Config = {
         'glow-purple': '0 0 20px rgba(139, 92, 246, 0.5), 0 0 40px rgba(139, 92, 246, 0.3)',
         'glow-blue': '0 0 20px rgba(59, 130, 246, 0.5), 0 0 40px rgba(59, 130, 246, 0.3)',
         'glow-white': '0 0 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(255, 255, 255, 0.1)',
-        'glow-orange':
-          '0 0 18px rgba(255, 69, 0, 0.45), 0 0 36px rgba(255, 99, 71, 0.25)',
-        'glow-orange-lg':
-          '0 0 28px rgba(255, 69, 0, 0.55), 0 0 52px rgba(255, 140, 0, 0.3)',
+        'glow-orange': '0 0 18px rgba(255, 69, 0, 0.45), 0 0 36px rgba(255, 99, 71, 0.25)',
+        'glow-orange-lg': '0 0 28px rgba(255, 69, 0, 0.55), 0 0 52px rgba(255, 140, 0, 0.3)',
       },
       animation: {
         float: 'float 6s ease-in-out infinite',
@@ -148,12 +140,10 @@ const config: Config = {
         },
         solarPulse: {
           '0%, 100%': {
-            boxShadow:
-              '0 0 22px rgba(255, 69, 0, 0.5), 0 0 44px rgba(255, 99, 71, 0.22)',
+            boxShadow: '0 0 22px rgba(255, 69, 0, 0.5), 0 0 44px rgba(255, 99, 71, 0.22)',
           },
           '50%': {
-            boxShadow:
-              '0 0 36px rgba(255, 69, 0, 0.7), 0 0 58px rgba(255, 140, 0, 0.32)',
+            boxShadow: '0 0 36px rgba(255, 69, 0, 0.7), 0 0 58px rgba(255, 140, 0, 0.32)',
           },
         },
         solarRing: {

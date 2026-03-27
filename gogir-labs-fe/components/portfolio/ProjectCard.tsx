@@ -37,9 +37,7 @@ export function ProjectCard({ project, linkPrefetch = false }: ProjectCardProps)
   const animationDelay = `${(project.id % 6) * 70}ms`
   const editorial = getPortfolioCardCopy(project.slug)
   const description = editorial?.description ?? project.description
-  const categoryLine = editorial
-    ? `Category: ${editorial.categoryLabel}`
-    : project.category?.name
+  const categoryLine = editorial ? `Category: ${editorial.categoryLabel}` : project.category?.name
 
   return (
     <article
@@ -58,7 +56,7 @@ export function ProjectCard({ project, linkPrefetch = false }: ProjectCardProps)
         }
         className="flex flex-1 flex-col focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brutal-ink"
       >
-        <div className="relative aspect-[16/9] w-full overflow-hidden bg-brutal-ink/05">
+        <div className="bg-brutal-ink/05 relative aspect-[16/9] w-full overflow-hidden">
           <Image
             src={src}
             alt={`${project.title} preview`}
@@ -70,7 +68,7 @@ export function ProjectCard({ project, linkPrefetch = false }: ProjectCardProps)
         </div>
         <div className="flex flex-1 flex-col pt-4">
           {categoryLine && (
-            <span className="text-meta mb-2 block text-center text-[10px] font-sans font-normal uppercase tracking-[0.1em] text-brutal-muted/80">
+            <span className="text-meta mb-2 block text-center font-sans text-[10px] font-normal uppercase tracking-[0.1em] text-brutal-muted/80">
               {categoryLine}
             </span>
           )}
@@ -82,12 +80,15 @@ export function ProjectCard({ project, linkPrefetch = false }: ProjectCardProps)
           >
             {project.title}
           </h3>
-          <p className="text-meta mt-2 mx-auto line-clamp-5 flex-1 text-center font-sans leading-relaxed text-brutal-muted">
+          <p className="text-meta mx-auto mt-2 line-clamp-5 flex-1 text-center font-sans leading-relaxed text-brutal-muted">
             {description}
           </p>
           <span className="mt-4 inline-flex w-full items-center justify-center gap-2 text-center font-sans text-sm font-semibold text-brutal-ink transition-all duration-500 ease-out group-hover:translate-x-0.5 group-hover:opacity-75">
             View Case Study
-            <ArrowRight className="h-4 w-4 transition-transform duration-500 ease-out group-hover:translate-x-0.5" aria-hidden />
+            <ArrowRight
+              className="h-4 w-4 transition-transform duration-500 ease-out group-hover:translate-x-0.5"
+              aria-hidden
+            />
           </span>
         </div>
       </Link>

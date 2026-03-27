@@ -152,7 +152,9 @@ export function PostContent({ post }: PostContentProps) {
 
       {/* Title */}
       <ScrollAnimation animationType="fade-in" delay={200}>
-        <h1 className={`mb-6 mt-2 font-serif font-semibold text-brutal-ink ${isFeatured ? 'text-5xl md:text-6xl' : 'text-4xl md:text-5xl'}`}>
+        <h1
+          className={`mb-6 mt-2 font-serif font-semibold text-brutal-ink ${isFeatured ? 'text-5xl md:text-6xl' : 'text-4xl md:text-5xl'}`}
+        >
           {post.title}
         </h1>
       </ScrollAnimation>
@@ -236,9 +238,7 @@ export function PostContent({ post }: PostContentProps) {
                 <div className="mb-4 rounded-sm border border-[orangered]/60 bg-[rgba(255,69,0,0.12)] p-3 text-sm text-brutal-ink">
                   Content exists but could not be safely rendered.
                 </div>
-                <pre
-                  className="overflow-x-auto whitespace-pre-wrap break-words text-sm text-brutal-muted"
-                >
+                <pre className="overflow-x-auto whitespace-pre-wrap break-words text-sm text-brutal-muted">
                   {post.content.substring(0, 500)}
                   {post.content.length > 500 ? '...' : ''}
                 </pre>
@@ -264,13 +264,13 @@ export function PostContent({ post }: PostContentProps) {
 
       {/* Share Buttons */}
       <div className="mt-8 border-t border-brutal-ink/15 pt-8">
-        <div className="animate-fade-in-up rounded-sm border border-brutal-ink/12 bg-brutal-bg p-4 shadow-[0_3px_12px_rgba(0,0,0,0.05)] transition-[box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(0,0,0,0.09)] motion-reduce:hover:translate-y-0">
-        <ShareButtons
-          url={`/blog/${post.slug}`}
-          title={post.title}
-          description={post.meta_description || post.excerpt}
-          type="blog"
-        />
+        <div className="border-brutal-ink/12 animate-fade-in-up rounded-sm border bg-brutal-bg p-4 shadow-[0_3px_12px_rgba(0,0,0,0.05)] transition-[box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(0,0,0,0.09)] motion-reduce:hover:translate-y-0">
+          <ShareButtons
+            url={`/blog/${post.slug}`}
+            title={post.title}
+            description={post.meta_description || post.excerpt}
+            type="blog"
+          />
         </div>
       </div>
 

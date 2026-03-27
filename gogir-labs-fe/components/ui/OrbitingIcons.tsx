@@ -24,7 +24,12 @@ export function OrbitingIcons({
   const ring3 = radius * 2 + 96
 
   return (
-    <div className={cn('relative flex h-64 w-full items-center justify-center sm:h-96', className)}>
+    <div
+      className={cn(
+        'relative flex h-64 w-full items-center justify-center overflow-x-clip sm:h-96',
+        className
+      )}
+    >
       {/* Decorative orbital rings (subtle, orangered hues) */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
         <div
@@ -40,7 +45,7 @@ export function OrbitingIcons({
           }}
         />
         <div
-          className="absolute rounded-full border border-[#ff7f50]/12"
+          className="border-[#ff7f50]/12 absolute rounded-full border"
           style={{ width: ring3, height: ring3 }}
         />
       </div>
@@ -60,7 +65,7 @@ export function OrbitingIcons({
       {/* Orbiting satellites */}
       <div className="pointer-events-none absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
         <div
-          className="animate-solar-orbit origin-center motion-reduce:animate-none"
+          className="origin-center animate-solar-orbit motion-reduce:animate-none"
           style={{
             width: 0,
             height: 0,

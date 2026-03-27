@@ -1,22 +1,50 @@
 from unittest.mock import patch
 
 import pytest
+from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.test import TestCase
+from django.test.utils import override_settings
 from rest_framework import status
 from rest_framework.test import APIClient
 
 from .models import NewsletterSubscriber
 
 User = get_user_model()
+TEST_REST_FRAMEWORK = {
+    **settings.REST_FRAMEWORK,
+    "DEFAULT_THROTTLE_CLASSES": [],
+    "DEFAULT_THROTTLE_RATES": {
+        **settings.REST_FRAMEWORK.get("DEFAULT_THROTTLE_RATES", {}),
+        "auth": "100000/minute",
+        "contact": "100000/minute",
+        "newsletter_subscribe": "100000/minute",
+        "newsletter_verify": "100000/minute",
+        "newsletter_unsubscribe": "100000/minute",
+        "analytics_track": "100000/minute",
+        "search": "100000/minute",
+        "comments": "100000/minute",
+        "anon": "100000/minute",
+        "user": "100000/minute",
+    },
+}
+GENERIC_UNSUBSCRIBE_MESSAGE = (
+    "If a matching subscription exists, it has been unsubscribed successfully."
+)
 
 
+@override_settings(REST_FRAMEWORK=TEST_REST_FRAMEWORK)
 class NewsletterAPITest(TestCase):
     """Test Newsletter API endpoints."""
 
     def setUp(self):
+        cache.clear()
         self.client = APIClient()
         self.user = User.objects.create_user(username="testuser", password="testpass")
+        self.staff_user = User.objects.create_user(
+            username="staffuser", password="testpass", is_staff=True
+        )
 
     @patch("apps.newsletter.services.NewsletterService.send_verification_email")
     def test_subscribe_creates_subscriber(self, mock_send_email):
@@ -143,7 +171,8 @@ class NewsletterAPITest(TestCase):
             "token": "invalid-token",
         }
         response = self.client.post(url, data)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["message"], GENERIC_UNSUBSCRIBE_MESSAGE)
 
     def test_unsubscribe_nonexistent_email(self):
         """Test unsubscribe with non-existent email."""
@@ -152,7 +181,8 @@ class NewsletterAPITest(TestCase):
             "email": "nonexistent@example.com",
         }
         response = self.client.post(url, data)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["message"], GENERIC_UNSUBSCRIBE_MESSAGE)
 
     def test_unsubscribe_already_unsubscribed(self):
         """Test unsubscribing already unsubscribed user."""
@@ -166,7 +196,7 @@ class NewsletterAPITest(TestCase):
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn("already unsubscribed", response.data["message"].lower())
+        self.assertEqual(response.data["message"], GENERIC_UNSUBSCRIBE_MESSAGE)
 
     def test_unsubscribe_missing_both_token_and_email(self):
         """Test unsubscribe with missing both token and email."""
@@ -187,7 +217,7 @@ class NewsletterAPITest(TestCase):
         NewsletterSubscriber.objects.all().delete()
         NewsletterSubscriber.objects.create(email="test1@example.com")
         NewsletterSubscriber.objects.create(email="test2@example.com")
-        self.client.force_authenticate(user=self.user)
+        self.client.force_authenticate(user=self.staff_user)
         url = "/api/v1/newsletter/subscribers/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -210,7 +240,7 @@ class NewsletterAPITest(TestCase):
             email="inactive@example.com",
             is_active=False,
         )
-        self.client.force_authenticate(user=self.user)
+        self.client.force_authenticate(user=self.staff_user)
         url = "/api/v1/newsletter/subscribers/"
 
         response = self.client.get(url, {"is_active": "true"})
@@ -237,7 +267,7 @@ class NewsletterAPITest(TestCase):
             email="unverified@example.com",
             is_verified=False,
         )
-        self.client.force_authenticate(user=self.user)
+        self.client.force_authenticate(user=self.staff_user)
         url = "/api/v1/newsletter/subscribers/"
 
         response = self.client.get(url, {"is_verified": "true"})
@@ -258,7 +288,7 @@ class NewsletterAPITest(TestCase):
         NewsletterSubscriber.objects.all().delete()
         NewsletterSubscriber.objects.create(email="john@example.com")
         NewsletterSubscriber.objects.create(email="jane@example.com")
-        self.client.force_authenticate(user=self.user)
+        self.client.force_authenticate(user=self.staff_user)
         url = "/api/v1/newsletter/subscribers/"
 
         response = self.client.get(url, {"search": "john"})
@@ -290,7 +320,7 @@ class NewsletterAPITest(TestCase):
             email="inactive@example.com",
             is_active=False,
         )
-        self.client.force_authenticate(user=self.user)
+        self.client.force_authenticate(user=self.staff_user)
         url = "/api/v1/newsletter/stats/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)

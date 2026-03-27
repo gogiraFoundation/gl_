@@ -17,11 +17,7 @@ export function TestimonialsCarousel({ testimonials }: TestimonialsCarouselProps
       {/* Reduced motion: static grid, no duplicate strip */}
       <div className="hidden grid-cols-1 gap-8 motion-reduce:grid md:grid-cols-2 lg:grid-cols-3 lg:gap-12">
         {testimonials.map((t, i) => (
-          <TestimonialCard
-            key={t.id}
-            testimonial={t}
-            accent={i % 2 === 0 ? 'green' : 'orange'}
-          />
+          <TestimonialCard key={t.id} testimonial={t} accent={i % 2 === 0 ? 'green' : 'orange'} />
         ))}
       </div>
 
@@ -38,7 +34,7 @@ export function TestimonialsCarousel({ testimonials }: TestimonialsCarouselProps
           aria-hidden
         />
 
-        <div className="flex w-max gap-6 animate-testimonial-marquee group-hover:[animation-play-state:paused] md:gap-8">
+        <div className="flex w-max animate-testimonial-marquee gap-6 group-hover:[animation-play-state:paused] md:gap-8">
           {loop.map((t, i) => (
             <div
               key={`${t.id}-${i}`}

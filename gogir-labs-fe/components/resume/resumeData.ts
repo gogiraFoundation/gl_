@@ -56,8 +56,7 @@ export const resumeExperience: ResumeExperience[] = [
     ],
     impact:
       'Enhanced operational decision-making capabilities, enabling more efficient use of energy resources.',
-    technologies:
-      'Python, SQL, ETL Pipelines, Data Modelling, Power BI, Analytics Engineering',
+    technologies: 'Python, SQL, ETL Pipelines, Data Modelling, Power BI, Analytics Engineering',
   },
   {
     id: 'startup-ops',
@@ -121,13 +120,7 @@ export const resumeSkillCategories: ResumeSkillCategory[] = [
   },
   {
     category: 'Databases & Data Engineering',
-    items: [
-      'Redis',
-      'ETL Pipelines',
-      'Data Modelling',
-      'SQL Server',
-      'Analytics Engineering',
-    ],
+    items: ['Redis', 'ETL Pipelines', 'Data Modelling', 'SQL Server', 'Analytics Engineering'],
   },
   {
     category: 'Frameworks & Development',
