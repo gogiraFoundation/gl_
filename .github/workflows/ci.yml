@@ -18,7 +18,8 @@ jobs:
     
     services:
       postgres:
-        image: postgres:15-alpine
+        # Use AWS public ECR mirror to avoid Docker Hub auth/rate-limit failures in CI.
+        image: public.ecr.aws/docker/library/postgres:15-alpine
         env:
           POSTGRES_USER: testuser
           POSTGRES_PASSWORD: testpass
