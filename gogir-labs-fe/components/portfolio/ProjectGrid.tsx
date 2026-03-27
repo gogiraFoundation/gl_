@@ -1,7 +1,6 @@
 'use client'
 
 import { ProjectCard } from './ProjectCard'
-import { ScrollAnimation } from '@/components/ui/ScrollAnimation'
 
 interface Project {
   id: number
@@ -24,24 +23,17 @@ interface ProjectGridProps {
 export function ProjectGrid({ projects }: ProjectGridProps) {
   if (!projects || projects.length === 0) {
     return (
-      <div className="py-12 text-center text-gray-400">
-        <p className="mb-2">No projects found.</p>
+      <div className="py-12 text-center font-sans text-brutal-muted">
+        <p className="mb-2 text-brutal-ink">No projects found.</p>
         <p className="text-sm">Try adjusting your filters or check back later.</p>
       </div>
     )
   }
 
   return (
-    <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-      {projects.map((project, index) => (
-        <ScrollAnimation
-          key={project.id}
-          animationType="fade-in"
-          delay={index * 50}
-          className="h-full"
-        >
-          <ProjectCard project={project} />
-        </ScrollAnimation>
+    <div className="mt-8 mx-auto grid w-full max-w-7xl grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 xl:gap-6">
+      {projects.map((project) => (
+        <ProjectCard key={project.id} project={project} />
       ))}
     </div>
   )

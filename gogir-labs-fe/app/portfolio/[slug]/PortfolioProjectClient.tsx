@@ -63,10 +63,12 @@ export default function PortfolioProjectClient() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen flex-col">
+      <div className="flex min-h-screen flex-col bg-brutal-bg">
         <Header />
         <main className="flex-grow px-4 py-12">
-          <div className="mx-auto max-w-4xl text-center">Loading project...</div>
+          <div className="mx-auto max-w-4xl text-center font-sans text-brutal-muted">
+            Loading project…
+          </div>
         </main>
         <Footer />
       </div>
@@ -75,13 +77,13 @@ export default function PortfolioProjectClient() {
 
   if (error || !project) {
     return (
-      <div className="flex min-h-screen flex-col">
+      <div className="flex min-h-screen flex-col bg-brutal-bg">
         <Header />
         <main className="flex-grow px-4 py-12">
           <div className="mx-auto max-w-4xl text-center">
-            <h1 className="mb-4 text-2xl font-bold">Project not found</h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              The project you're looking for doesn't exist or has been removed.
+            <h1 className="mb-4 font-serif text-2xl font-semibold text-brutal-ink">Project not found</h1>
+            <p className="text-brutal-muted">
+              The project you&apos;re looking for doesn&apos;t exist or has been removed.
             </p>
           </div>
         </main>
@@ -91,10 +93,9 @@ export default function PortfolioProjectClient() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-brutal-bg">
       <Header />
       <main className="relative flex-grow px-4 py-12">
-        <div className="absolute inset-0 bg-gradient-mesh opacity-30"></div>
         <div className="relative z-10 mx-auto max-w-4xl">
           <ProjectContent project={project} />
         </div>

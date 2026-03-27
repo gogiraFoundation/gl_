@@ -2,20 +2,19 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Github, Linkedin, BookOpen, Menu, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { ThemeToggle } from '@/components/ThemeToggle'
 import { useAnalyticsEvent } from '@/hooks/useAnalyticsEvent'
 import { SearchBar } from '@/components/search/SearchBar'
 
 const navigation = [
-  { name: 'Home', href: '/' },
-  { name: 'Portfolio', href: '/portfolio' },
-  { name: 'Blog', href: '/blog' },
-  { name: 'About', href: '/about' },
-  { name: 'Resume', href: '/resume' },
-  { name: 'Contact', href: '/contact' },
+  { name: 'HOME', href: '/' },
+  { name: 'PORTFOLIO', href: '/portfolio' },
+  { name: 'BLOG', href: '/blog' },
+  { name: 'ABOUT', href: '/about' },
+  { name: 'RESUME', href: '/resume' },
+  { name: 'CONTACT', href: '/contact' },
 ]
 
 export function Header() {
@@ -24,21 +23,39 @@ export function Header() {
   const pathnameFromHook = usePathname()
   const pathname =
     pathnameFromHook ?? (typeof window !== 'undefined' ? window.location.pathname : '')
+  const panelRef = useRef<HTMLDivElement>(null)
+  const firstLinkRef = useRef<HTMLAnchorElement>(null)
+  const closeBtnRef = useRef<HTMLButtonElement>(null)
+
+  const closeMenu = useCallback(() => setMobileMenuOpen(false), [])
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeMenu()
+    }
+    document.addEventListener('keydown', onKey)
+    document.body.style.overflow = 'hidden'
+    queueMicrotask(() => firstLinkRef.current?.focus())
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = ''
+    }
+  }, [mobileMenuOpen, closeMenu])
 
   return (
-    <header className="glass sticky top-0 z-50 border-b border-slate-200 dark:border-purple-500/20">
-      <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-50 border-b border-brutal-ink/15 bg-brutal-bg/95 backdrop-blur-sm">
+      <nav className="mx-auto max-w-shell px-6 lg:px-8" aria-label="Main">
         <div className="flex h-16 items-center justify-between">
           <Link
             href="/"
-            className="gradient-text text-xl font-bold transition-transform hover:scale-105"
+            className="font-serif text-lg font-semibold tracking-tight text-brutal-ink transition-opacity hover:opacity-70"
           >
             Emmanuel Ugbaje
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden items-center gap-6 md:flex">
-            <div className="flex space-x-6">
+          <div className="hidden items-center gap-8 md:flex">
+            <div className="flex items-center gap-8">
               {navigation.map((item) => {
                 const isActive =
                   pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))
@@ -46,24 +63,22 @@ export function Header() {
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={cn(
-                      'relative text-sm font-medium transition-all duration-300',
-                      isActive
-                        ? 'text-purple-600 dark:text-purple-400'
-                        : 'text-slate-600 hover:text-purple-600 dark:text-gray-300 dark:hover:text-purple-400'
-                    )}
+                    className={cn('brutal-nav-link', isActive && 'opacity-100')}
+                    data-active={isActive ? 'true' : undefined}
+                    onClick={() =>
+                      trackClick('nav_link', {
+                        link: item.name,
+                        href: item.href,
+                        location: 'desktop',
+                      })
+                    }
                   >
                     {item.name}
-                    {isActive && (
-                      <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-primary" />
-                    )}
                   </Link>
                 )
               })}
             </div>
-
-            {/* Search & Social Icons */}
-            <div className="ml-4 flex items-center gap-4 border-l border-slate-200 pl-4 dark:border-purple-500/20">
+            <div className="ml-2 flex items-center gap-4 border-l border-brutal-ink/15 pl-6">
               <SearchBar />
               <a
                 href="https://github.com/gogiraFoundation"
@@ -72,10 +87,10 @@ export function Header() {
                 onClick={() =>
                   trackClick('social_github', { platform: 'github', location: 'header' })
                 }
-                className="text-slate-500 transition-all duration-300 hover:scale-110 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
+                className="text-brutal-muted transition-opacity hover:opacity-70"
                 aria-label="GitHub"
               >
-                <Github className="h-8 w-8" />
+                <Github className="h-6 w-6" />
               </a>
               <a
                 href="https://www.linkedin.com/in/emmanuel-ugbaje"
@@ -84,10 +99,10 @@ export function Header() {
                 onClick={() =>
                   trackClick('social_linkedin', { platform: 'linkedin', location: 'header' })
                 }
-                className="text-slate-500 transition-all duration-300 hover:scale-110 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
+                className="text-brutal-muted transition-opacity hover:opacity-70"
                 aria-label="LinkedIn"
               >
-                <Linkedin className="h-8 w-8" />
+                <Linkedin className="h-6 w-6" />
               </a>
               <a
                 href="https://medium.com/@aigbemanuel"
@@ -96,38 +111,69 @@ export function Header() {
                 onClick={() =>
                   trackClick('social_medium', { platform: 'medium', location: 'header' })
                 }
-                className="text-slate-500 transition-all duration-300 hover:scale-110 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
+                className="text-brutal-muted transition-opacity hover:opacity-70"
                 aria-label="Medium"
               >
-                <BookOpen className="h-8 w-8" />
+                <BookOpen className="h-6 w-6" />
               </a>
-              <ThemeToggle />
             </div>
           </div>
 
-          {/* Mobile Menu Button */}
           <div className="flex items-center gap-3 md:hidden">
-            <ThemeToggle />
             <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="text-slate-600 transition-colors hover:text-slate-900 dark:text-gray-300 dark:hover:text-white"
-              aria-label="Toggle menu"
+              type="button"
+              onClick={() => setMobileMenuOpen(true)}
+              className="text-brutal-ink transition-opacity hover:opacity-70"
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-drawer"
+              aria-label="Open menu"
             >
-              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              <Menu className="h-6 w-6" />
             </button>
           </div>
         </div>
+      </nav>
 
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="animate-slide-in-left border-t border-slate-200 py-4 dark:border-purple-500/20 md:hidden">
-            <div className="flex flex-col space-y-4">
-              {navigation.map((item) => {
+      {/* Mobile drawer: overlay + panel from right */}
+      {mobileMenuOpen ? (
+        <>
+          <button
+            type="button"
+            className="fixed inset-0 z-[60] bg-brutal-ink/20 backdrop-blur-sm"
+            aria-label="Close menu"
+            onClick={closeMenu}
+          />
+          <div
+            id="mobile-drawer"
+            ref={panelRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Navigation menu"
+            className="fixed inset-y-0 right-0 z-[70] flex w-[min(100%,20rem)] flex-col border-l border-brutal-ink/15 bg-brutal-bg shadow-[var(--shadow-subtle)] transition-transform duration-300 ease-out"
+          >
+            <div className="flex items-center justify-between border-b border-brutal-ink/15 px-6 py-4">
+              <span className="font-serif text-sm font-semibold text-brutal-ink">Menu</span>
+              <button
+                ref={closeBtnRef}
+                type="button"
+                onClick={closeMenu}
+                className="text-brutal-ink transition-opacity hover:opacity-70"
+                aria-label="Close menu"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            <div className="border-b border-brutal-ink/15 px-6 py-4">
+              <SearchBar />
+            </div>
+            <div className="flex flex-col gap-1 px-6 py-6">
+              {navigation.map((item, i) => {
                 const isActive =
                   pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))
                 return (
                   <Link
                     key={item.name}
+                    ref={i === 0 ? firstLinkRef : undefined}
                     href={item.href}
                     onClick={() => {
                       setMobileMenuOpen(false)
@@ -138,58 +184,47 @@ export function Header() {
                       })
                     }}
                     className={cn(
-                      'text-base font-medium transition-colors',
-                      isActive
-                        ? 'text-purple-600 dark:text-purple-400'
-                        : 'text-slate-600 hover:text-purple-600 dark:text-gray-300 dark:hover:text-purple-400'
+                      'py-3 font-sans text-sm font-semibold uppercase tracking-wider text-brutal-ink transition-opacity hover:opacity-70',
+                      isActive && 'border-b-2 border-brutal-ink'
                     )}
                   >
                     {item.name}
                   </Link>
                 )
               })}
-              <div className="flex items-center gap-4 border-t border-slate-200 pt-4 dark:border-purple-500/20">
-                <a
-                  href="https://github.com/gogiraFoundation"
-                  target="_blank"
-                  rel="me noopener noreferrer"
-                  onClick={() =>
-                    trackClick('social_github', { platform: 'github', location: 'mobile' })
-                  }
-                  className="text-slate-500 transition-colors hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
-                  aria-label="GitHub"
-                >
-                  <Github className="h-8 w-8" />
-                </a>
-                <a
-                  href="https://www.linkedin.com/in/emmanuel-ugbaje"
-                  target="_blank"
-                  rel="me noopener noreferrer"
-                  onClick={() =>
-                    trackClick('social_linkedin', { platform: 'linkedin', location: 'mobile' })
-                  }
-                  className="text-slate-500 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
-                  aria-label="LinkedIn"
-                >
-                  <Linkedin className="h-8 w-8" />
-                </a>
-                <a
-                  href="https://medium.com/@aigbemanuel"
-                  target="_blank"
-                  rel="me noopener noreferrer"
-                  onClick={() =>
-                    trackClick('social_medium', { platform: 'medium', location: 'mobile' })
-                  }
-                  className="text-slate-500 transition-colors hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
-                  aria-label="Medium"
-                >
-                  <BookOpen className="h-8 w-8" />
-                </a>
-              </div>
+            </div>
+            <div className="mt-auto flex gap-6 border-t border-brutal-ink/15 px-6 py-6">
+              <a
+                href="https://github.com/gogiraFoundation"
+                target="_blank"
+                rel="me noopener noreferrer"
+                className="text-brutal-muted transition-opacity hover:opacity-70"
+                aria-label="GitHub"
+              >
+                <Github className="h-7 w-7" />
+              </a>
+              <a
+                href="https://www.linkedin.com/in/emmanuel-ugbaje"
+                target="_blank"
+                rel="me noopener noreferrer"
+                className="text-brutal-muted transition-opacity hover:opacity-70"
+                aria-label="LinkedIn"
+              >
+                <Linkedin className="h-7 w-7" />
+              </a>
+              <a
+                href="https://medium.com/@aigbemanuel"
+                target="_blank"
+                rel="me noopener noreferrer"
+                className="text-brutal-muted transition-opacity hover:opacity-70"
+                aria-label="Medium"
+              >
+                <BookOpen className="h-7 w-7" />
+              </a>
             </div>
           </div>
-        )}
-      </nav>
+        </>
+      ) : null}
     </header>
   )
 }

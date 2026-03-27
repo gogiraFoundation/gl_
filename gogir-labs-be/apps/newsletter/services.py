@@ -71,9 +71,7 @@ Emmanuel Ugbaije
                 html_body=html_body,
             )
         except Exception as e:
-            logger.error(
-                f"Failed to send verification email to {subscriber.email}: {e}"
-            )
+            logger.error("Failed to send verification email: %s", e)
             return False
 
     @staticmethod
@@ -138,7 +136,7 @@ Emmanuel Ugbaije
                 html_body=html_body,
             )
         except Exception as e:
-            logger.error(f"Failed to send welcome email to {subscriber.email}: {e}")
+            logger.error("Failed to send welcome email: %s", e)
             return False
 
     @staticmethod
@@ -257,6 +255,6 @@ Emmanuel Ugbaije
             )
         except Exception as e:
             logger.error(
-                f"Failed to send unsubscribe confirmation to {subscriber.email}: {e}"
+                "Failed to send unsubscribe confirmation: %s", e
             )
             return False
