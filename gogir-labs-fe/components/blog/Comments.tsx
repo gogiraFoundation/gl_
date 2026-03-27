@@ -116,106 +116,121 @@ export function Comments({ postId }: CommentsProps) {
 
       {/* Comment Form */}
       {showForm && (
-      <form id="post-comment-form" onSubmit={handleSubmit(onSubmit)} className="mb-8 space-y-4 animate-fade-in-up">
-        {/* Honeypot */}
-        <input
-          type="text"
-          {...register('website')}
-          className="hidden"
-          tabIndex={-1}
-          autoComplete="off"
-        />
-
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div>
-            <label htmlFor="comment-name" className="mb-2 block text-sm font-medium text-brutal-ink">
-              Name *
-            </label>
-            <input
-              type="text"
-              id="comment-name"
-              {...register('name')}
-              className="w-full rounded-sm border border-brutal-ink/20 bg-brutal-bg px-4 py-3 text-brutal-ink placeholder:text-brutal-muted focus:border-brutal-ink focus:outline-none"
-              placeholder="Your name"
-            />
-            {errors.name && <p className="mt-1 text-sm text-red-700">{errors.name.message}</p>}
-          </div>
-
-          <div>
-            <label htmlFor="comment-email" className="mb-2 block text-sm font-medium text-brutal-ink">
-              Email *
-            </label>
-            <input
-              type="email"
-              id="comment-email"
-              {...register('email')}
-              className="w-full rounded-sm border border-brutal-ink/20 bg-brutal-bg px-4 py-3 text-brutal-ink placeholder:text-brutal-muted focus:border-brutal-ink focus:outline-none"
-              placeholder="your.email@example.com"
-            />
-            {errors.email && <p className="mt-1 text-sm text-red-700">{errors.email.message}</p>}
-          </div>
-        </div>
-
-        <div>
-          <label htmlFor="comment-content" className="mb-2 block text-sm font-medium text-brutal-ink">
-            Comment *
-          </label>
-          <textarea
-            id="comment-content"
-            rows={6}
-            {...register('content')}
-            className="w-full resize-none rounded-sm border border-brutal-ink/20 bg-brutal-bg px-4 py-3 text-brutal-ink placeholder:text-brutal-muted focus:border-brutal-ink focus:outline-none"
-            placeholder="Share your thoughts..."
-          />
-          {errors.content && <p className="mt-1 text-sm text-red-700">{errors.content.message}</p>}
-        </div>
-
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="flex items-center gap-2 border border-brutal-ink bg-brutal-ink px-6 py-3 font-semibold text-brutal-bg transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+        <form
+          id="post-comment-form"
+          onSubmit={handleSubmit(onSubmit)}
+          className="mb-8 animate-fade-in-up space-y-4"
         >
-          {isSubmitting ? (
-            <>
-              <Loader2 className="h-5 w-5 animate-spin" />
-              Submitting...
-            </>
-          ) : (
-            <>
-              <Send className="h-5 w-5" />
-              Post Comment
-            </>
+          {/* Honeypot */}
+          <input
+            type="text"
+            {...register('website')}
+            className="hidden"
+            tabIndex={-1}
+            autoComplete="off"
+          />
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div>
+              <label
+                htmlFor="comment-name"
+                className="mb-2 block text-sm font-medium text-brutal-ink"
+              >
+                Name *
+              </label>
+              <input
+                type="text"
+                id="comment-name"
+                {...register('name')}
+                className="w-full rounded-sm border border-brutal-ink/20 bg-brutal-bg px-4 py-3 text-brutal-ink placeholder:text-brutal-muted focus:border-brutal-ink focus:outline-none"
+                placeholder="Your name"
+              />
+              {errors.name && <p className="mt-1 text-sm text-red-700">{errors.name.message}</p>}
+            </div>
+
+            <div>
+              <label
+                htmlFor="comment-email"
+                className="mb-2 block text-sm font-medium text-brutal-ink"
+              >
+                Email *
+              </label>
+              <input
+                type="email"
+                id="comment-email"
+                {...register('email')}
+                className="w-full rounded-sm border border-brutal-ink/20 bg-brutal-bg px-4 py-3 text-brutal-ink placeholder:text-brutal-muted focus:border-brutal-ink focus:outline-none"
+                placeholder="your.email@example.com"
+              />
+              {errors.email && <p className="mt-1 text-sm text-red-700">{errors.email.message}</p>}
+            </div>
+          </div>
+
+          <div>
+            <label
+              htmlFor="comment-content"
+              className="mb-2 block text-sm font-medium text-brutal-ink"
+            >
+              Comment *
+            </label>
+            <textarea
+              id="comment-content"
+              rows={6}
+              {...register('content')}
+              className="w-full resize-none rounded-sm border border-brutal-ink/20 bg-brutal-bg px-4 py-3 text-brutal-ink placeholder:text-brutal-muted focus:border-brutal-ink focus:outline-none"
+              placeholder="Share your thoughts..."
+            />
+            {errors.content && (
+              <p className="mt-1 text-sm text-red-700">{errors.content.message}</p>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="flex items-center gap-2 border border-brutal-ink bg-brutal-ink px-6 py-3 font-semibold text-brutal-bg transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin" />
+                Submitting...
+              </>
+            ) : (
+              <>
+                <Send className="h-5 w-5" />
+                Post Comment
+              </>
+            )}
+          </button>
+
+          {mutation.isError && (
+            <div className="rounded-sm border border-[orangered]/50 bg-[rgba(255,69,0,0.12)] p-4 text-brutal-ink">
+              <p className="mb-1 font-semibold">Failed to submit comment.</p>
+              <p className="text-sm">
+                {mutation.error && (mutation.error as any).response?.data
+                  ? typeof (mutation.error as any).response.data === 'string'
+                    ? (mutation.error as any).response.data
+                    : (mutation.error as any).response.data.detail ||
+                      (mutation.error as any).response.data.message ||
+                      JSON.stringify((mutation.error as any).response.data)
+                  : (mutation.error as any).message || 'Please try again.'}
+              </p>
+              <p className="mt-2 text-xs text-brutal-muted">
+                If this problem persists, please check your connection or try again later.
+              </p>
+            </div>
           )}
-        </button>
 
-        {mutation.isError && (
-          <div className="rounded-sm border border-[orangered]/50 bg-[rgba(255,69,0,0.12)] p-4 text-brutal-ink">
-            <p className="mb-1 font-semibold">Failed to submit comment.</p>
-            <p className="text-sm">
-              {mutation.error && (mutation.error as any).response?.data
-                ? typeof (mutation.error as any).response.data === 'string'
-                  ? (mutation.error as any).response.data
-                  : (mutation.error as any).response.data.detail ||
-                    (mutation.error as any).response.data.message ||
-                    JSON.stringify((mutation.error as any).response.data)
-                : (mutation.error as any).message || 'Please try again.'}
-            </p>
-            <p className="mt-2 text-xs text-brutal-muted">
-              If this problem persists, please check your connection or try again later.
-            </p>
-          </div>
-        )}
-
-        {mutation.isSuccess && (
-          <div className="rounded-sm border border-[lightgreen]/60 bg-[rgba(144,238,144,0.15)] p-4 text-brutal-ink">
-            <p className="mb-1 font-semibold">✓ Comment submitted successfully!</p>
-            <p className="text-sm">
-              Your comment has been submitted and is awaiting moderation. It will appear here once
-              approved.
-            </p>
-          </div>
-        )}
-      </form>
+          {mutation.isSuccess && (
+            <div className="rounded-sm border border-[lightgreen]/60 bg-[rgba(144,238,144,0.15)] p-4 text-brutal-ink">
+              <p className="mb-1 font-semibold">✓ Comment submitted successfully!</p>
+              <p className="text-sm">
+                Your comment has been submitted and is awaiting moderation. It will appear here once
+                approved.
+              </p>
+            </div>
+          )}
+        </form>
       )}
 
       {/* Comments List */}

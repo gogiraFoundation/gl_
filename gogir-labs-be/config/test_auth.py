@@ -1,13 +1,17 @@
 import pytest
 from django.contrib.auth import get_user_model
+from django.conf import settings
 from django.test import TestCase
+from django.test.utils import override_settings
 from rest_framework import status
 from rest_framework.test import APIClient
 from rest_framework_simplejwt.tokens import RefreshToken
 
 User = get_user_model()
+TEST_REST_FRAMEWORK = {**settings.REST_FRAMEWORK, "DEFAULT_THROTTLE_CLASSES": []}
 
 
+@override_settings(REST_FRAMEWORK=TEST_REST_FRAMEWORK)
 class AuthenticationAPITest(TestCase):
     """Test Authentication API endpoints."""
 

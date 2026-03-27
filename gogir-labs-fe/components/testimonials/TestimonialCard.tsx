@@ -89,9 +89,7 @@ export function TestimonialCard({ testimonial, accent, className }: TestimonialC
           />
         ))}
       </div>
-      <p className="italic leading-relaxed text-brutal-ink">
-        &quot;{testimonial.content}&quot;
-      </p>
+      <p className="italic leading-relaxed text-brutal-ink">&quot;{testimonial.content}&quot;</p>
     </GlowCard>
   )
 }

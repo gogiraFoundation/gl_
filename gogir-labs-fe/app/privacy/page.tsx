@@ -6,7 +6,7 @@ import { useAnalytics } from '@/contexts/AnalyticsContext'
 import { Shield, Cookie, Eye, Lock } from 'lucide-react'
 
 export default function PrivacyPage() {
-  const { consentGiven, trackingEnabled, giveConsent, revokeConsent } = useAnalytics()
+  const { trackingEnabled, giveConsent, revokeConsent } = useAnalytics()
 
   return (
     <div className="flex min-h-screen flex-col">

@@ -42,6 +42,7 @@ class PostViewSet(viewsets.ModelViewSet):
     search_fields = ["title", "excerpt", "content"]
     ordering_fields = ["created_at", "published_at", "views"]
     ordering = ["-published_at", "-created_at"]
+
     def get_serializer_class(self):
         if self.action == "list":
             return PostListSerializer

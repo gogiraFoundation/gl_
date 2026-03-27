@@ -12,10 +12,7 @@ interface GlowCardProps {
 }
 
 /** Flat elevated surface — shadow replaces border (Brutalist Elegance). */
-export function GlowCard({
-  children,
-  className,
-}: GlowCardProps) {
+export function GlowCard({ children, className }: GlowCardProps) {
   return (
     <div
       className={cn(

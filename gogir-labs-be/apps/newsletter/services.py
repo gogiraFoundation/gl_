@@ -254,7 +254,5 @@ Emmanuel Ugbaije
                 html_body=html_body,
             )
         except Exception as e:
-            logger.error(
-                "Failed to send unsubscribe confirmation: %s", e
-            )
+            logger.error("Failed to send unsubscribe confirmation: %s", e)
             return False

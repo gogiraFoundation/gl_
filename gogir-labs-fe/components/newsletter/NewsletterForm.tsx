@@ -51,7 +51,7 @@ export function NewsletterForm({
     setErrorMessage('')
 
     try {
-      const response = await api.post('/newsletter/subscribe/', {
+      await api.post('/newsletter/subscribe/', {
         email: data.email,
         name: data.name || '',
         source: data.source || source,
@@ -104,7 +104,7 @@ export function NewsletterForm({
               type="email"
               id="newsletter-email-compact"
               {...register('email')}
-              className="min-h-[48px] w-full border border-white/30 bg-transparent px-4 py-2 text-sm text-white placeholder:text-white/50 transition-opacity focus:border-white focus:outline-none"
+              className="min-h-[48px] w-full border border-white/30 bg-transparent px-4 py-2 text-sm text-white transition-opacity placeholder:text-white/50 focus:border-white focus:outline-none"
               placeholder="Enter your email"
               autoComplete="email"
             />
@@ -113,7 +113,7 @@ export function NewsletterForm({
           <button
             type="submit"
             disabled={isSubmitting}
-            className="min-h-[44px] w-full touch-manipulation select-none whitespace-nowrap rounded-md border border-orange-500/70 bg-transparent px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_18px_rgba(255,69,0,0.35)] transition-[color,box-shadow,border-color] duration-300 ease-out hover:border-orange-400 hover:text-[#f5f5f5] hover:shadow-[0_12px_24px_rgba(255,69,0,0.45)] active:border-orange-300 active:text-[#f5f5f5] active:shadow-[0_8px_18px_rgba(255,69,0,0.35)] sm:w-auto disabled:cursor-not-allowed disabled:opacity-50"
+            className="min-h-[44px] w-full touch-manipulation select-none whitespace-nowrap rounded-md border border-orange-500/70 bg-transparent px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_18px_rgba(255,69,0,0.35)] transition-[color,box-shadow,border-color] duration-300 ease-out hover:border-orange-400 hover:text-[#f5f5f5] hover:shadow-[0_12px_24px_rgba(255,69,0,0.45)] active:border-orange-300 active:text-[#f5f5f5] active:shadow-[0_8px_18px_rgba(255,69,0,0.35)] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           >
             {isSubmitting ? '...' : 'Subscribe'}
           </button>
