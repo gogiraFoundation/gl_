@@ -53,7 +53,7 @@ class EmailService:
             )
             return True
         except Exception as e:
-            logger.error(f"Failed to send email to {recipient}: {e}")
+            logger.error("Failed to send email notification: %s", e)
             return False
 
     @staticmethod

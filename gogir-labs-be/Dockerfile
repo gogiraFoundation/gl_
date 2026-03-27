@@ -19,7 +19,7 @@ RUN apt-get update && apt-get upgrade -y --no-install-recommends && apt-get inst
 
 # Install Python dependencies (upgrade setuptools/wheel to address CVE-2026-24049)
 COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip setuptools "wheel>=0.46.2" && \
+RUN pip install --no-cache-dir --upgrade pip "setuptools>=65,<82" "wheel>=0.46.2" && \
     pip install --no-cache-dir -r requirements.txt
 
 # Copy project

@@ -110,6 +110,47 @@
   --link-on-surface: #5b21b6;
 }
 
+/* Brutalist Elegance — strict monochrome when data-design="brutalist" */
+html[data-design='brutalist'][data-theme='light'],
+html[data-design='brutalist'] {
+  --color-bg: #ffffff;
+  --color-ink: #111111;
+  --color-muted: #4a4a4a;
+  --bg-primary: #ffffff;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f5f5f5;
+  --text-primary: #111111;
+  --text-secondary: #4a4a4a;
+  --text-tertiary: #4a4a4a;
+  --accent-primary: #111111;
+  --accent-secondary: #111111;
+  --glow-color: transparent;
+  --gradient-primary: #111111;
+  --gradient-secondary: #ffffff;
+  --gradient-card: #ffffff;
+  --border-default: rgba(17, 17, 17, 0.15);
+  --border-subtle: rgba(17, 17, 17, 0.12);
+  --border-focus: rgba(17, 17, 17, 0.45);
+  --surface-elevated: #ffffff;
+  --surface-input: #ffffff;
+  --surface-chip: transparent;
+  --surface-chip-active: rgba(17, 17, 17, 0.06);
+  --cta-surface: #ffffff;
+  --cta-border: rgba(17, 17, 17, 0.2);
+  --link-on-surface: #111111;
+  --shadow-subtle: 0 8px 40px rgba(0, 0, 0, 0.05);
+}
+
+html[data-design='brutalist'] {
+  color-scheme: light;
+}
+
+html[data-design='brutalist'] body {
+  background: var(--bg-primary);
+  background-image: none;
+  overflow-x: hidden;
+}
+
 /* Theme utility helpers (use with components) */
 .text-theme-muted {
   color: var(--text-tertiary);
@@ -133,6 +174,11 @@ html {
 
 html[data-theme='light'] {
   color-scheme: light;
+}
+
+html[data-design='brutalist'] .text-gray-400,
+html[data-design='brutalist'] .text-gray-300 {
+  color: var(--color-muted);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -285,6 +331,47 @@ table {
   text-justify: none;
 }
 
+/* Brutalist: editorial left alignment, Inter body, serif display via utilities */
+html[data-design='brutalist'] h1,
+html[data-design='brutalist'] h2,
+html[data-design='brutalist'] h3,
+html[data-design='brutalist'] h4,
+html[data-design='brutalist'] h5,
+html[data-design='brutalist'] h6 {
+  text-align: left;
+  font-family: var(--font-serif, 'Times New Roman', Georgia, serif);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+html[data-design='brutalist'] h1.font-sans,
+html[data-design='brutalist'] h2.font-sans,
+html[data-design='brutalist'] h3.font-sans {
+  font-family: var(--font-inter, system-ui, sans-serif);
+}
+
+html[data-design='brutalist'] p,
+html[data-design='brutalist'] li {
+  text-align: left;
+  text-justify: auto;
+  hyphens: manual;
+  line-height: 1.6;
+  font-family: var(--font-inter, system-ui, sans-serif);
+}
+
+html[data-design='brutalist'] .container-content,
+html[data-design='brutalist'] article,
+html[data-design='brutalist'] section:not(nav section) {
+  text-align: left;
+  text-justify: auto;
+}
+
+html[data-design='brutalist'] .text-meta {
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--color-muted);
+}
+
 /* Theme-aware text utilities */
 .text-gray-400 {
   color: var(--text-tertiary);
@@ -312,12 +399,126 @@ textarea::placeholder {
   opacity: 0.7;
 }
 
+/* 12-column shell: max-width 1400px, gutters per spec */
+.layout-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  width: 100%;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: min(1.5rem, 6vw);
+  padding-right: min(1.5rem, 6vw);
+  column-gap: 1.5rem;
+  row-gap: 0;
+}
+
+@media (min-width: 768px) {
+  .layout-grid {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html[data-design='brutalist'] .animate-page-fade {
+    animation: fadeIn 0.45s ease-out both;
+  }
+}
+
 /* Container for text content - prevents edge-to-edge stretching */
 .container-content {
   max-width: 1200px;
   margin: 0 auto;
   padding-left: 1rem;
   padding-right: 1rem;
+}
+
+html[data-design='brutalist'] .container-content {
+  max-width: 1400px;
+  padding-left: min(1.5rem, 6vw);
+  padding-right: min(1.5rem, 6vw);
+}
+
+@media (min-width: 768px) {
+  html[data-design='brutalist'] .container-content {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Navigation: uppercase links; underline scales from center on hover */
+.brutal-nav-link {
+  position: relative;
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  transition: opacity 0.2s ease;
+}
+
+.brutal-nav-link:hover {
+  opacity: 0.7;
+}
+
+.brutal-nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.25rem;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.2s ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .brutal-nav-link:hover::after,
+  .brutal-nav-link[data-active='true']::after {
+    transform: scaleX(1);
+  }
+}
+
+.brutal-nav-link[data-active='true']::after {
+  transform: scaleX(1);
+}
+
+/* Custom cursor: desktop fine pointer only */
+.custom-cursor-dot {
+  display: none;
+}
+
+@media (pointer: fine) and (hover: hover) {
+  html.has-custom-cursor:not(.reduce-motion) .custom-cursor-dot {
+    display: block;
+  }
+
+  html.has-custom-cursor:not(.reduce-motion) {
+    cursor: none;
+  }
+}
+
+@media (pointer: coarse), (hover: none) {
+  html.has-custom-cursor .custom-cursor-dot {
+    display: none !important;
+  }
+
+  html.has-custom-cursor {
+    cursor: auto !important;
+  }
 }
 
 /* Text wrapping utilities */
@@ -328,8 +529,8 @@ p,
   word-break: break-word;
 }
 
-/* Email addresses and long URLs */
-a[href^='mailto:'] {
+/* Email addresses and long URLs (exclude icon+label social rows, e.g. About “Connect”) */
+a[href^='mailto:']:not(.connect-social-link) {
   overflow-wrap: break-word;
   word-break: break-all;
   display: inline-block;
@@ -655,6 +856,14 @@ a[href^='mailto:'] {
   background: var(--accent-primary);
 }
 
+html[data-design='brutalist'] ::-webkit-scrollbar-thumb {
+  background: #111111;
+}
+
+html[data-design='brutalist'] ::-webkit-scrollbar-thumb:hover {
+  background: #4a4a4a;
+}
+
 /* Blog content styles for CKEditor HTML */
 /* Project Description Styles */
 .project-description {
@@ -954,6 +1163,13 @@ a[href^='mailto:'] {
   outline-color: rgba(91, 33, 182, 0.5) !important;
 }
 
+/* Contact form fields: override purple focus with orangered */
+[data-theme='light'] .contact-input:focus {
+  border-color: rgba(255, 69, 0, 0.85) !important;
+  outline-color: rgba(255, 69, 0, 0.55) !important;
+  box-shadow: 0 0 0 1px rgba(255, 69, 0, 0.22) !important;
+}
+
 /* Preserve dark backgrounds on form inputs */
 [data-theme='light'] input.bg-gray-900,
 [data-theme='light'] input[class*='bg-gray-900'],
@@ -1069,7 +1285,7 @@ a[href^='mailto:'] {
   }
 
   /* Text size adjustments for long words */
-  a[href^='mailto:'] {
+  a[href^='mailto:']:not(.connect-social-link) {
     font-size: 0.9rem;
   }
 }
@@ -1082,7 +1298,7 @@ a[href^='mailto:'] {
   }
 
   /* Further font size reduction for email addresses if needed */
-  a[href^='mailto:'] {
+  a[href^='mailto:']:not(.connect-social-link) {
     font-size: 0.85rem;
   }
 }

@@ -1,5 +1,3 @@
-'use client'
-
 import { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
@@ -9,16 +7,9 @@ interface GradientTextProps {
   gradient?: 'primary' | 'secondary'
 }
 
-export function GradientText({ children, className, gradient = 'primary' }: GradientTextProps) {
+/** Serif display text — flat ink (no gradient). */
+export function GradientText({ children, className }: GradientTextProps) {
   return (
-    <span
-      className={cn(
-        'gradient-text font-bold',
-        gradient === 'secondary' && 'gradient-text--secondary',
-        className
-      )}
-    >
-      {children}
-    </span>
+    <span className={cn('font-serif font-semibold text-brutal-ink', className)}>{children}</span>
   )
 }

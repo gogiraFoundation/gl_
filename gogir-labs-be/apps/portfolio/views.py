@@ -1,7 +1,7 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 from .models import Category, Project, Technology
@@ -23,7 +23,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         .select_related("category")
         .prefetch_related("technologies", "images")
     )
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,

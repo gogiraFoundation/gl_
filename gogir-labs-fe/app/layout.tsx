@@ -1,10 +1,15 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { EB_Garamond, Inter } from 'next/font/google'
 import './globals.css'
 import { Providers } from './providers'
 import { AnalyticsTracker } from '@/components/analytics/AnalyticsTracker'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
+const ebGaramond = EB_Garamond({
+  subsets: ['latin'],
+  variable: '--font-serif',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   icons: {
@@ -38,7 +43,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={inter.variable} data-theme="dark">
+    <html
+      lang="en"
+      className={`${inter.variable} ${ebGaramond.variable}`}
+      data-theme="light"
+      data-design="brutalist"
+    >
       <head>
         <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/feed/" />
         <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed/atom/" />

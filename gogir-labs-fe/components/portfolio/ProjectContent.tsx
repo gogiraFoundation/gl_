@@ -48,15 +48,17 @@ export function ProjectContent({ project }: ProjectContentProps) {
       {/* Header Section */}
       <div className="mb-8">
         {project.category && (
-          <span className="mb-4 inline-block rounded-lg bg-purple-500/20 px-3 py-1 text-sm font-semibold text-purple-400">
+          <span className="text-meta mb-4 inline-block font-sans font-semibold uppercase tracking-wider">
             {project.category.name}
           </span>
         )}
-        <h1 className="gradient-text mb-4 text-4xl font-bold md:text-5xl">{project.title}</h1>
-        <p className="mb-6 text-xl leading-relaxed text-gray-300">{project.description}</p>
+        <h1 className="mb-4 font-serif text-4xl font-semibold text-brutal-ink md:text-5xl">
+          {project.title}
+        </h1>
+        <p className="mb-6 text-xl leading-relaxed text-brutal-ink">{project.description}</p>
 
         {/* Meta Information */}
-        <div className="mb-6 flex flex-wrap items-center gap-4 text-sm text-gray-400">
+        <div className="mb-6 flex flex-wrap items-center gap-4 text-sm text-brutal-muted">
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4" />
             <span>{formatDate(project.created_at)}</span>
@@ -82,7 +84,7 @@ export function ProjectContent({ project }: ProjectContentProps) {
               onClick={() =>
                 trackClick('project_github', { projectId: project.id, projectTitle: project.title })
               }
-              className="flex items-center gap-2 rounded-lg bg-gray-800 px-6 py-3 font-semibold text-white transition-all duration-300 hover:scale-105 hover:bg-gray-700"
+              className="flex items-center gap-2 border border-brutal-ink bg-transparent px-6 py-3 font-semibold text-brutal-ink transition-opacity hover:opacity-70"
             >
               <Github className="h-5 w-5" />
               View on GitHub
@@ -96,7 +98,7 @@ export function ProjectContent({ project }: ProjectContentProps) {
               onClick={() =>
                 trackClick('project_live', { projectId: project.id, projectTitle: project.title })
               }
-              className="flex items-center gap-2 rounded-lg bg-gradient-primary px-6 py-3 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-glow-purple"
+              className="flex items-center gap-2 border border-brutal-ink bg-brutal-ink px-6 py-3 font-semibold text-brutal-bg transition-opacity hover:opacity-90"
             >
               <ExternalLink className="h-5 w-5" />
               Live Demo
@@ -138,9 +140,9 @@ export function ProjectContent({ project }: ProjectContentProps) {
       {project.long_description && (
         <div className="mb-8">
           <GlowCard className="p-6 md:p-8">
-            <h2 className="mb-4 text-2xl font-bold text-white">About This Project</h2>
+            <h2 className="mb-4 font-serif text-2xl font-semibold text-brutal-ink">About this project</h2>
             <div
-              className="project-description max-w-none leading-relaxed text-gray-300"
+              className="project-description max-w-none leading-relaxed text-brutal-ink"
               style={{ whiteSpace: 'pre-wrap' }}
             >
               {project.long_description}
@@ -152,15 +154,15 @@ export function ProjectContent({ project }: ProjectContentProps) {
       {/* Technologies */}
       {project.technologies.length > 0 && (
         <div className="mb-8">
-          <h2 className="mb-4 flex items-center gap-2 text-2xl font-bold text-white">
-            <Code className="h-6 w-6 text-purple-400" />
-            Technologies Used
+          <h2 className="mb-4 flex items-center gap-2 font-serif text-2xl font-semibold text-brutal-ink">
+            <Code className="h-6 w-6 text-brutal-ink" />
+            Technologies used
           </h2>
           <div className="flex flex-wrap gap-3">
             {project.technologies.map((tech) => (
               <span
                 key={tech.id}
-                className="rounded-lg border border-purple-500/30 bg-purple-500/20 px-4 py-2 font-medium text-purple-300"
+                className="border border-brutal-ink/20 px-4 py-2 font-medium text-brutal-ink"
               >
                 {tech.name}
               </span>
@@ -172,7 +174,7 @@ export function ProjectContent({ project }: ProjectContentProps) {
       {/* Project Images Gallery */}
       {project.images && project.images.length > 0 && (
         <div className="mb-8">
-          <h2 className="mb-4 text-2xl font-bold text-white">Project Gallery</h2>
+          <h2 className="mb-4 font-serif text-2xl font-semibold text-brutal-ink">Project gallery</h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {project.images
               .sort((a, b) => a.order - b.order)
@@ -201,11 +203,11 @@ export function ProjectContent({ project }: ProjectContentProps) {
       <RelatedProjects projectId={project.id} />
 
       {/* Back to Portfolio */}
-      <div className="mt-12 border-t border-gray-700 pt-8">
+      <div className="mt-12 border-t border-brutal-ink/15 pt-8">
         <Link
           href="/portfolio"
           onClick={() => trackClick('portfolio_back', { fromProject: project.title })}
-          className="inline-flex items-center gap-2 text-purple-400 transition-colors hover:text-purple-300"
+          className="inline-flex items-center gap-2 text-brutal-ink transition-opacity hover:opacity-70"
         >
           ← Back to Portfolio
         </Link>

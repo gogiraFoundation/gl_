@@ -12,20 +12,20 @@ interface ThemeContextType {
 export const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('dark')
+  const [theme, setTheme] = useState<Theme>('light')
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setMounted(true)
-    // Check localStorage or system preference
+    // Brutalist Elegance: single light, high-contrast palette sitewide
     if (typeof window !== 'undefined') {
-      const savedTheme = localStorage.getItem('theme') as Theme | null
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
-        ? 'dark'
-        : 'light'
-      const initialTheme = savedTheme || systemTheme
-      setTheme(initialTheme)
-      document.documentElement.setAttribute('data-theme', initialTheme)
+      setTheme('light')
+      document.documentElement.setAttribute('data-theme', 'light')
+      try {
+        localStorage.setItem('theme', 'light')
+      } catch {
+        /* ignore */
+      }
     }
   }, [])
 

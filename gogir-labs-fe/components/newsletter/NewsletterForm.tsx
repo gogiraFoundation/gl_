@@ -98,37 +98,35 @@ export function NewsletterForm({
           autoComplete="off"
         />
 
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row">
           <div className="flex-1">
             <input
               type="email"
               id="newsletter-email-compact"
               {...register('email')}
-              className="glass min-h-[48px] w-full rounded-lg px-4 py-2 text-sm text-white placeholder-gray-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="min-h-[48px] w-full border border-white/30 bg-transparent px-4 py-2 text-sm text-white placeholder:text-white/50 transition-opacity focus:border-white focus:outline-none"
               placeholder="Enter your email"
               autoComplete="email"
             />
-            {errors.email && <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>}
+            {errors.email && <p className="mt-1 text-xs text-red-300">{errors.email.message}</p>}
           </div>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="whitespace-nowrap rounded-lg bg-gradient-primary px-4 py-2 text-sm font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-glow-purple disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
+            className="min-h-[44px] w-full touch-manipulation select-none whitespace-nowrap rounded-md border border-orange-500/70 bg-transparent px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_18px_rgba(255,69,0,0.35)] transition-[color,box-shadow,border-color] duration-300 ease-out hover:border-orange-400 hover:text-[#f5f5f5] hover:shadow-[0_12px_24px_rgba(255,69,0,0.45)] active:border-orange-300 active:text-[#f5f5f5] active:shadow-[0_8px_18px_rgba(255,69,0,0.35)] sm:w-auto disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isSubmitting ? '...' : 'Subscribe'}
           </button>
         </div>
 
         {submitStatus === 'success' && (
-          <div className="rounded-lg border border-green-500/50 bg-green-500/20 p-3 text-sm text-green-300">
+          <div className="border border-white/25 p-3 text-sm text-white/90">
             Successfully subscribed! Please check your email to verify.
           </div>
         )}
 
         {submitStatus === 'error' && (
-          <div className="rounded-lg border border-red-500/50 bg-red-500/20 p-3 text-sm text-red-300">
-            {errorMessage}
-          </div>
+          <div className="border border-white/25 p-3 text-sm text-red-200">{errorMessage}</div>
         )}
       </form>
     )
@@ -151,7 +149,7 @@ export function NewsletterForm({
           <div className="flex items-center gap-4">
             <label
               htmlFor="newsletter-name"
-              className="min-w-[100px] whitespace-nowrap text-sm font-medium text-white"
+              className="min-w-[100px] whitespace-nowrap text-sm font-medium text-brutal-ink"
             >
               Name (Optional)
             </label>
@@ -159,7 +157,7 @@ export function NewsletterForm({
               type="text"
               id="newsletter-name"
               {...register('name')}
-              className="glass flex-1 rounded-lg px-4 py-3 text-white placeholder-gray-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="flex-1 border border-brutal-ink/20 bg-brutal-bg px-4 py-3 text-brutal-ink placeholder:text-brutal-muted focus:border-brutal-ink focus:outline-none"
               placeholder="Your name"
               autoComplete="name"
             />
@@ -171,43 +169,41 @@ export function NewsletterForm({
         <div className="flex items-center gap-4">
           <label
             htmlFor="newsletter-email"
-            className="min-w-[100px] whitespace-nowrap text-sm font-medium text-white"
+            className="min-w-[100px] whitespace-nowrap text-sm font-medium text-brutal-ink"
           >
             Email *
           </label>
           <div className="relative flex-1">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-              <Mail className="h-5 w-5 text-gray-400" />
+              <Mail className="h-5 w-5 text-brutal-muted" />
             </div>
             <input
               type="email"
               id="newsletter-email"
               {...register('email')}
-              className="glass w-full rounded-lg py-3 pl-10 pr-4 text-white placeholder-gray-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full border border-brutal-ink/20 bg-brutal-bg py-3 pl-10 pr-4 text-brutal-ink placeholder:text-brutal-muted focus:border-brutal-ink focus:outline-none"
               placeholder="your.email@example.com"
               autoComplete="email"
             />
           </div>
         </div>
-        {errors.email && <p className="ml-[116px] text-sm text-red-400">{errors.email.message}</p>}
+        {errors.email && <p className="ml-[116px] text-sm text-red-700">{errors.email.message}</p>}
       </div>
 
       {submitStatus === 'success' && (
-        <div className="rounded-lg border border-green-500/50 bg-green-500/20 p-4 text-green-300">
+        <div className="border border-brutal-ink/20 p-4 text-brutal-ink">
           Successfully subscribed! Please check your email to verify your subscription.
         </div>
       )}
 
       {submitStatus === 'error' && (
-        <div className="rounded-lg border border-red-500/50 bg-red-500/20 p-4 text-red-300">
-          {errorMessage}
-        </div>
+        <div className="border border-brutal-ink/20 p-4 text-red-700">{errorMessage}</div>
       )}
 
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full rounded-lg bg-gradient-primary px-5 py-2.5 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-glow-purple disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
+        className="w-full border border-brutal-ink bg-transparent px-5 py-2.5 font-semibold text-brutal-ink transition-opacity hover:opacity-70 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isSubmitting ? 'Subscribing...' : 'Subscribe to Newsletter'}
       </button>

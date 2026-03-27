@@ -119,20 +119,16 @@ export default function BlogClient() {
   })
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-brutal-bg">
       <Header />
       <main className="relative flex-grow px-4 py-20">
-        {/* Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-mesh opacity-30"></div>
-
         <div className="relative z-10 mx-auto max-w-7xl">
-          <div className="mb-12 animate-fade-in-up text-center">
-            <h1 className="mb-4 text-5xl font-bold md:text-6xl">
-              <span className="gradient-text">Blog</span>
-            </h1>
-            <p className="mx-auto max-w-2xl text-lg text-gray-400">
-              Insights on infrastructure, DevOps, cloud technologies, and software engineering -
-              from Terraform to Kubernetes, CI/CD to scalable architecture.
+          <div className="mb-12 text-center">
+            <h1 className="mb-4 font-serif text-5xl font-semibold text-brutal-ink md:text-6xl">Blog</h1>
+            <p className="mx-auto max-w-2xl text-lg text-brutal-muted">
+              Insights on Infrastructure, DevOps, Cloud Technologies, and Software Engineering.
+              From Terraform to Kubernetes, CI/CD to scalable architecture, explore my thoughts and
+              tutorials on the modern tools and practices shaping the industry.
             </p>
           </div>
 
@@ -163,23 +159,23 @@ export default function BlogClient() {
           />
 
           {/* Optional: Newsletter or Follow CTA */}
-          <div className="mt-16 text-center">
-            <p className="mb-4 text-gray-300">
+          <div className="mt-16 flex justify-center px-4">
+            <p className="w-full text-center text-xs leading-relaxed text-brutal-muted sm:text-sm md:mx-auto md:w-[40%]">
               Like what you're reading? Follow me on{' '}
               <Link
                 href="https://www.linkedin.com/in/emmanuel-ugbaje-b19227161/"
-                className="text-purple-400 underline hover:text-purple-300"
+                className="font-medium text-[#ff4500]/85 no-underline transition-colors duration-200 ease-out hover:text-[#ff4500] focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ff4500]/45"
               >
                 LinkedIn
               </Link>{' '}
               or{' '}
               <Link
                 href="https://medium.com/@aigbemanuel"
-                className="text-purple-400 underline hover:text-purple-300"
+                className="font-medium text-[#ff4500]/85 no-underline transition-colors duration-200 ease-out hover:text-[#ff4500] focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ff4500]/45"
               >
                 Medium
               </Link>{' '}
-              for more insights.
+              for more insights on software engineering, DevOps, and backend development.
             </p>
           </div>
         </div>

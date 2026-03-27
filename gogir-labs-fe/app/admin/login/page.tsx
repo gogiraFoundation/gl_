@@ -35,8 +35,8 @@ export default function AdminLoginPage() {
     try {
       const response = await api.post('/auth/token/', data)
       const { access, refresh } = response.data
-      localStorage.setItem('access_token', access)
-      localStorage.setItem('refresh_token', refresh)
+      sessionStorage.setItem('access_token', access)
+      sessionStorage.setItem('refresh_token', refresh)
       router.push('/admin')
     } catch (err: unknown) {
       const axiosError = err as AxiosError<{ detail?: string }>

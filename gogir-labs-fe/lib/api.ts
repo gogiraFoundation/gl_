@@ -9,8 +9,21 @@ const api = axios.create({
 
 type RequestConfigWithRetry = InternalAxiosRequestConfig & { _retry?: boolean }
 
-function clearStoredTokens() {
+function getTokenStorage(): Storage | null {
+  if (typeof window === 'undefined') return null
   try {
+    return window.sessionStorage
+  } catch {
+    return null
+  }
+}
+
+function clearStoredTokens() {
+  const storage = getTokenStorage()
+  try {
+    storage?.removeItem('access_token')
+    storage?.removeItem('refresh_token')
+    // Backward compatibility for users with older persisted tokens.
     localStorage.removeItem('access_token')
     localStorage.removeItem('refresh_token')
   } catch {
@@ -35,7 +48,8 @@ function stripAuthorizationHeader(config: InternalAxiosRequestConfig) {
 // Runs only in the browser.
 api.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('access_token')
+    const storage = getTokenStorage()
+    const token = storage?.getItem('access_token') ?? localStorage.getItem('access_token')
     if (token) {
       config.headers = config.headers ?? {}
       ;(config.headers as Record<string, string>).Authorization = `Bearer ${token}`
