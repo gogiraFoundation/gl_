@@ -48,11 +48,7 @@ export function ScrollProgress() {
       className="pointer-events-none fixed left-0 right-0 top-0 z-[1000] h-0.5 bg-transparent"
       aria-hidden
     >
-      <div
-        ref={barRef}
-        className="h-0.5 w-0 bg-brutal-ink"
-        style={{ width: '0%' }}
-      />
+      <div ref={barRef} className="h-0.5 w-0 bg-brutal-ink" style={{ width: '0%' }} />
     </div>
   )
 }

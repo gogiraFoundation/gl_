@@ -49,7 +49,7 @@ export function PostCard({ post, featured = false }: PostCardProps) {
         className={cn(
           'group relative flex h-full flex-col overflow-hidden rounded-lg p-6',
           'transition-[transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]',
-          'motion-reduce:transition-none hover:-translate-y-0.5 motion-reduce:hover:translate-y-0',
+          'hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0',
           !featured && 'hover:shadow-[0_12px_32px_rgba(0,0,0,0.11)]',
           featured &&
             'shadow-[0_8px_28px_rgba(0,0,0,0.1),0_1px_0_rgba(255,255,255,0.05)_inset] hover:shadow-[0_14px_40px_rgba(0,0,0,0.14)]'
@@ -88,7 +88,9 @@ export function PostCard({ post, featured = false }: PostCardProps) {
             )}
           </div>
           {post.featured_image && (
-            <div className={cn('relative flex-1 overflow-hidden', featured ? 'h-48 md:h-56' : 'h-32')}>
+            <div
+              className={cn('relative flex-1 overflow-hidden', featured ? 'h-48 md:h-56' : 'h-32')}
+            >
               <Image
                 src={post.featured_image}
                 alt={`${post.title} - ${post.category?.name || 'Blog post'} featured image`}
@@ -102,7 +104,7 @@ export function PostCard({ post, featured = false }: PostCardProps) {
         </div>
 
         <div className="flex-grow text-center">
-          <h3 className="mb-3 mt-2 font-sans text-xl font-semibold text-brutal-ink transition-[transform,opacity] duration-300 ease-out group-hover:-translate-y-px group-hover:opacity-100 md:text-2xl motion-reduce:group-hover:translate-y-0">
+          <h3 className="mb-3 mt-2 font-sans text-xl font-semibold text-brutal-ink transition-[transform,opacity] duration-300 ease-out group-hover:-translate-y-px group-hover:opacity-100 motion-reduce:group-hover:translate-y-0 md:text-2xl">
             {post.title}
           </h3>
           <p
@@ -128,7 +130,9 @@ export function PostCard({ post, featured = false }: PostCardProps) {
           )}
 
           <div className="mt-auto border-t border-brutal-ink/15 pt-4 text-center">
-            <p className="text-xs text-brutal-muted">Posted on {formatDate(post.published_at || post.created_at)}</p>
+            <p className="text-xs text-brutal-muted">
+              Posted on {formatDate(post.published_at || post.created_at)}
+            </p>
             <span className="mt-3 inline-flex justify-center text-sm font-semibold text-brutal-ink underline underline-offset-4 transition-[transform,opacity] duration-300 ease-out group-hover:translate-x-0.5 group-hover:opacity-80 motion-reduce:group-hover:translate-x-0">
               Read Full Post
             </span>

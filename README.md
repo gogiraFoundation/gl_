@@ -2,7 +2,7 @@
 
 A production-ready portfolio website built with Django REST Framework (backend) and Next.js (frontend), featuring blog, portfolio showcase, contact forms, newsletter, notifications, and analytics.
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Using Docker Compose (Recommended)
 
@@ -24,7 +24,7 @@ docker-compose up -d
 ./start-frontend.sh
 ```
 
-## 📋 Features
+## Features
 
 - **Portfolio Showcase**: Display projects with images, videos, and descriptions
 - **Blog System**: Rich text blog posts with categories, tags, and comments
@@ -36,7 +36,7 @@ docker-compose up -d
 - **Responsive Design**: Mobile-friendly with dark/light theme toggle
 - **SEO Optimized**: Meta tags, structured data, semantic HTML
 
-## 🧪 Testing
+## Testing
 
 ### Run All Tests
 
@@ -62,7 +62,7 @@ npm test
 - Backend: 170 tests passing (100%)
 - Frontend: 31 tests passing (96.9%)
 
-## 🏗️ Architecture
+## Architecture
 
 ### Backend (Django/DRF)
 - Django 4.2.7
@@ -79,7 +79,7 @@ npm test
 - React Query for data fetching
 - Framer Motion for animations
 
-## 📦 Deployment
+## Deployment
 
 ### Prerequisites
 - Docker and Docker Compose
@@ -99,26 +99,30 @@ npm test
 
 See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed instructions.
 
-## 🔄 CI/CD Pipeline
+## CI/CD Pipeline
 
 The project includes automated CI/CD pipelines:
 
-- **CI Pipeline**: Runs tests, security scans, and builds Docker images
-- **CD Pipeline**: Automatically deploys to staging and production
-- **Code Quality**: Linting and formatting checks
+- **CI Pipeline** (`.github/workflows/ci.yml`): backend tests (PostgreSQL), frontend lint/type/tests, and security scan
+- **Code Quality** (`.github/workflows/code-quality.yml`): backend `black/isort/flake8` and frontend ESLint/Prettier checks
+- **CD Pipeline** (`.github/workflows/cd.yml`): builds and pushes backend/frontend Docker images on `main` and `dev`
+- **Cloudflare Backend Validation** (`.github/workflows/backend-cloudflare-setup.yml`): deploy checks + SQLite test validation; optional manual backend image publish
 
-See [CI_CD_README.md](./CI_CD_README.md) for details.
+### Required Actions Secrets
 
-## 📚 Documentation
+- `DOCKER_USERNAME`
+- `DOCKER_PASSWORD`
+- `API_ALLOWED_HOSTS` (recommended for production config checks)
+- `CLOUDFLARE_PAGES_URL` (recommended for production config checks)
+
+## Documentation
 
 - [DEPLOYMENT.md](./DEPLOYMENT.md) - Deployment guide
-- [DEPLOYMENT_SUMMARY.md](./DEPLOYMENT_SUMMARY.md) - Deployment summary
-- [CI_CD_README.md](./CI_CD_README.md) - CI/CD pipeline documentation
 - [TESTING.md](./TESTING.md) - Testing guide
 - [PRODUCTION_CHECKLIST.md](./PRODUCTION_CHECKLIST.md) - Pre-deployment checklist
 - [ADMIN_GUIDE.md](./ADMIN_GUIDE.md) - Admin user guide
 
-## 🔐 Security
+## Security
 
 - SSL/TLS encryption
 - Security headers (HSTS, CSP, etc.)
@@ -129,7 +133,7 @@ See [CI_CD_README.md](./CI_CD_README.md) for details.
 - SQL injection prevention
 - XSS protection
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 gogir_labs/
@@ -155,7 +159,7 @@ gogir_labs/
 └── deploy.sh              # Deployment script
 ```
 
-## 🛠️ Development
+## Development
 
 ### Backend Setup
 
@@ -177,26 +181,26 @@ npm install
 npm run dev
 ```
 
-## 📝 Environment Variables
+## Environment Variables
 
 See `.env.production.example` and `.env.staging.example` for required environment variables.
 
-## 🤝 Contributing
+## Contributing
 
 1. Create a feature branch
 2. Make your changes
 3. Run tests: `./run-tests.sh`
 4. Submit a pull request
 
-## 📄 License
+## License
 
 [Your License Here]
 
-## 👤 Author
+## Author
 
 Emmanuel Ugbaije - Software Engineer
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Django REST Framework
 - Next.js

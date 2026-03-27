@@ -9,7 +9,9 @@ export default function NotFound() {
       <Header />
       <main className="relative flex flex-grow items-center justify-center px-4 py-20">
         <div className="relative z-10 mx-auto max-w-2xl text-center">
-          <h1 className="mb-4 font-serif text-8xl font-semibold text-brutal-ink md:text-9xl">404</h1>
+          <h1 className="mb-4 font-serif text-8xl font-semibold text-brutal-ink md:text-9xl">
+            404
+          </h1>
           <h2 className="mb-6 font-sans text-3xl font-semibold text-brutal-ink md:text-4xl">
             Page not found
           </h2>

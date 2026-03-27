@@ -70,7 +70,7 @@ export function NotificationDropdown({ onClose }: { onClose: () => void }) {
   return (
     <div
       ref={dropdownRef}
-      className="absolute right-0 z-50 mt-2 max-h-96 w-96 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800"
+      className="absolute right-0 z-50 mt-2 max-h-96 w-[min(24rem,calc(100vw-1rem))] max-w-full overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800"
     >
       <div className="flex items-center justify-between border-b border-gray-200 p-4 dark:border-gray-700">
         <h3 className="text-lg font-semibold">Notifications</h3>

@@ -1,4 +1,4 @@
-## Cloudflare Pages deployment (frontend)
+# Cloudflare Pages Deployment (Frontend)
 
 - **Domain**: **www.gogirlabs.uk** (frontend on Cloudflare Pages)
 - **API**: **api.gogirlabs.uk** (backend on your server)

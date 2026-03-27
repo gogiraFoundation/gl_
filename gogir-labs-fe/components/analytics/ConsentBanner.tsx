@@ -3,7 +3,6 @@
 import { useAnalytics } from '@/contexts/AnalyticsContext'
 import { X, Cookie, Shield } from 'lucide-react'
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
 
 export function ConsentBanner() {
   const { consentGiven, giveConsent, revokeConsent } = useAnalytics()

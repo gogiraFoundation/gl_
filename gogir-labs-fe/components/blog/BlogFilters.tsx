@@ -47,7 +47,7 @@ export function BlogFilters({
           placeholder="Search posts..."
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="glass w-full rounded-sm border border-white/10 py-3.5 pl-12 pr-10 text-white placeholder-gray-400 shadow-[0_8px_18px_rgba(112,128,144,0.35)] transition-[box-shadow,border-color] duration-300 ease-out hover:border-orange-500/45 hover:shadow-[0_10px_26px_rgba(255,69,0,0.32)] focus:border-orange-500/55 focus:outline-none focus:ring-0 focus:shadow-[0_12px_30px_rgba(255,69,0,0.45)] active:shadow-[0_8px_22px_rgba(255,69,0,0.38)]"
+          className="glass w-full rounded-sm border border-white/10 py-3.5 pl-12 pr-10 text-white placeholder-gray-400 shadow-[0_8px_18px_rgba(112,128,144,0.35)] transition-[box-shadow,border-color] duration-300 ease-out hover:border-orange-500/45 hover:shadow-[0_10px_26px_rgba(255,69,0,0.32)] focus:border-orange-500/55 focus:shadow-[0_12px_30px_rgba(255,69,0,0.45)] focus:outline-none focus:ring-0 active:shadow-[0_8px_22px_rgba(255,69,0,0.38)]"
           autoComplete="off"
         />
         {searchQuery && (
@@ -67,7 +67,7 @@ export function BlogFilters({
           name="blog-category"
           value={selectedCategory || ''}
           onChange={(e) => onCategoryChange(e.target.value ? Number(e.target.value) : null)}
-          className="glass cursor-pointer rounded-lg border border-white/15 px-4 py-2 text-white shadow-[0_6px_14px_rgba(112,128,144,0.25)] transition-[box-shadow,border-color] duration-300 ease-out hover:border-orange-500/40 hover:shadow-[0_8px_18px_rgba(255,69,0,0.28)] focus:outline-none focus:ring-0 focus:border-orange-500/50 focus:shadow-[0_10px_22px_rgba(255,69,0,0.38)]"
+          className="glass cursor-pointer rounded-lg border border-white/15 px-4 py-2 text-white shadow-[0_6px_14px_rgba(112,128,144,0.25)] transition-[box-shadow,border-color] duration-300 ease-out hover:border-orange-500/40 hover:shadow-[0_8px_18px_rgba(255,69,0,0.28)] focus:border-orange-500/50 focus:shadow-[0_10px_22px_rgba(255,69,0,0.38)] focus:outline-none focus:ring-0"
         >
           <option value="" className="bg-gray-900">
             All Categories
@@ -83,7 +83,7 @@ export function BlogFilters({
           name="blog-tag"
           value={selectedTag || ''}
           onChange={(e) => onTagChange(e.target.value ? Number(e.target.value) : null)}
-          className="glass cursor-pointer rounded-lg border border-white/15 px-4 py-2 text-white shadow-[0_6px_14px_rgba(112,128,144,0.25)] transition-[box-shadow,border-color] duration-300 ease-out hover:border-orange-500/40 hover:shadow-[0_8px_18px_rgba(255,69,0,0.28)] focus:outline-none focus:ring-0 focus:border-orange-500/50 focus:shadow-[0_10px_22px_rgba(255,69,0,0.38)]"
+          className="glass cursor-pointer rounded-lg border border-white/15 px-4 py-2 text-white shadow-[0_6px_14px_rgba(112,128,144,0.25)] transition-[box-shadow,border-color] duration-300 ease-out hover:border-orange-500/40 hover:shadow-[0_8px_18px_rgba(255,69,0,0.28)] focus:border-orange-500/50 focus:shadow-[0_10px_22px_rgba(255,69,0,0.38)] focus:outline-none focus:ring-0"
         >
           <option value="" className="bg-gray-900">
             All Tags

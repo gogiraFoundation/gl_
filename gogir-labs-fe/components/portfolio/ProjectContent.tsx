@@ -140,7 +140,9 @@ export function ProjectContent({ project }: ProjectContentProps) {
       {project.long_description && (
         <div className="mb-8">
           <GlowCard className="p-6 md:p-8">
-            <h2 className="mb-4 font-serif text-2xl font-semibold text-brutal-ink">About this project</h2>
+            <h2 className="mb-4 font-serif text-2xl font-semibold text-brutal-ink">
+              About this project
+            </h2>
             <div
               className="project-description max-w-none leading-relaxed text-brutal-ink"
               style={{ whiteSpace: 'pre-wrap' }}
@@ -174,7 +176,9 @@ export function ProjectContent({ project }: ProjectContentProps) {
       {/* Project Images Gallery */}
       {project.images && project.images.length > 0 && (
         <div className="mb-8">
-          <h2 className="mb-4 font-serif text-2xl font-semibold text-brutal-ink">Project gallery</h2>
+          <h2 className="mb-4 font-serif text-2xl font-semibold text-brutal-ink">
+            Project gallery
+          </h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {project.images
               .sort((a, b) => a.order - b.order)

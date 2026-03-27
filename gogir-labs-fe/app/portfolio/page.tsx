@@ -145,7 +145,7 @@ export default function PortfolioPage() {
             <ProjectGrid projects={typedProjects} />
           )}
 
-          <div className="mt-20 mx-auto w-full max-w-3xl bg-brutal-bg p-6 text-center opacity-0 transition-all duration-500 ease-out [animation:fadeIn_0.55s_ease-out_forwards] md:mt-24 md:w-[40%] md:p-8">
+          <div className="mx-auto mt-20 w-full max-w-3xl bg-brutal-bg p-6 text-center opacity-0 transition-all duration-500 ease-out [animation:fadeIn_0.55s_ease-out_forwards] md:mt-24 md:max-w-xl md:p-8">
             <p className="text-center text-base leading-relaxed text-brutal-ink md:text-lg">
               Interested in a custom solution or planning your next platform build?{' '}
               <Link

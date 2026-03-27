@@ -124,10 +124,12 @@ export default function BlogClient() {
       <main className="relative flex-grow px-4 py-20">
         <div className="relative z-10 mx-auto max-w-7xl">
           <div className="mb-12 text-center">
-            <h1 className="mb-4 font-serif text-5xl font-semibold text-brutal-ink md:text-6xl">Blog</h1>
+            <h1 className="mb-4 font-serif text-5xl font-semibold text-brutal-ink md:text-6xl">
+              Blog
+            </h1>
             <p className="mx-auto max-w-2xl text-lg text-brutal-muted">
-              Insights on Infrastructure, DevOps, Cloud Technologies, and Software Engineering.
-              From Terraform to Kubernetes, CI/CD to scalable architecture, explore my thoughts and
+              Insights on Infrastructure, DevOps, Cloud Technologies, and Software Engineering. From
+              Terraform to Kubernetes, CI/CD to scalable architecture, explore my thoughts and
               tutorials on the modern tools and practices shaping the industry.
             </p>
           </div>
@@ -160,7 +162,7 @@ export default function BlogClient() {
 
           {/* Optional: Newsletter or Follow CTA */}
           <div className="mt-16 flex justify-center px-4">
-            <p className="w-full text-center text-xs leading-relaxed text-brutal-muted sm:text-sm md:mx-auto md:w-[40%]">
+            <p className="w-full max-w-2xl text-center text-xs leading-relaxed text-brutal-muted sm:text-sm md:mx-auto md:max-w-xl">
               Like what you're reading? Follow me on{' '}
               <Link
                 href="https://www.linkedin.com/in/emmanuel-ugbaje-b19227161/"

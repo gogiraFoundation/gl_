@@ -157,7 +157,7 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="mx-auto mt-[10px] flex min-h-[38px] w-[72%] items-center justify-center border border-brutal-ink bg-transparent px-3 py-2 text-[11px] font-bold text-brutal-ink shadow-[0_10px_24px_rgba(255,69,0,0.24),0_4px_12px_rgba(112,128,144,0.34),0_1px_0_rgba(255,255,255,0.35)_inset] transition-[color,box-shadow,border-color] hover:cursor-default hover:text-[orangered] hover:shadow-[0_12px_28px_rgba(255,69,0,0.3),0_6px_16px_rgba(112,128,144,0.4),0_1px_0_rgba(255,255,255,0.4)_inset] active:border-[lightgreen] sm:w-[34%] disabled:cursor-not-allowed disabled:opacity-50"
+        className="mx-auto mt-[10px] flex min-h-[38px] w-[72%] items-center justify-center border border-brutal-ink bg-transparent px-3 py-2 text-[11px] font-bold text-brutal-ink shadow-[0_10px_24px_rgba(255,69,0,0.24),0_4px_12px_rgba(112,128,144,0.34),0_1px_0_rgba(255,255,255,0.35)_inset] transition-[color,box-shadow,border-color] hover:cursor-default hover:text-[orangered] hover:shadow-[0_12px_28px_rgba(255,69,0,0.3),0_6px_16px_rgba(112,128,144,0.4),0_1px_0_rgba(255,255,255,0.4)_inset] active:border-[lightgreen] disabled:cursor-not-allowed disabled:opacity-50 sm:w-[34%]"
       >
         {isSubmitting ? 'Sending...' : 'Discuss Your Project'}
       </button>

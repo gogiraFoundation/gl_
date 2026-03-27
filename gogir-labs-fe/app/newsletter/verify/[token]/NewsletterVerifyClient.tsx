@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
@@ -15,14 +15,7 @@ export default function NewsletterVerifyClient() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
   const [message, setMessage] = useState('')
 
-  useEffect(() => {
-    if (token) {
-      verifyEmail(token)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token])
-
-  const verifyEmail = async (verificationToken: string) => {
+  const verifyEmail = useCallback(async (verificationToken: string) => {
     try {
       const response = await api.get(`/newsletter/verify/${verificationToken}/`)
       setStatus('success')
@@ -38,7 +31,13 @@ export default function NewsletterVerifyClient() {
         setMessage('Failed to verify email. The verification link may be invalid or expired.')
       }
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    if (token) {
+      verifyEmail(token)
+    }
+  }, [token, verifyEmail])
 
   return (
     <div className="flex min-h-screen flex-col">
