@@ -93,7 +93,7 @@ export function Header() {
                 <Github className="h-6 w-6" />
               </a>
               <a
-                href="https://www.linkedin.com/in/emmanuel-ugbaje"
+                href="https://www.linkedin.com/in/emmanuel-ugbaje-b19227161/"
                 target="_blank"
                 rel="me noopener noreferrer"
                 onClick={() =>
@@ -204,7 +204,7 @@ export function Header() {
                 <Github className="h-7 w-7" />
               </a>
               <a
-                href="https://www.linkedin.com/in/emmanuel-ugbaje"
+                href="https://www.linkedin.com/in/emmanuel-ugbaje-b19227161/"
                 target="_blank"
                 rel="me noopener noreferrer"
                 className="text-brutal-muted transition-opacity hover:opacity-70"
