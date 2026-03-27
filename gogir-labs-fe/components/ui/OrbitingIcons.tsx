@@ -24,7 +24,12 @@ export function OrbitingIcons({
   const ring3 = radius * 2 + 96
 
   return (
-    <div className={cn('relative flex h-64 w-full items-center justify-center sm:h-96', className)}>
+    <div
+      className={cn(
+        'relative flex h-64 w-full items-center justify-center overflow-x-clip sm:h-96',
+        className
+      )}
+    >
       {/* Decorative orbital rings (subtle, orangered hues) */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
         <div

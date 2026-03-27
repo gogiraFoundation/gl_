@@ -26,20 +26,43 @@ export function Header() {
   const panelRef = useRef<HTMLDivElement>(null)
   const firstLinkRef = useRef<HTMLAnchorElement>(null)
   const closeBtnRef = useRef<HTMLButtonElement>(null)
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
 
   const closeMenu = useCallback(() => setMobileMenuOpen(false), [])
 
   useEffect(() => {
     if (!mobileMenuOpen) return
+
+    const originalBodyOverflow = document.body.style.overflow
+    const openerEl = menuButtonRef.current
+    const focusableSelector =
+      'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') closeMenu()
+      if (e.key === 'Tab' && panelRef.current) {
+        const focusables = Array.from(
+          panelRef.current.querySelectorAll<HTMLElement>(focusableSelector)
+        ).filter((el) => !el.hasAttribute('disabled') && el.tabIndex !== -1)
+        if (focusables.length === 0) return
+        const first = focusables[0]
+        const last = focusables[focusables.length - 1]
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault()
+          last.focus()
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault()
+          first.focus()
+        }
+      }
     }
     document.addEventListener('keydown', onKey)
     document.body.style.overflow = 'hidden'
     queueMicrotask(() => firstLinkRef.current?.focus())
     return () => {
       document.removeEventListener('keydown', onKey)
-      document.body.style.overflow = ''
+      document.body.style.overflow = originalBodyOverflow
+      openerEl?.focus()
     }
   }, [mobileMenuOpen, closeMenu])
 
@@ -54,8 +77,8 @@ export function Header() {
             Emmanuel Ugbaje
           </Link>
 
-          <div className="hidden items-center gap-8 md:flex">
-            <div className="flex items-center gap-8">
+          <div className="hidden min-w-0 items-center gap-4 lg:flex xl:gap-6">
+            <div className="flex min-w-0 items-center gap-5 xl:gap-7">
               {navigation.map((item) => {
                 const isActive =
                   pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))
@@ -78,7 +101,7 @@ export function Header() {
                 )
               })}
             </div>
-            <div className="ml-2 flex items-center gap-4 border-l border-brutal-ink/15 pl-6">
+            <div className="ml-1 flex items-center gap-3 border-l border-brutal-ink/15 pl-4 xl:ml-2 xl:gap-4 xl:pl-6">
               <SearchBar />
               <a
                 href="https://github.com/gogiraFoundation"
@@ -119,14 +142,15 @@ export function Header() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 md:hidden">
+          <div className="flex items-center gap-3 lg:hidden">
             <button
+              ref={menuButtonRef}
               type="button"
               onClick={() => setMobileMenuOpen(true)}
               className="text-brutal-ink transition-opacity hover:opacity-70"
               aria-expanded={mobileMenuOpen}
               aria-controls="mobile-drawer"
-              aria-label="Open menu"
+              aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
             >
               <Menu className="h-6 w-6" />
             </button>
@@ -139,7 +163,7 @@ export function Header() {
         <>
           <button
             type="button"
-            className="fixed inset-0 z-[60] bg-brutal-ink/20 backdrop-blur-sm"
+            className="fixed inset-0 z-[60] bg-black/45 backdrop-blur-sm"
             aria-label="Close menu"
             onClick={closeMenu}
           />
@@ -148,11 +172,13 @@ export function Header() {
             ref={panelRef}
             role="dialog"
             aria-modal="true"
-            aria-label="Navigation menu"
+            aria-labelledby="mobile-menu-title"
             className="fixed inset-y-0 right-0 z-[70] flex w-[min(100%,20rem)] flex-col border-l border-brutal-ink/15 bg-brutal-bg shadow-[var(--shadow-subtle)] transition-transform duration-300 ease-out"
           >
             <div className="flex items-center justify-between border-b border-brutal-ink/15 px-6 py-4">
-              <span className="font-serif text-sm font-semibold text-brutal-ink">Menu</span>
+              <span id="mobile-menu-title" className="font-serif text-sm font-semibold text-brutal-ink">
+                Menu
+              </span>
               <button
                 ref={closeBtnRef}
                 type="button"

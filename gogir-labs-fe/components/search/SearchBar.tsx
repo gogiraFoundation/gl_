@@ -102,7 +102,7 @@ export function SearchBar() {
 
       {/* Search Modal */}
       {isOpen && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-96 max-w-[90vw] animate-fade-in-up rounded-sm border border-brutal-ink/15 bg-brutal-bg shadow-[0_16px_36px_rgba(0,0,0,0.12)]">
+        <div className="absolute right-0 top-full z-50 mt-2 w-[min(24rem,90vw)] max-w-full animate-fade-in-up rounded-sm border border-brutal-ink/15 bg-brutal-bg shadow-[0_16px_36px_rgba(0,0,0,0.12)]">
           {/* Search Input */}
           <div className="border-b border-brutal-ink/15 p-4">
             <div className="relative">

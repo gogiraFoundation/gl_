@@ -53,7 +53,7 @@ const STATIC_TESTIMONIALS: Testimonial[] = [
 ]
 
 const CONNECT_LINK_CLASS =
-  'connect-social-link group inline-flex shrink-0 flex-row flex-nowrap items-center gap-1.5 rounded-sm px-2 py-1 text-sm font-medium text-brutal-ink whitespace-nowrap transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-brutal-ink/[0.06] hover:shadow-[0_4px_14px_rgba(0,0,0,0.07)] motion-reduce:hover:translate-y-0'
+  'connect-social-link group inline-flex shrink-0 items-center gap-1.5 rounded-sm px-2 py-1 text-sm font-medium text-brutal-ink whitespace-nowrap transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-brutal-ink/[0.06] hover:shadow-[0_4px_14px_rgba(0,0,0,0.07)] motion-reduce:hover:translate-y-0'
 
 const CONNECT_ICON_CLASS =
   'block h-3.5 w-3.5 shrink-0 leading-none transition-transform duration-300 group-hover:scale-105 sm:h-4 sm:w-4'
@@ -203,7 +203,7 @@ export default function AboutPage() {
               className="mb-12"
             />
 
-            <div className="mx-auto my-0 grid w-[80%] min-w-0 max-w-full grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-4 xl:gap-3">
+            <div className="mx-auto my-0 grid w-full min-w-0 max-w-full grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-4 xl:gap-3">
               <GlowCard className="min-w-0 overflow-hidden p-3 text-left sm:p-4 md:p-4">
                 <h3 className="mb-2 text-sm font-semibold leading-tight text-brutal-ink sm:text-base">
                   Backend &amp; Security
@@ -370,7 +370,7 @@ export default function AboutPage() {
 
           <section
             aria-labelledby="connect-heading"
-            className="mx-auto w-full max-w-[40%] text-center"
+            className="mx-auto w-full max-w-2xl text-center"
           >
             <h2
               id="connect-heading"
@@ -378,8 +378,8 @@ export default function AboutPage() {
             >
               Connect with me
             </h2>
-            <div className="flex w-full justify-center overflow-x-auto [-webkit-overflow-scrolling:touch]">
-              <div className="inline-flex w-max translate-x-[calc(10px-1.25rem)] flex-nowrap items-center justify-center gap-2 sm:translate-x-[calc(10px-2rem)] sm:gap-3">
+            <div className="flex w-full justify-center">
+              <div className="flex w-full flex-wrap items-center justify-center gap-2 sm:gap-3">
                 <a
                   href="https://medium.com/@aigbemanuel"
                   target="_blank"

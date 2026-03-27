@@ -73,13 +73,13 @@ export default function ContactClient() {
               >
                 Get in Touch
               </h2>
-              <p className="mb-8 w-full px-0 text-left text-brutal-muted [margin:0_auto] md:w-[80%]">
+              <p className="mb-8 w-full px-0 text-left text-brutal-muted [margin:0_auto] md:max-w-3xl">
                 Prefer direct contact? You can reach me via email or connect with me online to stay
                 updated on my work in cloud infrastructure, DevOps, and scalable systems.
               </p>
 
-              <div className="mx-auto w-full space-y-6 text-center md:w-[75%]">
-                <div className="mt-[60px] w-full border-t border-brutal-ink/15 pt-6 [margin:0_auto] md:w-[70%]">
+              <div className="mx-auto w-full space-y-6 text-center md:max-w-2xl">
+                <div className="mt-[60px] w-full border-t border-brutal-ink/15 pt-6 [margin:0_auto] md:max-w-2xl">
                   <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-brutal-ink">
                     Professional Links
                   </h3>
@@ -121,7 +121,7 @@ export default function ContactClient() {
                   </div>
                 </div>
 
-                <div className="w-full border-t border-brutal-ink/15 pt-6 [margin:0_auto] md:w-[70%]">
+                <div className="w-full border-t border-brutal-ink/15 pt-6 [margin:0_auto] md:max-w-2xl">
                   <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-brutal-ink">
                     What You Can Expect
                   </h3>
