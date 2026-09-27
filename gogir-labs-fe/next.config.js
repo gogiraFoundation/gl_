@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Used by Docker (standalone) and by OpenNext Cloudflare adapter.
   output: 'standalone',
   // Browsers request /favicon.ico by default; public/icon.svg is served at /icon.svg
   async redirects() {
@@ -38,3 +39,13 @@ const nextConfig = {
 }
 
 module.exports = nextConfig
+
+// Bindings for local `next dev` when the OpenNext adapter is installed (devDependency).
+if (process.env.NODE_ENV === 'development') {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    require('@opennextjs/cloudflare').initOpenNextCloudflareForDev()
+  } catch {
+    // Ignore when adapter is not installed (e.g. production Docker image).
+  }
+}
