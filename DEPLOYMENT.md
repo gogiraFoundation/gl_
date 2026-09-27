@@ -2,6 +2,17 @@
 
 This guide covers deploying the Gogir Labs portfolio website to production and staging environments.
 
+## Homelab API (N4020 + ikon)
+
+For the live public API on home compute (`gogir-server`) with TLS on Oracle VPS **ikon** and the frontend on Cloudflare Pages, use:
+
+- Runbook: [docs/HOMELAB_API.md](docs/HOMELAB_API.md)
+- Compose: `docker-compose.homelab.yml`
+- Deploy: `./deploy-homelab.sh`
+- Edge nginx snippet: `nginx/homelab-api.gogirlabs.uk.conf`
+
+The sections below describe the older full-stack Docker Compose + nginx-on-same-host path (`docker-compose.prod.yml` / `deploy.sh`).
+
 ## Prerequisites
 
 - Docker and Docker Compose installed

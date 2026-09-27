@@ -2,7 +2,18 @@
 
 Use this checklist before deploying to production.
 
-## Pre-Deployment
+## Homelab path (recommended for api.gogirlabs.uk)
+
+See [docs/HOMELAB_API.md](docs/HOMELAB_API.md).
+
+- [x] ikon TLS + `https://api.gogirlabs.uk/api/v1/` OK (verified 2026-09-27)
+- [ ] Pages `gl-frontend`: `NEXT_PUBLIC_API_URL=https://api.gogirlabs.uk/api/v1` (Production + Preview), then **Retry deployment** (remove Heroku API URL)
+- [ ] After rebuild: browser Network tab hits `api.gogirlabs.uk` only (not `*.herokuapp.com`)
+- [ ] No Pi-hole override for public `api.gogirlabs.uk`
+- [ ] Kuma monitor + DB backup cron to `/mnt/data/backups/gogirlabs` (+ rsync to ikon)
+- [ ] Jellyfin / Dozzle still healthy
+
+## Pre-Deployment (same-host Compose / classic path)
 
 ### Code Quality
 - [ ] All tests passing (backend: 170+, frontend: 32+)

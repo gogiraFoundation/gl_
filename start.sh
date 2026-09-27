@@ -46,6 +46,28 @@ if [ ! -f "gogir-labs-fe/.env" ]; then
     fi
 fi
 
+# Resolve host ports (avoid "address already in use" when 3000/8000/5433 are taken)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=scripts/port-utils.sh
+source "$SCRIPT_DIR/scripts/port-utils.sh"
+
+FRONTEND_HOST_PORT=$(pick_host_port 3000 "${FRONTEND_HOST_PORT:-}") || {
+  echo -e "${YELLOW}⚠️  Could not find a free port for the frontend (tried 3000–3200).${NC}"
+  exit 1
+}
+BACKEND_HOST_PORT=$(pick_host_port 8000 "${BACKEND_HOST_PORT:-}") || {
+  echo -e "${YELLOW}⚠️  Could not find a free port for the backend (tried 8000–8200).${NC}"
+  exit 1
+}
+DB_HOST_PORT=$(pick_host_port 5433 "${DB_HOST_PORT:-}") || {
+  echo -e "${YELLOW}⚠️  Could not find a free port for PostgreSQL (tried 5433–5633).${NC}"
+  exit 1
+}
+export FRONTEND_HOST_PORT BACKEND_HOST_PORT DB_HOST_PORT
+
+echo -e "${BLUE}🔌 Host ports:${NC} frontend → ${GREEN}http://localhost:${FRONTEND_HOST_PORT}${NC}, backend → ${GREEN}http://localhost:${BACKEND_HOST_PORT}${NC}, Postgres host → ${GREEN}localhost:${DB_HOST_PORT}${NC}"
+echo ""
+
 # Build and start containers
 echo -e "${BLUE}📦 Building Docker images...${NC}"
 docker-compose build
@@ -85,10 +107,10 @@ echo ""
 echo -e "${GREEN}✅ Application started successfully!${NC}"
 echo ""
 echo -e "${BLUE}📍 Access the application at:${NC}"
-echo -e "   Frontend:  ${GREEN}http://localhost:3000${NC}"
-echo -e "   Backend:   ${GREEN}http://localhost:8000/api/v1${NC}"
-echo -e "   Admin:     ${GREEN}http://localhost:8000/admin${NC}"
-echo -e "   API Docs:  ${GREEN}http://localhost:8000/api/docs${NC}"
+echo -e "   Frontend:  ${GREEN}http://localhost:${FRONTEND_HOST_PORT}${NC}"
+echo -e "   Backend:   ${GREEN}http://localhost:${BACKEND_HOST_PORT}/api/v1${NC}"
+echo -e "   Admin:     ${GREEN}http://localhost:${BACKEND_HOST_PORT}/admin${NC}"
+echo -e "   API Docs:  ${GREEN}http://localhost:${BACKEND_HOST_PORT}/api/docs${NC}"
 echo ""
 echo -e "${BLUE}📊 View logs:${NC}"
 echo -e "   docker-compose logs -f"

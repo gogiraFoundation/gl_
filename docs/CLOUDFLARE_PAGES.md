@@ -42,13 +42,13 @@ If you see that error, you almost certainly have **Workers Builds** pointed at t
 
 ### 2. Environment variables
 
-Set the following in Cloudflare Pages (**Settings → Environment variables**) for **Production** and **Preview**:
+Set the following in Cloudflare Pages (**Settings → Environment variables**) for **Production** and **Preview** (project **`gl-frontend`**):
 
 | Name | Value |
 |------|--------|
 | `NEXT_PUBLIC_API_URL` | `https://api.gogirlabs.uk/api/v1` |
 
-The frontend will call the backend at this URL.
+The frontend will call the backend at this URL. **Replace any Heroku value** (`*.herokuapp.com/api/v1`) — `NEXT_PUBLIC_*` is baked in at build time, so you must **Retry deployment** after saving. Confirm in DevTools that requests hit `api.gogirlabs.uk`, not Heroku.
 
 ### 3. Backend (Django) configuration
 

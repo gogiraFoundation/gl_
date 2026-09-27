@@ -2,6 +2,7 @@
 API URL routing configuration.
 """
 
+from django.http import JsonResponse
 from django.urls import include, path
 from rest_framework.permissions import AllowAny
 from rest_framework.throttling import ScopedRateThrottle
@@ -24,7 +25,13 @@ class PublicTokenRefreshView(TokenRefreshView):
     throttle_scope = "auth"
 
 
+def api_root(_request):
+    # Probe target for homelab healthchecks and Uptime Kuma. Not an auth surface.
+    return JsonResponse({"status": "ok"})
+
+
 urlpatterns = [
+    path("", api_root, name="api-root"),
     # Authentication - Allow unauthenticated access for login
     path("auth/token/", PublicTokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("auth/token/refresh/", PublicTokenRefreshView.as_view(), name="token_refresh"),

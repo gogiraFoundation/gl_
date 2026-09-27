@@ -122,7 +122,42 @@ DEFAULT_FROM_EMAIL=noreply@gogirlabs.uk
 
 ---
 
-## 5. Backend – Heroku
+## 5. Homelab (N4020 + ikon)
+
+Backend runs on `gogir-server` via [`docker-compose.homelab.yml`](docker-compose.homelab.yml). Public TLS is on `ikon`; frontend stays on Cloudflare Pages.
+
+**Local file for deploy:** copy [`.env.homelab.example`](.env.homelab.example) → `.env.homelab` (gitignored).  
+**On the host:** `/mnt/data/compose/gogirlabs/.env` (mode 600). Full runbook: [`docs/HOMELAB_API.md`](docs/HOMELAB_API.md).
+
+```env
+DB_NAME=gogirlabs
+DB_USER=gogirlabs
+DB_PASSWORD=your-secure-db-password
+
+SECRET_KEY=your-django-secret-key-min-50-chars-long-and-random
+DEBUG=False
+ALLOWED_HOSTS=api.gogirlabs.uk
+CORS_ALLOW_ALL_ORIGINS=False
+CORS_ALLOWED_ORIGINS=https://www.gogirlabs.uk,https://gogirlabs.uk
+CSRF_TRUSTED_ORIGINS=https://www.gogirlabs.uk,https://gogirlabs.uk
+FRONTEND_URL=https://www.gogirlabs.uk
+SECURE_SSL_REDIRECT=False
+
+EMAIL_HOST=smtp.example.com
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER=
+EMAIL_HOST_PASSWORD=
+DEFAULT_FROM_EMAIL=noreply@gogirlabs.uk
+```
+
+Compose injects `DATABASE_URL` / `REDIS_URL` to the `db` and `redis` services. Pages: `NEXT_PUBLIC_API_URL=https://api.gogirlabs.uk/api/v1`.
+
+Deploy: `./deploy-homelab.sh` (or `HOMELAB_USE_JUMP=1 ./deploy-homelab.sh` off-LAN).
+
+---
+
+## 6. Backend – Heroku
 
 Set in **Heroku** → your app → **Settings** → **Config Vars**.  
 `ALLOWED_HOSTS` is auto-extended with `*.herokuapp.com` when `DYNO` is set; you can still set it to add custom domains.
@@ -143,7 +178,7 @@ CSRF_TRUSTED_ORIGINS=https://your-frontend.vercel.app,https://www.yourdomain.com
 
 ---
 
-## 6. Frontend only – Cloudflare Pages / Vercel
+## 7. Frontend only – Cloudflare Pages / Vercel
 
 Set in **Cloudflare Pages** or **Vercel** → Project → Settings → Environment variables.
 
@@ -155,7 +190,7 @@ NEXT_PUBLIC_API_URL=https://api.gogirlabs.uk/api/v1
 
 ---
 
-## 7. Local Docker Compose (defaults)
+## 8. Local Docker Compose (defaults)
 
 If you use `docker-compose.yml` and only need to override the API URL for the frontend, you can rely on defaults. Optional **`gogir-labs-be/.env`**:
 
