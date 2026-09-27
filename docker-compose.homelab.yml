@@ -1,0 +1,105 @@
+# Gogir Labs API on gogir-server (N4020).
+# Frontend stays on Cloudflare Pages. Public TLS terminates on ikon.
+# Bind API to the LAN IP so ikon→Pi→.21 can reach it; restrict with UFW (see docs/HOMELAB_API.md).
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: gogirlabs-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-gogirlabs}
+      POSTGRES_USER: ${DB_USER:-gogirlabs}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+    volumes:
+      - gogirlabs_postgres_data:/var/lib/postgresql/data
+    networks:
+      - gogirlabs
+    mem_limit: 512m
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-gogirlabs} -d ${DB_NAME:-gogirlabs}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: gogirlabs-redis
+    restart: unless-stopped
+    command: redis-server --maxmemory 96mb --maxmemory-policy allkeys-lru
+    volumes:
+      - gogirlabs_redis_data:/data
+    networks:
+      - gogirlabs
+    mem_limit: 128m
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./gogir-labs-be
+      dockerfile: Dockerfile
+    image: ${BACKEND_IMAGE:-gogirlabs-backend:homelab}
+    container_name: gogirlabs-backend
+    restart: unless-stopped
+    command: >-
+      gunicorn config.wsgi:application
+      --bind 0.0.0.0:8000
+      --workers 2
+      --threads 2
+      --timeout 120
+      --graceful-timeout 30
+      --keep-alive 5
+      --access-logfile -
+      --error-logfile -
+    ports:
+      # LAN-facing only (not 127.0.0.1): ikon reaches 192.168.0.21:8001 via Pi WG route.
+      - "${HOMELAB_BIND_IP:-192.168.0.21}:8001:8000"
+    environment:
+      DEBUG: "False"
+      SECRET_KEY: ${SECRET_KEY:?Set SECRET_KEY in .env}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-api.gogirlabs.uk}
+      CORS_ALLOW_ALL_ORIGINS: ${CORS_ALLOW_ALL_ORIGINS:-False}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-https://www.gogirlabs.uk,https://gogirlabs.uk}
+      CSRF_TRUSTED_ORIGINS: ${CSRF_TRUSTED_ORIGINS:-https://www.gogirlabs.uk,https://gogirlabs.uk}
+      FRONTEND_URL: ${FRONTEND_URL:-https://www.gogirlabs.uk}
+      DATABASE_URL: postgresql://${DB_USER:-gogirlabs}:${DB_PASSWORD}@db:5432/${DB_NAME:-gogirlabs}
+      REDIS_URL: redis://redis:6379/0
+      EMAIL_HOST: ${EMAIL_HOST:-}
+      EMAIL_PORT: ${EMAIL_PORT:-587}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER:-}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD:-}
+      EMAIL_USE_TLS: ${EMAIL_USE_TLS:-True}
+      DEFAULT_FROM_EMAIL: ${DEFAULT_FROM_EMAIL:-noreply@gogirlabs.uk}
+      # TLS terminates on ikon; keep False so container healthchecks stay on HTTP.
+      SECURE_SSL_REDIRECT: ${SECURE_SSL_REDIRECT:-False}
+    volumes:
+      - gogirlabs_static:/app/staticfiles
+      - gogirlabs_media:/app/media
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - gogirlabs
+    mem_limit: 1g
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  gogirlabs_postgres_data:
+  gogirlabs_redis_data:
+  gogirlabs_static:
+  gogirlabs_media:
+
+networks:
+  gogirlabs:
+    driver: bridge
