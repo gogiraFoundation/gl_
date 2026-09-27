@@ -154,9 +154,11 @@ gogir_labs/
 │   └── package.json
 ├── nginx/                  # Nginx configuration
 ├── .github/workflows/      # CI/CD pipelines
-├── docker-compose.yml      # Development
-├── docker-compose.prod.yml # Production
-└── deploy.sh              # Deployment script
+├── docker-compose.yml         # Development
+├── docker-compose.prod.yml    # Full-stack production (same host)
+├── docker-compose.homelab.yml # API on N4020 (see docs/HOMELAB_API.md)
+├── deploy.sh                  # Classic Compose deploy
+└── deploy-homelab.sh          # Homelab API deploy (N4020 + ikon)
 ```
 
 ## Development
