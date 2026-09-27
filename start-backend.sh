@@ -13,6 +13,10 @@ BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=scripts/port-utils.sh
+source "$SCRIPT_DIR/scripts/port-utils.sh"
+
 cd gogir-labs-be
 
 # Check if virtual environment exists
@@ -60,15 +64,20 @@ python manage.py migrate
 echo -e "${BLUE}📁 Collecting static files...${NC}"
 python manage.py collectstatic --noinput || echo -e "${YELLOW}⚠️  Static files collection skipped${NC}"
 
+BACKEND_PORT=$(pick_host_port 8000 "${BACKEND_PORT:-}") || {
+  echo -e "${YELLOW}⚠️  Could not find a free port for the backend.${NC}"
+  exit 1
+}
+
 # Start development server
 echo ""
 echo -e "${GREEN}✅ Starting Django development server...${NC}"
-echo -e "${BLUE}📍 Backend API: http://localhost:8000/api/v1${NC}"
-echo -e "${BLUE}📍 Admin Panel: http://localhost:8000/admin${NC}"
-echo -e "${BLUE}📍 API Docs: http://localhost:8000/api/docs${NC}"
+echo -e "${BLUE}📍 Backend API: http://localhost:${BACKEND_PORT}/api/v1${NC}"
+echo -e "${BLUE}📍 Admin Panel: http://localhost:${BACKEND_PORT}/admin${NC}"
+echo -e "${BLUE}📍 API Docs: http://localhost:${BACKEND_PORT}/api/docs${NC}"
 echo ""
 echo -e "${YELLOW}Press Ctrl+C to stop the server${NC}"
 echo ""
 
-python manage.py runserver
+python manage.py runserver "0.0.0.0:${BACKEND_PORT}"
 
