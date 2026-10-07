@@ -1,0 +1,57 @@
+name: Deploy frontend (Cloudflare Workers)
+
+# OpenNext Next 16 cannot deploy via classic Pages + next-on-pages.
+# This workflow builds and deploys the Worker named in gogir-labs-fe/wrangler.jsonc.
+#
+# Required GitHub secrets:
+#   CLOUDFLARE_API_TOKEN   (Workers Scripts:Edit, Account:Read)
+#   CLOUDFLARE_ACCOUNT_ID
+#
+# After first deploy: attach www.gogirlabs.uk to Worker "gogir-labs-fe",
+# and turn OFF automatic deployments on the old Pages project "gl-frontend".
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "gogir-labs-fe/**"
+      - ".github/workflows/frontend-cloudflare-workers.yml"
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  deploy:
+    name: Build and deploy OpenNext Worker
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: gogir-labs-fe
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: gogir-labs-fe/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build OpenNext Worker
+        run: npm run pages:build
+        env:
+          NEXT_PUBLIC_API_URL: https://api.gogirlabs.uk/api/v1
+
+      - name: Deploy with Wrangler
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: gogir-labs-fe
+          command: deploy

@@ -3,106 +3,100 @@
 - **Domain**: **www.gogirlabs.uk** (and apex → www)
 - **API**: **api.gogirlabs.uk** (homelab via ikon — see [HOMELAB_API.md](HOMELAB_API.md))
 - **App**: Next.js in `gogir-labs-fe`
-- **Adapter**: **OpenNext for Cloudflare** (`@opennextjs/cloudflare`) — not deprecated `@cloudflare/next-on-pages`
+- **Adapter**: **OpenNext** (`@opennextjs/cloudflare`) on **Workers** — not Pages + `next-on-pages`
 
-`next-on-pages` only supports Next ≤ 15.5.2. This app is on **Next 16.3.x**, so Pages/Workers must use OpenNext.
+## Why Pages builds keep failing
 
-## Recommended: Workers deploy (OpenNext)
-
-OpenNext produces a Worker (`.open-next/`) plus assets. Deploy with Wrangler (git-connected Workers Builds, or `npm run deploy` locally/CI).
-
-### Build settings (Cloudflare dashboard) — must match this
-
-Project **`gl-frontend`** → **Settings → Builds & deployments**:
-
-| Setting | Value |
-|---------|--------|
-| Root directory | `gogir-labs-fe` |
-| **Build command** | **`npm run pages:build`** |
-| **Deploy command** | **`npx wrangler deploy`** |
-| **Build output directory** | **clear / empty** (do not use `.vercel/output/static`) |
-
-**Save**, then **Retry deployment**.
-
-If the build log still contains:
+Your build log still shows:
 
 ```text
 Executing user command: npx @cloudflare/next-on-pages@1
 ```
 
-the dashboard command was **not** updated (or not saved). Git/`main` already has OpenNext; Cloudflare will keep failing until that UI field changes.
+That command is stored on the **Pages project `gl-frontend`** in the Cloudflare dashboard. Changing git does **not** change it. `next-on-pages` also does not support **Next 16**.
 
-Expected good log lines:
+OpenNext produces a **Worker** (`.open-next/worker.js` + assets). Classic Pages expects a static output dir (`pages_build_output_dir`). That is why Wrangler warns and skips `wrangler.jsonc` on Pages.
+
+**Do not keep retrying the Pages project with `next-on-pages`.** Use one of the paths below.
+
+---
+
+## Path A — GitHub Actions → Workers (recommended)
+
+Workflow: [`.github/workflows/frontend-cloudflare-workers.yml`](../.github/workflows/frontend-cloudflare-workers.yml)
+
+1. Cloudflare dashboard → **My Profile → API Tokens → Create Token**  
+   Use template **Edit Cloudflare Workers** (needs account read + workers edit).
+2. GitHub → `gogiraFoundation/gl_` → **Settings → Secrets and variables → Actions**  
+   Add:
+   - `CLOUDFLARE_API_TOKEN`
+   - `CLOUDFLARE_ACCOUNT_ID` (Workers overview / account URL)
+3. Push to `main` (or **Actions → Deploy frontend → Run workflow**).
+4. Cloudflare → **Workers & Pages → `gogir-labs-fe`** (Worker) → **Custom domains** → add `www.gogirlabs.uk` (and apex redirect if needed).
+5. On old Pages project **`gl-frontend`**: **Settings → Builds** → turn **Automatic deployments OFF** (or delete the project once www is on the Worker).
+
+Build env used by the workflow:
 
 ```text
-Executing user command: npm run pages:build
-…
-OpenNext — Cloudflare build
-…
-Worker saved in `.open-next/worker.js`
+NEXT_PUBLIC_API_URL=https://api.gogirlabs.uk/api/v1
 ```
 
-The Pages warning *“wrangler.json … does not appear to be valid … pages_build_output_dir”* is expected for an OpenNext **Worker** config. Ignore it; Wrangler uses `main` + `assets`, not Pages static output.
+---
 
-Do **not** use:
+## Path B — Workers Builds in the Cloudflare dashboard
 
-- `npx @cloudflare/next-on-pages@1` (peer conflicts + Next 16 unsupported)
-- `npx wrangler versions upload` without a valid Worker entry (fails with missing entry-point)
+1. **Workers & Pages → Create → Import repository** (or open Worker `gogir-labs-fe` if it exists).
+2. Connect `gogiraFoundation/gl_`, root directory **`gogir-labs-fe`**.
+3. Build / deploy settings:
 
-Repo config: [`gogir-labs-fe/wrangler.jsonc`](../gogir-labs-fe/wrangler.jsonc), [`gogir-labs-fe/open-next.config.ts`](../gogir-labs-fe/open-next.config.ts).
+| Setting | Value |
+|---------|--------|
+| Build command | `npm run pages:build` |
+| Deploy command | `npx wrangler deploy` |
+| Root directory | `gogir-labs-fe` |
 
-### Local scripts
+4. Variables: `NEXT_PUBLIC_API_URL=https://api.gogirlabs.uk/api/v1`
+5. Disable auto-deploy on Pages project **`gl-frontend`**.
+6. Point **www** at the Worker.
+
+If you only edit **`gl-frontend` Pages** and leave Build command as `npx @cloudflare/next-on-pages@1`, builds will keep failing.
+
+---
+
+## Path C — Local deploy (one-shot)
 
 ```bash
 cd gogir-labs-fe
 npm ci
-NEXT_PUBLIC_API_URL=https://api.gogirlabs.uk/api/v1 npm run pages:build
-npm run preview   # optional local Wrangler preview
-npm run deploy    # build + deploy to Cloudflare Workers
+NEXT_PUBLIC_API_URL=https://api.gogirlabs.uk/api/v1 npm run deploy
 ```
 
-### Custom domain
+Requires `npx wrangler login` (or API token env vars). Then attach `www.gogirlabs.uk` to Worker `gogir-labs-fe`.
 
-Attach **www.gogirlabs.uk** (and apex redirect) to the Worker / Pages project in the Cloudflare dashboard after the first successful deploy.
+---
 
-## Environment variables
+## Repo files
 
-Set for **Production** and **Preview** (build-time):
+| File | Role |
+|------|------|
+| [`gogir-labs-fe/wrangler.jsonc`](../gogir-labs-fe/wrangler.jsonc) | Worker name, assets, compat flags |
+| [`gogir-labs-fe/open-next.config.ts`](../gogir-labs-fe/open-next.config.ts) | OpenNext adapter config |
+| `npm run pages:build` | `opennextjs-cloudflare build` |
+| `npm run deploy` | build + `opennextjs-cloudflare deploy` |
 
-| Name | Value |
-|------|--------|
-| `NEXT_PUBLIC_API_URL` | `https://api.gogirlabs.uk/api/v1` |
-
-Replace any Heroku `*.herokuapp.com/api/v1` value. `NEXT_PUBLIC_*` is baked at build — change requires a new deployment.
-
-Confirm in DevTools that API calls hit `api.gogirlabs.uk`, not Heroku.
-
-## Backend (Django) CORS
-
-On the API host (homelab Compose / ikon edge), ensure:
+## Backend CORS (unchanged)
 
 | Variable | Value |
 |----------|--------|
 | `ALLOWED_HOSTS` | `api.gogirlabs.uk` |
-| `CORS_ALLOW_ALL_ORIGINS` | `False` |
 | `CORS_ALLOWED_ORIGINS` | `https://www.gogirlabs.uk,https://gogirlabs.uk` |
 | `CSRF_TRUSTED_ORIGINS` | `https://www.gogirlabs.uk,https://gogirlabs.uk` |
 | `FRONTEND_URL` | `https://www.gogirlabs.uk` |
 
-## Optional caching
+## Verify
 
-OpenNext can use R2 for incremental cache ([docs](https://opennext.js.org/cloudflare/caching)). The repo ships without R2 so Always Free / zero-config deploys work; enable later if you need ISR cache durability.
+After a green Worker deploy:
 
-## DNS
-
-- **www.gogirlabs.uk** / apex → Cloudflare frontend (Worker/Pages custom domain)
-- **api.gogirlabs.uk** → ikon (`140.238.85.163`), Full (strict) if proxied
-
-## GitHub secrets (optional CI check)
-
-Workflow `.github/workflows/backend-cloudflare-setup.yml` can validate:
-
-| Secret | Purpose |
-|--------|---------|
-| `API_ALLOWED_HOSTS` | e.g. `api.gogirlabs.uk` |
-| `CLOUDFLARE_PAGES_URL` | e.g. `https://www.gogirlabs.uk` |
+1. Hard-refresh `https://www.gogirlabs.uk`
+2. DevTools → Network → API host is `api.gogirlabs.uk` (not Heroku)
+3. No more Pages logs with `next-on-pages`
