@@ -11,16 +11,38 @@
 
 OpenNext produces a Worker (`.open-next/`) plus assets. Deploy with Wrangler (git-connected Workers Builds, or `npm run deploy` locally/CI).
 
-### Build settings (Cloudflare dashboard)
+### Build settings (Cloudflare dashboard) — must match this
 
-Project **`gl-frontend`** (or equivalent Workers project):
+Project **`gl-frontend`** → **Settings → Builds & deployments**:
 
 | Setting | Value |
 |---------|--------|
 | Root directory | `gogir-labs-fe` |
-| Build command | `npm run pages:build` |
-| Deploy command | `npx wrangler deploy` |
-| Build output directory | leave empty / unused (Wrangler uses `wrangler.jsonc`) |
+| **Build command** | **`npm run pages:build`** |
+| **Deploy command** | **`npx wrangler deploy`** |
+| **Build output directory** | **clear / empty** (do not use `.vercel/output/static`) |
+
+**Save**, then **Retry deployment**.
+
+If the build log still contains:
+
+```text
+Executing user command: npx @cloudflare/next-on-pages@1
+```
+
+the dashboard command was **not** updated (or not saved). Git/`main` already has OpenNext; Cloudflare will keep failing until that UI field changes.
+
+Expected good log lines:
+
+```text
+Executing user command: npm run pages:build
+…
+OpenNext — Cloudflare build
+…
+Worker saved in `.open-next/worker.js`
+```
+
+The Pages warning *“wrangler.json … does not appear to be valid … pages_build_output_dir”* is expected for an OpenNext **Worker** config. Ignore it; Wrangler uses `main` + `assets`, not Pages static output.
 
 Do **not** use:
 
