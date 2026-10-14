@@ -1,8 +1,10 @@
+from datetime import timedelta
 from unittest.mock import MagicMock, patch
 
 import pytest
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient
 
@@ -199,6 +201,36 @@ class BlogAPITest(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_cannot_publish_with_future_publish_at(self):
+        """published=True + future publish_at must be rejected so the scheduler owns go-live."""
+        self.client.force_authenticate(user=self.staff_user)
+        url = f"/api/v1/blog/posts/{self.unpublished_post.id}/"
+        response = self.client.patch(
+            url,
+            {
+                "published": True,
+                "publish_at": (timezone.now() + timedelta(days=2)).isoformat(),
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.unpublished_post.refresh_from_db()
+        self.assertFalse(self.unpublished_post.published)
+
+    def test_schedule_with_future_publish_at_keeps_unpublished(self):
+        self.client.force_authenticate(user=self.staff_user)
+        future = timezone.now() + timedelta(days=2)
+        url = f"/api/v1/blog/posts/{self.unpublished_post.id}/"
+        response = self.client.patch(
+            url,
+            {"published": False, "publish_at": future.isoformat()},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.unpublished_post.refresh_from_db()
+        self.assertFalse(self.unpublished_post.published)
+        self.assertIsNotNone(self.unpublished_post.publish_at)
+
     def test_increment_views(self):
         """Test POST /api/v1/blog/posts/{id}/increment_views/ increments view count."""
         initial_views = self.post.views
@@ -260,6 +292,19 @@ class BlogAPITest(TestCase):
         self.assertTrue(Comment.objects.filter(email="john@example.com").exists())
         mock_notify.assert_called_once()
 
+    def test_create_comment_honeypot_rejected(self):
+        """Filled website honeypot is rejected and creates no row."""
+        url = f"/api/v1/blog/posts/{self.post.id}/comments/"
+        data = {
+            "name": "Bot",
+            "email": "bot@example.com",
+            "content": "Spam comment content",
+            "website": "https://spam.example",
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(Comment.objects.filter(email="bot@example.com").exists())
+
     def test_create_comment_invalid_email(self):
         """Test comment creation with invalid email."""
         url = f"/api/v1/blog/posts/{self.post.id}/comments/"
@@ -272,7 +317,7 @@ class BlogAPITest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_comment_very_long(self):
-        """Test comment creation with very long content."""
+        """Test comment creation rejects content over 2000 characters."""
         url = f"/api/v1/blog/posts/{self.post.id}/comments/"
         data = {
             "name": "John Doe",
@@ -280,10 +325,36 @@ class BlogAPITest(TestCase):
             "content": "A" * 10000,
         }
         response = self.client.post(url, data)
-        # Should either succeed or return validation error
-        self.assertIn(
-            response.status_code, [status.HTTP_201_CREATED, status.HTTP_400_BAD_REQUEST]
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_post_detail_hides_unapproved_comments(self):
+        Comment.objects.create(
+            post=self.post,
+            name="John",
+            email="john@example.com",
+            content="Approved",
+            approved=True,
         )
+        Comment.objects.create(
+            post=self.post,
+            name="Jane",
+            email="jane@example.com",
+            content="Pending",
+            approved=False,
+        )
+        url = f"/api/v1/blog/posts/{self.post.id}/"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data["comments"]), 1)
+        self.assertEqual(response.data["comments"][0]["content"], "Approved")
+
+    def test_increment_views_is_atomic(self):
+        from django.db.models import F
+
+        Post.objects.filter(pk=self.post.pk).update(views=F("views") + 1)
+        Post.objects.filter(pk=self.post.pk).update(views=F("views") + 1)
+        self.post.refresh_from_db()
+        self.assertEqual(self.post.views, 2)
 
     def test_create_comment_missing_fields(self):
         """Test comment creation with missing required fields."""
@@ -294,3 +365,82 @@ class BlogAPITest(TestCase):
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_anonymous_cannot_create_post(self):
+        url = "/api/v1/blog/posts/"
+        data = {
+            "title": "New Post",
+            "excerpt": "Excerpt",
+            "content": "Content",
+        }
+        response = self.client.post(url, data)
+        # Unauthenticated requests hit JWT auth before IsAdminUser (401).
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_non_staff_cannot_create_post(self):
+        self.client.force_authenticate(user=self.user)
+        url = "/api/v1/blog/posts/"
+        data = {
+            "title": "New Post",
+            "excerpt": "Excerpt",
+            "content": "Content",
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_non_staff_cannot_update_or_delete_post(self):
+        self.client.force_authenticate(user=self.user)
+        url = f"/api/v1/blog/posts/{self.post.id}/"
+        response = self.client.patch(url, {"title": "Hacked"})
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @patch("apps.notifications.services.NotificationService.notify_admins")
+    def test_staff_can_create_post(self, mock_notify):
+        self.client.force_authenticate(user=self.staff_user)
+        url = "/api/v1/blog/posts/"
+        data = {
+            "title": "Staff Post",
+            "excerpt": "Excerpt",
+            "content": "Content",
+            "published": False,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["author"], self.staff_user.id)
+        self.assertEqual(Post.objects.get(id=response.data["id"]).author, self.staff_user)
+
+    @patch("apps.blog.views.NotificationService.send_template_to_address")
+    def test_approve_comment_emails_guest(self, mock_send):
+        comment = Comment.objects.create(
+            post=self.post,
+            name="Guest",
+            email="guest@example.com",
+            content="Nice post",
+            approved=False,
+        )
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.patch(
+            f"/api/v1/blog/comments/{comment.id}/",
+            {"approved": True},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        mock_send.assert_called_once()
+        self.assertEqual(mock_send.call_args.kwargs["recipient"], "guest@example.com")
+
+    @patch("apps.blog.views.NotificationService.send_template_to_address")
+    def test_approve_comment_twice_emails_once(self, mock_send):
+        comment = Comment.objects.create(
+            post=self.post,
+            name="Guest",
+            email="guest@example.com",
+            content="Nice post",
+            approved=False,
+        )
+        self.client.force_authenticate(user=self.staff_user)
+        url = f"/api/v1/blog/comments/{comment.id}/"
+        self.client.patch(url, {"approved": True}, format="json")
+        self.client.patch(url, {"approved": True}, format="json")
+        self.assertEqual(mock_send.call_count, 1)

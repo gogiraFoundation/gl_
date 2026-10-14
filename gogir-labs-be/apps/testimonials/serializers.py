@@ -41,3 +41,16 @@ class TestimonialListSerializer(serializers.ModelSerializer):
             "featured",
             "created_at",
         ]
+
+
+class TestimonialInviteCreateSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+
+class TestimonialSubmitSerializer(serializers.Serializer):
+    client_name = serializers.CharField(max_length=100)
+    client_role = serializers.CharField(max_length=100)
+    company = serializers.CharField(max_length=100, required=False, allow_blank=True)
+    content = serializers.CharField(max_length=5000)
+    rating = serializers.IntegerField(min_value=1, max_value=5, default=5)
+

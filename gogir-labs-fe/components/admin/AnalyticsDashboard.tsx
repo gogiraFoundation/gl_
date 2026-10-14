@@ -8,6 +8,7 @@ interface AnalyticsStats {
     total_views: number
     unique_visitors: number
     top_pages: Array<{ path: string; count: number }>
+    top_referrers?: Array<{ referer: string; count: number }>
     views_by_day?: Array<{ day: string; count: number }>
   }
   events: {
@@ -29,7 +30,7 @@ export function AnalyticsDashboard({ stats }: AnalyticsDashboardProps) {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         <GlowCard className="p-6">
           <div className="mb-4 flex items-center justify-between">
-            <Eye className="h-8 w-8 text-purple-400" />
+            <Eye className="h-8 w-8 text-gray-500" />
             <TrendingUp className="h-5 w-5 text-green-400" />
           </div>
           <div className="mb-1 text-3xl font-bold text-white">{stats.pageViews.total_views}</div>
@@ -77,10 +78,32 @@ export function AnalyticsDashboard({ stats }: AnalyticsDashboardProps) {
                 className="flex items-center justify-between rounded-lg bg-gray-800/50 p-4"
               >
                 <div className="flex items-center gap-4">
-                  <span className="w-8 text-2xl font-bold text-purple-400">{index + 1}</span>
+                  <span className="w-8 text-2xl font-bold text-gray-500">{index + 1}</span>
                   <span className="text-gray-300">{page.path}</span>
                 </div>
                 <span className="font-semibold text-white">{page.count} views</span>
+              </div>
+            ))}
+          </div>
+        </GlowCard>
+      )}
+
+      {stats.pageViews.top_referrers && stats.pageViews.top_referrers.length > 0 && (
+        <GlowCard className="p-6">
+          <h2 className="mb-6 text-2xl font-bold text-white">Top Referrers</h2>
+          <div className="space-y-4">
+            {stats.pageViews.top_referrers.slice(0, 10).map((ref, index) => (
+              <div
+                key={ref.referer}
+                className="flex items-center justify-between rounded-lg bg-gray-800/50 p-4"
+              >
+                <div className="flex min-w-0 items-center gap-4">
+                  <span className="w-8 shrink-0 text-2xl font-bold text-green-400">
+                    {index + 1}
+                  </span>
+                  <span className="truncate text-gray-300">{ref.referer}</span>
+                </div>
+                <span className="shrink-0 font-semibold text-white">{ref.count}</span>
               </div>
             ))}
           </div>
@@ -115,7 +138,9 @@ export function AnalyticsDashboard({ stats }: AnalyticsDashboardProps) {
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             {stats.events.events_by_type.map((type) => (
               <div key={type.event_type} className="rounded-lg bg-gray-800/50 p-4 text-center">
-                <div className="mb-1 text-2xl font-bold text-purple-400">{type.count}</div>
+                <div className="mb-1 text-2xl font-bold text-gray-700 dark:text-gray-200">
+                  {type.count}
+                </div>
                 <div className="text-sm capitalize text-gray-400">{type.event_type}</div>
               </div>
             ))}

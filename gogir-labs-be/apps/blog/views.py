@@ -1,10 +1,12 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.utils import timezone
+from django.db.models import F, Prefetch
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
+from rest_framework.throttling import ScopedRateThrottle
 
 from apps.notifications.models import NotificationType
 from apps.notifications.services import NotificationService
@@ -14,6 +16,7 @@ from .models import Category, Comment, Post, Tag
 User = get_user_model()
 from .serializers import (
     CategorySerializer,
+    CommentAdminSerializer,
     CommentCreateSerializer,
     CommentSerializer,
     PostListSerializer,
@@ -21,18 +24,23 @@ from .serializers import (
     TagSerializer,
 )
 
+APPROVED_COMMENTS_PREFETCH = Prefetch(
+    "comments",
+    queryset=Comment.objects.filter(approved=True),
+)
+
 
 class PostViewSet(viewsets.ModelViewSet):
     """
     ViewSet for viewing and editing Post instances.
+    Public reads; staff-only create/update/delete.
     """
 
     queryset = (
         Post.objects.filter(published=True)
         .select_related("author", "category")
-        .prefetch_related("tags", "comments")
+        .prefetch_related("tags")
     )
-    permission_classes = [IsAuthenticatedOrReadOnly]
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
@@ -43,20 +51,36 @@ class PostViewSet(viewsets.ModelViewSet):
     ordering_fields = ["created_at", "published_at", "views"]
     ordering = ["-published_at", "-created_at"]
 
+    def get_permissions(self):
+        if self.action in ("list", "retrieve", "by_slug", "related"):
+            return [AllowAny()]
+        if self.action in ("comments", "increment_views"):
+            return [AllowAny()]
+        return [IsAdminUser()]
+
+    def get_throttles(self):
+        if self.action == "comments" and self.request.method == "POST":
+            self.throttle_scope = "comments"
+            return [ScopedRateThrottle()]
+        if self.action == "increment_views":
+            self.throttle_scope = "views"
+            return [ScopedRateThrottle()]
+        return super().get_throttles()
+
     def get_serializer_class(self):
         if self.action == "list":
             return PostListSerializer
         return PostSerializer
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        # Allow admins to see unpublished posts
         if self.request.user.is_authenticated and self.request.user.is_staff:
-            queryset = (
-                Post.objects.all()
-                .select_related("author", "category")
-                .prefetch_related("tags", "comments")
-            )
+            base = Post.objects.all()
+        else:
+            base = Post.objects.filter(published=True)
+
+        queryset = base.select_related("author", "category").prefetch_related("tags")
+        if self.action in ("retrieve", "by_slug"):
+            queryset = queryset.prefetch_related(APPROVED_COMMENTS_PREFETCH)
         return queryset
 
     @action(
@@ -83,8 +107,8 @@ class PostViewSet(viewsets.ModelViewSet):
     def increment_views(self, request, pk=None):
         """Increment view count for a post."""
         post = self.get_object()
-        post.views += 1
-        post.save(update_fields=["views"])
+        Post.objects.filter(pk=post.pk).update(views=F("views") + 1)
+        post.refresh_from_db(fields=["views"])
         return Response({"views": post.views})
 
     @action(detail=True, methods=["get", "post"], permission_classes=[AllowAny])
@@ -110,7 +134,10 @@ class PostViewSet(viewsets.ModelViewSet):
                         "commenter_name": comment.name,
                         "commenter_email": comment.email,
                         "comment_content": comment.content,
-                        "admin_url": f"{request.scheme}://{request.get_host()}/admin/blog/comment/{comment.id}/",
+                        "admin_url": (
+                            f"{(settings.FRONTEND_URL or 'http://localhost:3000').rstrip('/')}"
+                            f"/admin/comments"
+                        ),
                     },
                     related_object=comment,
                 )
@@ -131,40 +158,57 @@ class PostViewSet(viewsets.ModelViewSet):
     def related(self, request, pk=None):
         """Get related posts based on tags and category."""
         post = self.get_object()
-        limit = int(request.query_params.get("limit", 3))
+        try:
+            limit = int(request.query_params.get("limit", 3))
+        except (TypeError, ValueError):
+            return Response(
+                {"detail": "limit must be an integer."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if limit < 1 or limit > 10:
+            return Response(
+                {"detail": "limit must be between 1 and 10."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-        # Get posts with same tags or category
-        related_posts = Post.objects.filter(published=True).exclude(pk=post.pk)
+        base = (
+            Post.objects.filter(published=True)
+            .exclude(pk=post.pk)
+            .select_related("author", "category")
+            .prefetch_related("tags")
+        )
+        results = []
+        seen = set()
 
-        # Prioritize posts with same tags
+        def take(qs):
+            for item in qs:
+                if item.pk in seen:
+                    continue
+                seen.add(item.pk)
+                results.append(item)
+                if len(results) >= limit:
+                    return True
+            return False
+
         if post.tags.exists():
             tag_ids = post.tags.values_list("id", flat=True)
-            related_posts = related_posts.filter(tags__id__in=tag_ids).distinct()
+            if take(base.filter(tags__id__in=tag_ids).distinct()[:limit]):
+                serializer = PostListSerializer(
+                    results, many=True, context={"request": request}
+                )
+                return Response(serializer.data)
 
-        # If not enough, add posts with same category
-        if related_posts.count() < limit and post.category:
-            category_posts = (
-                Post.objects.filter(published=True, category=post.category)
-                .exclude(pk=post.pk)
-                .exclude(pk__in=related_posts.values_list("id", flat=True))
+        if post.category and take(
+            base.filter(category=post.category).exclude(pk__in=seen)[: limit - len(results)]
+        ):
+            serializer = PostListSerializer(
+                results, many=True, context={"request": request}
             )
-            related_posts = list(related_posts) + list(
-                category_posts[: limit - related_posts.count()]
-            )
+            return Response(serializer.data)
 
-        # If still not enough, get recent posts
-        if len(related_posts) < limit:
-            recent_posts = (
-                Post.objects.filter(published=True)
-                .exclude(pk=post.pk)
-                .exclude(pk__in=[p.pk for p in related_posts if hasattr(p, "pk")])[
-                    : limit - len(related_posts)
-                ]
-            )
-            related_posts = list(related_posts) + list(recent_posts)
-
+        take(base.exclude(pk__in=seen)[: limit - len(results)])
         serializer = PostListSerializer(
-            related_posts[:limit], many=True, context={"request": request}
+            results, many=True, context={"request": request}
         )
         return Response(serializer.data)
 
@@ -199,7 +243,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     """
 
     queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
+    serializer_class = CommentAdminSerializer
     permission_classes = [IsAdminUser]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_fields = ["post", "approved"]
@@ -208,28 +252,47 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         """Handle comment approval notifications."""
+        from django.conf import settings
+
         old_comment = self.get_object()
         was_approved = old_comment.approved
         comment = serializer.save()
 
         # If comment was just approved, notify the commenter
         if comment.approved and not was_approved:
-            # Try to find user by email, otherwise create a notification for the email
+            post_url = (
+                f"{settings.FRONTEND_URL.rstrip('/')}/blog/{comment.post.slug}/"
+            )
+            context = {
+                "post_title": comment.post.title,
+                "post_slug": comment.post.slug,
+                "post_url": post_url,
+                "message": (
+                    f'Your comment on "{comment.post.title}" has been approved '
+                    "and is now visible."
+                ),
+            }
+            NotificationService.send_template_to_address(
+                recipient=comment.email,
+                notification_type=NotificationType.BLOG_COMMENT_APPROVED,
+                context=context,
+                custom_subject="Your comment has been approved",
+                custom_body=context["message"],
+            )
             try:
                 user = User.objects.get(email=comment.email)
                 NotificationService.send_notification(
                     user=user,
                     notification_type=NotificationType.BLOG_COMMENT_APPROVED,
                     title="Your comment has been approved",
-                    message=f'Your comment on "{comment.post.title}" has been approved and is now visible.',
+                    message=context["message"],
                     data={
                         "post_title": comment.post.title,
                         "post_slug": comment.post.slug,
-                        "post_url": f"{self.request.scheme}://{self.request.get_host()}/blog/{comment.post.slug}/",
+                        "post_url": post_url,
                     },
                     related_object=comment,
+                    send_email=False,
                 )
             except User.DoesNotExist:
-                # If user doesn't exist, we could send an email directly
-                # For now, just log it
                 pass

@@ -242,3 +242,74 @@ class NotificationTemplateModelTest(TestCase):
         template.enabled = True
         template.save()
         self.assertTrue(template.enabled)
+
+
+class NotificationServiceTest(TestCase):
+    """Test notification service linkage and preference ownership."""
+
+    def setUp(self):
+        self.staff = User.objects.create_user(
+            username="staff", password="testpass", is_staff=True, email="staff@example.com"
+        )
+        self.other = User.objects.create_user(
+            username="other", password="testpass", email="other@example.com"
+        )
+
+    def test_notify_admins_stores_related_object(self):
+        from apps.notifications.services import NotificationService
+
+        message = ContactMessage.objects.create(
+            name="Ada",
+            email="ada@example.com",
+            subject="Hi",
+            message="Hello",
+        )
+        notifications = NotificationService.notify_admins(
+            notification_type=NotificationType.CONTACT_MESSAGE,
+            title="New contact",
+            message="Body",
+            related_object=message,
+            send_email=False,
+        )
+        self.assertEqual(len(notifications), 1)
+        self.assertEqual(notifications[0].related_object, message)
+        self.assertEqual(notifications[0].object_id, message.id)
+
+    def test_preference_create_binds_to_request_user(self):
+        from rest_framework.test import APIClient
+
+        client = APIClient()
+        client.force_authenticate(user=self.other)
+        response = client.post(
+            "/api/v1/notifications/preferences/",
+            {
+                "notification_type": NotificationType.CONTACT_MESSAGE,
+                "email_enabled": False,
+                "in_app_enabled": True,
+                "user": self.staff.id,
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 201)
+        pref = NotificationPreference.objects.get(id=response.data["id"])
+        self.assertEqual(pref.user, self.other)
+
+    def test_preference_duplicate_create_returns_409(self):
+        from rest_framework.test import APIClient
+
+        NotificationPreference.objects.create(
+            user=self.other,
+            notification_type=NotificationType.CONTACT_MESSAGE,
+        )
+        client = APIClient()
+        client.force_authenticate(user=self.other)
+        response = client.post(
+            "/api/v1/notifications/preferences/",
+            {
+                "notification_type": NotificationType.CONTACT_MESSAGE,
+                "email_enabled": True,
+                "in_app_enabled": True,
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 409)

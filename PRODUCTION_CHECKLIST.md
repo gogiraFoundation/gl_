@@ -2,146 +2,93 @@
 
 Use this checklist before deploying to production.
 
-## Homelab path (recommended for api.gogirlabs.uk)
+## Homelab path (api.gogirlabs.uk)
 
 See [docs/HOMELAB_API.md](docs/HOMELAB_API.md).
 
-- [x] ikon TLS + `https://api.gogirlabs.uk/api/v1/` OK (verified 2026-09-27)
-- [ ] Pages `gl-frontend`: `NEXT_PUBLIC_API_URL=https://api.gogirlabs.uk/api/v1` (Production + Preview), then **Retry deployment** (remove Heroku API URL)
-- [ ] After rebuild: browser Network tab hits `api.gogirlabs.uk` only (not `*.herokuapp.com`)
+- [ ] `.env.homelab` present locally, mode `600`, not committed
+- [ ] `HOMELAB_BIND_IP` set; Postgres/Redis not published on the host
+- [ ] `./deploy-homelab.sh` succeeds (migrations + collectstatic)
+- [ ] `https://api.gogirlabs.uk/api/v1/` returns 200 with valid TLS
+- [ ] ikon nginx uses `API_LAN_HOST` only on the server (not committed)
 - [ ] No Pi-hole override for public `api.gogirlabs.uk`
-- [ ] Kuma monitor + DB backup cron to `/mnt/data/backups/gogirlabs` (+ rsync to ikon)
-- [ ] Jellyfin / Dozzle still healthy
+- [ ] Kuma monitor + DB backup cron under `/mnt/data/backups/gogirlabs`
+- [ ] Jellyfin / Dozzle still healthy after deploy
 
-## Pre-Deployment (same-host Compose / classic path)
+## Frontend (www.gogirlabs.uk)
+
+See [docs/CLOUDFLARE_PAGES.md](docs/CLOUDFLARE_PAGES.md).
+
+- [ ] Worker `gogir-labs-fe` deployed (Actions or `npm run deploy`)
+- [ ] Build uses `NEXT_PUBLIC_API_URL=https://api.gogirlabs.uk/api/v1`
+- [ ] Browser Network tab hits `api.gogirlabs.uk` only (not Heroku / stale hosts)
+- [ ] Old Pages project `gl-frontend` auto-deploy **off** (or removed)
+- [ ] Custom domain `www` (and apex redirect) attached to the Worker
+
+## Pre-Deployment (classic same-host Compose)
 
 ### Code Quality
-- [ ] All tests passing (backend: 170+, frontend: 32+)
+
+- [ ] Backend and frontend tests pass (`./run-tests.sh`)
 - [ ] No linting errors
-- [ ] Code review completed
-- [ ] Security scan passed
+- [ ] Security scan reviewed
 
 ### Configuration
-- [ ] `.env.production` file created and configured
-- [ ] `SECRET_KEY` generated and set (strong, unique)
-- [ ] `DEBUG=False` in production
-- [ ] `ALLOWED_HOSTS` includes all domain names
-- [ ] Database credentials configured
-- [ ] Email service credentials configured
-- [ ] `CORS_ALLOWED_ORIGINS` set correctly
-- [ ] `FRONTEND_URL` and `NEXT_PUBLIC_API_URL` set
+
+- [ ] Root `.env` created from [ENV_EXAMPLE.md](ENV_EXAMPLE.md) (not committed)
+- [ ] `SECRET_KEY` strong and unique
+- [ ] `DEBUG=False`
+- [ ] `ALLOWED_HOSTS`, CORS, CSRF, `FRONTEND_URL`, `NEXT_PUBLIC_API_URL` correct
+- [ ] Database and email credentials configured
 
 ### Infrastructure
-- [ ] Server provisioned (min 2GB RAM, 2 CPU cores)
-- [ ] Docker and Docker Compose installed
-- [ ] Domain DNS configured
-- [ ] SSL certificates obtained and placed in `nginx/ssl/`
-- [ ] Firewall rules configured
-- [ ] SSH access configured
+
+- [ ] Server sized (≈2GB+ RAM)
+- [ ] Docker / Compose installed
+- [ ] DNS + TLS ready
+- [ ] Firewall; SSH keys only
+- [ ] Postgres/Redis not exposed publicly
 
 ### Database
-- [ ] PostgreSQL installed/configured
-- [ ] Database created
-- [ ] Database user created with proper permissions
+
+- [ ] DB user/password strong
 - [ ] Backup strategy in place
 
 ### Security
-- [ ] Strong passwords for all services
-- [ ] SSH keys configured (no password auth)
-- [ ] Firewall enabled
-- [ ] Rate limiting configured in nginx
-- [ ] Security headers enabled
-- [ ] HTTPS enforced
 
-## Deployment
+- [ ] No secrets in git or docs
+- [ ] Rate limiting and security headers enabled
+- [ ] HTTPS enforced at the edge
 
-### Initial Setup
-- [ ] Code cloned to server
-- [ ] Environment files created
-- [ ] SSL certificates installed
-- [ ] Docker images built or pulled
-- [ ] Database initialized
+## Deployment (classic)
 
-### Deployment Steps
-- [ ] Run migrations: `python manage.py migrate`
-- [ ] Collect static files: `python manage.py collectstatic`
-- [ ] Create superuser: `python manage.py createsuperuser`
-- [ ] Start services: `docker-compose up -d`
-- [ ] Verify all containers running: `docker-compose ps`
+- [ ] Migrations + collectstatic
+- [ ] Superuser created (once)
+- [ ] Containers healthy: `docker-compose -f docker-compose.prod.yml ps`
+- [ ] API and (if co-hosted) frontend health checks pass
 
-### Post-Deployment Verification
-- [ ] Backend API accessible: `curl https://domain.com/api/v1/`
-- [ ] Frontend accessible: `curl https://domain.com/`
-- [ ] Admin panel accessible: `https://domain.com/admin/`
-- [ ] Static files loading correctly
-- [ ] Media files accessible
-- [ ] Database connections working
-- [ ] Email service tested
-- [ ] SSL certificate valid
-- [ ] No errors in logs
+## Functionality smoke
 
-### Functionality Tests
-- [ ] Homepage loads correctly
-- [ ] Blog posts display
-- [ ] Portfolio projects display
-- [ ] Contact form submits successfully
-- [ ] Newsletter subscription works
-- [ ] Admin login works
-- [ ] File uploads work
-- [ ] Search functionality works
+- [ ] Homepage, blog, portfolio, resume, search
+- [ ] Contact form + newsletter subscribe/verify
+- [ ] Admin login (Django + frontend admin)
+- [ ] Email transactional path (contact / newsletter)
 
-## Monitoring Setup
+## Monitoring
 
-- [ ] Log aggregation configured
-- [ ] Error tracking setup (Sentry, etc.)
-- [ ] Uptime monitoring configured
-- [ ] Performance monitoring enabled
-- [ ] Backup automation scheduled
+- [ ] Uptime check on `https://api.gogirlabs.uk/api/v1/`
+- [ ] Backup automation verified
+- [ ] Logs reviewed after first deploy
 
-## Documentation
+## Rollback
 
-- [ ] Deployment process documented
-- [ ] Environment variables documented
-- [ ] Backup/restore procedures documented
-- [ ] Troubleshooting guide available
-- [ ] Team access configured
-
-## Post-Deployment
-
-### First 24 Hours
-- [ ] Monitor error logs
-- [ ] Check server resources (CPU, memory, disk)
-- [ ] Verify all features working
-- [ ] Test email notifications
-- [ ] Monitor database performance
-
-### First Week
-- [ ] Review access logs
-- [ ] Check for security issues
-- [ ] Verify backup process
-- [ ] Performance optimization if needed
-- [ ] User feedback collection
-
-## Rollback Plan
-
-- [ ] Previous version tagged in git
-- [ ] Previous Docker images available
-- [ ] Database backup available
-- [ ] Rollback script tested
-- [ ] Rollback procedure documented
-
-## Emergency Contacts
-
-- DevOps Team: [Contact Info]
-- Database Admin: [Contact Info]
-- Security Team: [Contact Info]
-- Hosting Provider: [Contact Info]
+- [ ] Previous git tag / images available
+- [ ] DB backup available
+- [ ] Homelab rollback steps known ([docs/HOMELAB_API.md](docs/HOMELAB_API.md))
 
 ## Notes
 
 - Deployment date: ___________
 - Deployed by: ___________
-- Version: ___________
-- Issues encountered: ___________
-- Resolution: ___________
-
+- Version / commit: ___________
+- Issues / resolution: ___________

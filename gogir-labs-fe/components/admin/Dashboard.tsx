@@ -11,6 +11,7 @@ interface AnalyticsStats {
   total_views: number
   unique_visitors: number
   top_pages: Array<{ path: string; count: number }>
+  top_referrers?: Array<{ referer: string; count: number }>
   views_by_day: Array<{ day: string; count: number }>
 }
 
@@ -56,7 +57,16 @@ export function Dashboard() {
     refetchInterval: 30000, // Poll every 30 seconds
   })
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    const refresh =
+      sessionStorage.getItem('refresh_token') || localStorage.getItem('refresh_token')
+    if (refresh) {
+      try {
+        await api.post('/auth/token/blacklist/', { refresh })
+      } catch {
+        // Still clear local tokens if blacklist fails (network / already revoked).
+      }
+    }
     sessionStorage.removeItem('access_token')
     sessionStorage.removeItem('refresh_token')
     localStorage.removeItem('access_token')
@@ -70,7 +80,37 @@ export function Dashboard() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+              <Link
+                href="/admin/analytics"
+                className="rounded-lg bg-emerald-600 px-4 py-2 text-white transition hover:bg-emerald-700"
+              >
+                Analytics
+              </Link>
+              <Link
+                href="/admin/contact"
+                className="rounded-lg bg-gray-900 px-4 py-2 text-white transition hover:bg-gray-800"
+              >
+                Contact
+              </Link>
+              <Link
+                href="/admin/newsletter"
+                className="rounded-lg bg-violet-600 px-4 py-2 text-white transition hover:bg-violet-700"
+              >
+                Newsletter
+              </Link>
+              <Link
+                href="/admin/comments"
+                className="rounded-lg bg-teal-600 px-4 py-2 text-white transition hover:bg-teal-700"
+              >
+                Comments
+              </Link>
+              <Link
+                href="/admin/preferences"
+                className="rounded-lg bg-slate-600 px-4 py-2 text-white transition hover:bg-slate-700"
+              >
+                Preferences
+              </Link>
               <Link
                 href="/admin/notifications"
                 className="rounded-lg bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"

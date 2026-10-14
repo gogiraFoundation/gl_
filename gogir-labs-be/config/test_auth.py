@@ -22,6 +22,7 @@ TEST_REST_FRAMEWORK = {
         "analytics_track": "100000/minute",
         "search": "100000/minute",
         "comments": "100000/minute",
+        "views": "100000/minute",
         "anon": "100000/minute",
         "user": "100000/minute",
     },
@@ -118,13 +119,18 @@ class AuthenticationAPITest(TestCase):
     def test_token_refresh_valid_token(self):
         """Test POST /api/v1/auth/token/refresh/ with valid refresh token."""
         refresh = RefreshToken.for_user(self.user)
+        original = str(refresh)
         url = "/api/v1/auth/token/refresh/"
         data = {
-            "refresh": str(refresh),
+            "refresh": original,
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("access", response.data)
+        self.assertIn("refresh", response.data)
+        # Rotated refresh is blacklisted; reuse of the original must fail.
+        reuse = self.client.post(url, {"refresh": original})
+        self.assertEqual(reuse.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_token_refresh_invalid_token(self):
         """Test POST /api/v1/auth/token/refresh/ with invalid refresh token."""
@@ -152,3 +158,12 @@ class AuthenticationAPITest(TestCase):
         data = {}
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_token_blacklist_on_logout(self):
+        """POST /api/v1/auth/token/blacklist/ revokes the refresh token."""
+        refresh = RefreshToken.for_user(self.user)
+        token = str(refresh)
+        response = self.client.post("/api/v1/auth/token/blacklist/", {"refresh": token})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        reuse = self.client.post("/api/v1/auth/token/refresh/", {"refresh": token})
+        self.assertEqual(reuse.status_code, status.HTTP_401_UNAUTHORIZED)

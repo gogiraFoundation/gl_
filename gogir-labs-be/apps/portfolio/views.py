@@ -1,7 +1,7 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 
 from .models import Category, Project, Technology
@@ -16,6 +16,7 @@ from .serializers import (
 class ProjectViewSet(viewsets.ModelViewSet):
     """
     ViewSet for viewing and editing Project instances.
+    Public reads; staff-only create/update/delete.
     """
 
     queryset = (
@@ -23,7 +24,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
         .select_related("category")
         .prefetch_related("technologies", "images")
     )
-    permission_classes = [IsAuthenticatedOrReadOnly]
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
@@ -33,6 +33,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
     search_fields = ["title", "description", "long_description"]
     ordering_fields = ["created_at", "updated_at", "order"]
     ordering = ["-order", "-created_at"]
+
+    def get_permissions(self):
+        if self.action in ("list", "retrieve", "by_slug", "related"):
+            return [AllowAny()]
+        return [IsAdminUser()]
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -81,42 +86,59 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def related(self, request, pk=None):
         """Get related projects based on technologies and category."""
         project = self.get_object()
-        limit = int(request.query_params.get("limit", 3))
+        try:
+            limit = int(request.query_params.get("limit", 3))
+        except (TypeError, ValueError):
+            return Response(
+                {"detail": "limit must be an integer."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if limit < 1 or limit > 10:
+            return Response(
+                {"detail": "limit must be between 1 and 10."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-        # Get projects with same technologies or category
-        related_projects = Project.objects.filter(published=True).exclude(pk=project.pk)
+        base = (
+            Project.objects.filter(published=True)
+            .exclude(pk=project.pk)
+            .select_related("category")
+            .prefetch_related("technologies")
+        )
+        results = []
+        seen = set()
 
-        # Prioritize projects with same technologies
+        def take(qs):
+            for item in qs:
+                if item.pk in seen:
+                    continue
+                seen.add(item.pk)
+                results.append(item)
+                if len(results) >= limit:
+                    return True
+            return False
+
         if project.technologies.exists():
             tech_ids = project.technologies.values_list("id", flat=True)
-            related_projects = related_projects.filter(
-                technologies__id__in=tech_ids
-            ).distinct()
+            if take(base.filter(technologies__id__in=tech_ids).distinct()[:limit]):
+                serializer = ProjectListSerializer(
+                    results, many=True, context={"request": request}
+                )
+                return Response(serializer.data)
 
-        # If not enough, add projects with same category
-        if related_projects.count() < limit and project.category:
-            category_projects = (
-                Project.objects.filter(published=True, category=project.category)
-                .exclude(pk=project.pk)
-                .exclude(pk__in=related_projects.values_list("id", flat=True))
+        if project.category and take(
+            base.filter(category=project.category).exclude(pk__in=seen)[
+                : limit - len(results)
+            ]
+        ):
+            serializer = ProjectListSerializer(
+                results, many=True, context={"request": request}
             )
-            related_projects = list(related_projects) + list(
-                category_projects[: limit - related_projects.count()]
-            )
+            return Response(serializer.data)
 
-        # If still not enough, get recent projects
-        if len(related_projects) < limit:
-            recent_projects = (
-                Project.objects.filter(published=True)
-                .exclude(pk=project.pk)
-                .exclude(pk__in=[p.pk for p in related_projects if hasattr(p, "pk")])[
-                    : limit - len(related_projects)
-                ]
-            )
-            related_projects = list(related_projects) + list(recent_projects)
-
+        take(base.exclude(pk__in=seen)[: limit - len(results)])
         serializer = ProjectListSerializer(
-            related_projects[:limit], many=True, context={"request": request}
+            results, many=True, context={"request": request}
         )
         return Response(serializer.data)
 

@@ -6,7 +6,6 @@ import { Footer } from '@/components/layout/Footer'
 import { TestimonialCard } from '@/components/testimonials/TestimonialCard'
 import api from '@/lib/api'
 import { useEffect } from 'react'
-import { Quote } from 'lucide-react'
 
 interface Testimonial {
   id: number
@@ -36,27 +35,23 @@ export default function TestimonialsPage() {
   }, [])
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-brutal-bg text-brutal-ink">
       <Header />
-      <main className="relative flex-grow px-4 py-12">
-        <div className="absolute inset-0 bg-gradient-mesh opacity-30"></div>
-        <div className="relative z-10 mx-auto max-w-7xl">
-          <div className="mb-12 text-center">
-            <div className="mb-4 flex items-center justify-center gap-2">
-              <Quote className="h-8 w-8 text-purple-400" />
-              <h1 className="gradient-text text-4xl font-bold md:text-5xl">Testimonials</h1>
-            </div>
-            <p className="mx-auto max-w-2xl text-lg text-gray-400">
-              What clients and colleagues say about working with me
+      <main className="flex-grow px-6 py-16 lg:px-8 md:py-24">
+        <div className="mx-auto max-w-shell">
+          <header className="mb-12 max-w-2xl text-left">
+            <h1 className="mb-4 font-serif text-4xl font-semibold tracking-tight md:text-5xl">
+              Testimonials
+            </h1>
+            <p className="text-left text-base leading-relaxed text-brutal-muted md:text-lg">
+              What clients and colleagues say about the work.
             </p>
-          </div>
+          </header>
 
           {isLoading ? (
-            <div className="py-12 text-center text-gray-400">Loading testimonials...</div>
+            <p className="py-12 text-left text-brutal-muted">Loading testimonials…</p>
           ) : testimonials.length === 0 ? (
-            <div className="py-12 text-center">
-              <p className="text-gray-400">No testimonials available yet.</p>
-            </div>
+            <p className="py-12 text-left text-brutal-muted">No testimonials published yet.</p>
           ) : (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {testimonials.map((testimonial: Testimonial) => (

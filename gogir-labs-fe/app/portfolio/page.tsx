@@ -115,9 +115,9 @@ export default function PortfolioPage() {
             <h1 className="mb-5 font-serif text-5xl font-semibold tracking-tight text-brutal-ink md:mb-6 md:text-6xl">
               Portfolio
             </h1>
-            <p className="max-w-2xl text-lg leading-relaxed text-brutal-muted md:text-xl">
-              Real-world projects demonstrating expertise in cloud infrastructure, infrastructure as
-              code, CI/CD automation, and scalable platform design.
+            <p className="max-w-2xl text-left text-base leading-relaxed text-brutal-muted md:text-lg md:text-justify">
+              Selected work in cloud infrastructure, infrastructure as code, CI/CD, and platform
+              design—open a project to see what shipped.
             </p>
           </div>
 
@@ -133,24 +133,26 @@ export default function PortfolioPage() {
           />
 
           {(isLoading || isFetching) && !typedProjects.length ? (
-            <div className="py-12 text-center font-sans text-brutal-muted">Loading projects…</div>
+            <div className="py-12 text-left font-sans text-brutal-muted">Loading projects…</div>
           ) : error ? (
-            <div className="py-12 text-center text-red-700">
-              <p className="mb-2 font-medium">Error loading projects</p>
+            <div role="alert" className="border border-brutal-ink bg-brutal-bg p-4 text-left">
+              <p className="mb-2 font-medium text-brutal-ink">Could not load projects</p>
               <p className="text-sm text-brutal-muted">
-                {error instanceof Error ? error.message : 'Unknown error'}
+                {error instanceof Error
+                  ? error.message
+                  : 'Something went wrong. Refresh the page or try again later.'}
               </p>
             </div>
           ) : (
             <ProjectGrid projects={typedProjects} />
           )}
 
-          <div className="mx-auto mt-20 w-full max-w-3xl bg-brutal-bg p-6 text-center opacity-0 transition-all duration-500 ease-out [animation:fadeIn_0.55s_ease-out_forwards] md:mt-24 md:max-w-xl md:p-8">
-            <p className="text-center text-base leading-relaxed text-brutal-ink md:text-lg">
-              Interested in a custom solution or planning your next platform build?{' '}
+          <div className="mt-20 max-w-xl border-t border-brutal-ink/15 pt-10 md:mt-24">
+            <p className="text-left text-base leading-relaxed text-brutal-ink md:text-justify">
+              Planning a backend, API, or platform build?{' '}
               <Link
                 href="/contact"
-                className="font-medium text-brutal-ink underline underline-offset-4 transition-all duration-300 ease-out hover:opacity-70"
+                className="font-medium text-brutal-ink underline underline-offset-4 transition-opacity duration-200 ease-out hover:opacity-70"
               >
                 Get in touch
               </Link>

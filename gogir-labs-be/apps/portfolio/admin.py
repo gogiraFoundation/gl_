@@ -37,8 +37,13 @@ class ProjectAdmin(admin.ModelAdmin):
     ]
 
     def publish_projects(self, request, queryset):
-        """Bulk publish selected projects."""
-        count = queryset.update(published=True)
+        """Bulk publish selected projects via save() so notifications run."""
+        count = 0
+        for project in queryset:
+            if not project.published:
+                project.published = True
+                project.save()
+                count += 1
         self.message_user(request, f"{count} project(s) published successfully.")
 
     publish_projects.short_description = "Publish selected projects"

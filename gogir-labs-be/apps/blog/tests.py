@@ -186,6 +186,31 @@ class PostModelTest(TestCase):
         mock_notify.assert_called_once()
 
     @patch("apps.notifications.services.NotificationService.notify_admins")
+    def test_admin_publish_action_sets_published_at(self, mock_notify):
+        """Admin publish action uses save() so published_at and notify run."""
+        from django.contrib.admin.sites import AdminSite
+        from django.test import RequestFactory
+
+        from apps.blog.admin import PostAdmin
+
+        post = Post.objects.create(
+            title="Draft",
+            excerpt="Excerpt",
+            content="Content",
+            author=self.user,
+            published=False,
+        )
+        admin = PostAdmin(Post, AdminSite())
+        request = RequestFactory().get("/")
+        request.user = self.user
+        with patch.object(admin, "message_user"):
+            admin.publish_posts(request, Post.objects.filter(pk=post.pk))
+        post.refresh_from_db()
+        self.assertTrue(post.published)
+        self.assertIsNotNone(post.published_at)
+        mock_notify.assert_called_once()
+
+    @patch("apps.notifications.services.NotificationService.notify_admins")
     def test_no_notification_when_already_published(self, mock_notify):
         """Test notification is not sent when already published post is updated."""
         post = Post.objects.create(

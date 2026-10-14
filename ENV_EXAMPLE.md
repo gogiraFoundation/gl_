@@ -31,14 +31,19 @@ CORS_ALLOW_ALL_ORIGINS=True
 CORS_ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
 CSRF_TRUSTED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
 
-# Email (console backend by default)
+# Email (console backend by default; nothing is delivered)
 EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend
 EMAIL_HOST=localhost
 EMAIL_PORT=587
 EMAIL_USE_TLS=True
+EMAIL_USE_SSL=False
 EMAIL_HOST_USER=
 EMAIL_HOST_PASSWORD=
+DEFAULT_FROM_NAME=
 DEFAULT_FROM_EMAIL=noreply@localhost
+NEWSLETTER_FROM_EMAIL=
+EMAIL_REPLY_TO=
+NEWSLETTER_BROADCASTS_ENABLED=False
 
 # App
 FRONTEND_URL=http://localhost:3000
@@ -75,13 +80,19 @@ ALLOWED_HOSTS=api.yourdomain.com
 CORS_ALLOWED_ORIGINS=https://www.yourdomain.com
 CSRF_TRUSTED_ORIGINS=https://www.yourdomain.com
 
-# Email (SMTP)
-EMAIL_HOST=smtp.example.com
-EMAIL_PORT=587
-EMAIL_USE_TLS=True
-EMAIL_HOST_USER=your-smtp-user
-EMAIL_HOST_PASSWORD=your-smtp-password
-DEFAULT_FROM_EMAIL=noreply@yourdomain.com
+# Email — Cloudflare Email Sending (implicit TLS). See section 5 for the full set.
+EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+EMAIL_HOST=smtp.mx.cloudflare.net
+EMAIL_PORT=465
+EMAIL_USE_TLS=False
+EMAIL_USE_SSL=True
+EMAIL_HOST_USER=api_token
+EMAIL_HOST_PASSWORD=your-cloudflare-email-sending-token
+DEFAULT_FROM_NAME=Gogir Labs
+DEFAULT_FROM_EMAIL=hi@yourdomain.com
+NEWSLETTER_FROM_EMAIL=newsletter@yourdomain.com
+EMAIL_REPLY_TO=hi@yourdomain.com
+NEWSLETTER_BROADCASTS_ENABLED=False
 
 # Frontend URL (used by backend)
 FRONTEND_URL=https://www.yourdomain.com
@@ -109,12 +120,17 @@ DATABASE_URL=postgresql://user:password@host:5432/dbname
 REDIS_URL=redis://localhost:6379/0
 
 EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
-EMAIL_HOST=smtp.example.com
-EMAIL_PORT=587
-EMAIL_USE_TLS=True
-EMAIL_HOST_USER=
-EMAIL_HOST_PASSWORD=
-DEFAULT_FROM_EMAIL=noreply@gogirlabs.uk
+EMAIL_HOST=smtp.mx.cloudflare.net
+EMAIL_PORT=465
+EMAIL_USE_TLS=False
+EMAIL_USE_SSL=True
+EMAIL_HOST_USER=api_token
+EMAIL_HOST_PASSWORD=your-cloudflare-email-sending-token
+DEFAULT_FROM_NAME=Gogir Labs
+DEFAULT_FROM_EMAIL=hi@gogirlabs.uk
+NEWSLETTER_FROM_EMAIL=newsletter@gogirlabs.uk
+EMAIL_REPLY_TO=hi@gogirlabs.uk
+NEWSLETTER_BROADCASTS_ENABLED=False
 
 # Optional: custom log directory
 # DJANGO_LOG_DIR=/app/logs
@@ -124,7 +140,7 @@ DEFAULT_FROM_EMAIL=noreply@gogirlabs.uk
 
 ## 5. Homelab (N4020 + ikon)
 
-Backend runs on `gogir-server` via [`docker-compose.homelab.yml`](docker-compose.homelab.yml). Public TLS is on `ikon`; frontend stays on Cloudflare Pages.
+Backend runs on `gogir-server` via [`docker-compose.homelab.yml`](docker-compose.homelab.yml). Public TLS is on `ikon`; frontend is Cloudflare Workers (OpenNext).
 
 **Local file for deploy:** copy [`.env.homelab.example`](.env.homelab.example) → `.env.homelab` (gitignored).  
 **On the host:** `/mnt/data/compose/gogirlabs/.env` (mode 600). Full runbook: [`docs/HOMELAB_API.md`](docs/HOMELAB_API.md).
@@ -136,24 +152,37 @@ DB_PASSWORD=your-secure-db-password
 
 SECRET_KEY=your-django-secret-key-min-50-chars-long-and-random
 DEBUG=False
-ALLOWED_HOSTS=api.gogirlabs.uk
+ALLOWED_HOSTS=api.gogirlabs.uk,localhost,127.0.0.1,GOGIR_SERVER_LAN_IP
 CORS_ALLOW_ALL_ORIGINS=False
 CORS_ALLOWED_ORIGINS=https://www.gogirlabs.uk,https://gogirlabs.uk
 CSRF_TRUSTED_ORIGINS=https://www.gogirlabs.uk,https://gogirlabs.uk
 FRONTEND_URL=https://www.gogirlabs.uk
 SECURE_SSL_REDIRECT=False
 
-EMAIL_HOST=smtp.example.com
-EMAIL_PORT=587
-EMAIL_USE_TLS=True
-EMAIL_HOST_USER=
-EMAIL_HOST_PASSWORD=
-DEFAULT_FROM_EMAIL=noreply@gogirlabs.uk
+EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+EMAIL_HOST=smtp.mx.cloudflare.net
+EMAIL_PORT=465
+EMAIL_USE_TLS=False
+EMAIL_USE_SSL=True
+EMAIL_HOST_USER=api_token
+EMAIL_HOST_PASSWORD=your-cloudflare-email-sending-token
+DEFAULT_FROM_NAME=Gogir Labs
+DEFAULT_FROM_EMAIL=hi@gogirlabs.uk
+NEWSLETTER_FROM_EMAIL=newsletter@gogirlabs.uk
+EMAIL_REPLY_TO=hi@gogirlabs.uk
+NEWSLETTER_BROADCASTS_ENABLED=False
 ```
 
-Compose injects `DATABASE_URL` / `REDIS_URL` to the `db` and `redis` services. Pages: `NEXT_PUBLIC_API_URL=https://api.gogirlabs.uk/api/v1`.
+Include `localhost` (compose healthcheck) and your `HOMELAB_BIND_IP` so LAN curls are not rejected by Django’s host check. Inbound aliases are Cloudflare **Email Routing**, not Django. Onboard `gogirlabs.uk`, verify one personal inbox, and route `hi@`, `newsletter@`, and `dev@` (old public links) to that inbox. `EMAIL_HOST_PASSWORD` is an API token with **Email Sending: Edit**. `EMAIL_USE_TLS` and `EMAIL_USE_SSL` cannot both be true.
 
-Deploy: `./deploy-homelab.sh` (or `HOMELAB_USE_JUMP=1 ./deploy-homelab.sh` off-LAN).
+Compose injects `DATABASE_URL` / `REDIS_URL` to the `db` and `redis` services. Frontend build: `NEXT_PUBLIC_API_URL=https://api.gogirlabs.uk/api/v1`.
+
+Deploy (hosts and key paths stay in your shell — do not commit them):
+
+```bash
+HOMELAB_HOST='user@api-host' HOMELAB_SSH_KEY=~/.ssh/key ./deploy-homelab.sh
+# Off LAN: also set SSH_JUMP, SSH_JUMP_KEY, HOMELAB_USE_JUMP=1
+```
 
 ---
 
@@ -178,15 +207,19 @@ CSRF_TRUSTED_ORIGINS=https://your-frontend.vercel.app,https://www.yourdomain.com
 
 ---
 
-## 7. Frontend only – Cloudflare Pages / Vercel
+## 7. Frontend only – Cloudflare Workers (OpenNext)
 
-Set in **Cloudflare Pages** or **Vercel** → Project → Settings → Environment variables.
+`NEXT_PUBLIC_API_URL` is a **build-time** variable. Set it in:
 
-**Production / Preview:**
+- GitHub Actions workflow [`.github/workflows/frontend-cloudflare-workers.yml`](.github/workflows/frontend-cloudflare-workers.yml), or
+- Local: `NEXT_PUBLIC_API_URL=… npm run deploy`, or
+- Cloudflare Workers Builds env if you deploy from the dashboard
 
 ```env
 NEXT_PUBLIC_API_URL=https://api.gogirlabs.uk/api/v1
 ```
+
+Do not put Cloudflare API tokens, account IDs, or Wrangler credentials in this file. Use GitHub Actions secrets or `wrangler login`. See [`docs/CLOUDFLARE_PAGES.md`](docs/CLOUDFLARE_PAGES.md).
 
 ---
 
@@ -219,6 +252,12 @@ NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
 | `CORS_ALLOWED_ORIGINS` | ✅ | – | Comma-separated frontend origins |
 | `CSRF_TRUSTED_ORIGINS` | ✅ | – | Same as CORS for form/API |
 | `FRONTEND_URL` | ✅ | – | Frontend base URL |
-| `EMAIL_*` | ✅ | – | SMTP / email backend |
+| `EMAIL_*` | ✅ | – | SMTP backend, host, port, TLS/SSL, credentials |
+| `DEFAULT_FROM_EMAIL` / `DEFAULT_FROM_NAME` | ✅ | – | From address for contact and other notifications |
+| `NEWSLETTER_FROM_EMAIL` | ✅ | – | From address for verify, welcome, and unsubscribe mail |
+| `EMAIL_REPLY_TO` | ✅ | – | Reply-To on outbound mail (public inbox) |
+| `NEWSLETTER_BROADCASTS_ENABLED` | ✅ | – | `False` keeps campaign fan-out off the transactional sender |
+| `ANALYTICS_IP_RETENTION_DAYS` | ✅ | – | Days before `purge_analytics` nulls IP/UA (default `30`) |
+| `ANALYTICS_ROW_RETENTION_DAYS` | ✅ | – | Days before `purge_analytics` deletes rows (default `365`) |
 | `NEXT_PUBLIC_API_URL` | – | ✅ | Backend API base (build-time) |
 | `DJANGO_LOG_DIR` | ✅ | – | Optional log directory (default `/app/logs` in prod) |

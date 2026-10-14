@@ -32,6 +32,7 @@ export default function NotificationsPage() {
     queryKey: ['notifications', 'list', readFilter],
     queryFn: async () => {
       const params = new URLSearchParams()
+      params.set('page_size', '100')
       if (readFilter !== null) {
         params.append('read', readFilter)
       }

@@ -23,6 +23,10 @@ interface Project {
   category: { id: number; name: string; slug: string } | null
   technologies: Array<{ id: number; name: string; slug: string; icon: string }>
   images: Array<{ id: number; image: string; caption: string; order: number }>
+  role?: string
+  year?: number | null
+  client?: string
+  outcomes?: string[]
   featured: boolean
   created_at: string
   updated_at: string
@@ -61,8 +65,10 @@ export function ProjectContent({ project }: ProjectContentProps) {
         <div className="mb-6 flex flex-wrap items-center gap-4 text-sm text-brutal-muted">
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4" />
-            <span>{formatDate(project.created_at)}</span>
+            <span>{project.year ?? formatDate(project.created_at)}</span>
           </div>
+          {project.role && <span>{project.role}</span>}
+          {project.client && <span>Client: {project.client}</span>}
           {project.technologies.length > 0 && (
             <div className="flex items-center gap-2">
               <Tag className="h-4 w-4" />
@@ -74,6 +80,17 @@ export function ProjectContent({ project }: ProjectContentProps) {
           )}
         </div>
 
+        {Array.isArray(project.outcomes) && project.outcomes.length > 0 && (
+          <div className="mb-8">
+            <h2 className="mb-3 font-serif text-xl font-semibold text-brutal-ink">Outcomes</h2>
+            <ul className="list-inside list-disc space-y-2 text-brutal-muted">
+              {project.outcomes.map((outcome, index) => (
+                <li key={`${project.id}-outcome-${index}`}>{outcome}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         {/* Action Buttons */}
         <div className="mb-8 flex flex-wrap gap-4">
           {project.github_url && (
@@ -84,7 +101,7 @@ export function ProjectContent({ project }: ProjectContentProps) {
               onClick={() =>
                 trackClick('project_github', { projectId: project.id, projectTitle: project.title })
               }
-              className="flex items-center gap-2 border border-brutal-ink bg-transparent px-6 py-3 font-semibold text-brutal-ink transition-opacity hover:opacity-70"
+              className="btn-brutal btn-brutal-md gap-2"
             >
               <Github className="h-5 w-5" />
               View on GitHub
@@ -98,7 +115,7 @@ export function ProjectContent({ project }: ProjectContentProps) {
               onClick={() =>
                 trackClick('project_live', { projectId: project.id, projectTitle: project.title })
               }
-              className="flex items-center gap-2 border border-brutal-ink bg-brutal-ink px-6 py-3 font-semibold text-brutal-bg transition-opacity hover:opacity-90"
+              className="btn-brutal btn-brutal-md gap-2"
             >
               <ExternalLink className="h-5 w-5" />
               Live Demo

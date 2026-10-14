@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import Link from 'next/link'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { PostContent } from '@/components/blog/PostContent'
@@ -134,10 +135,10 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen flex-col">
+      <div className="flex min-h-screen flex-col bg-brutal-bg text-brutal-ink">
         <Header />
-        <main className="flex-grow px-4 py-12">
-          <div className="mx-auto max-w-4xl text-center">Loading post...</div>
+        <main className="flex-grow px-6 py-12 lg:px-8">
+          <div className="mx-auto max-w-content text-left text-brutal-muted">Loading post…</div>
         </main>
         <Footer />
       </div>
@@ -146,13 +147,20 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
 
   if (error || !post) {
     return (
-      <div className="flex min-h-screen flex-col">
+      <div className="flex min-h-screen flex-col bg-brutal-bg text-brutal-ink">
         <Header />
-        <main className="flex-grow px-4 py-12">
-          <div className="mx-auto max-w-4xl text-center">
-            <h1 className="mb-4 text-2xl font-bold">Post not found</h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              The blog post you're looking for doesn't exist or has been removed.
+        <main className="flex-grow px-6 py-12 lg:px-8">
+          <div className="mx-auto max-w-content text-left">
+            <h1 className="mb-4 font-serif text-2xl font-semibold tracking-tight">Post not found</h1>
+            <p className="text-brutal-muted">
+              That post doesn&apos;t exist or was removed. Browse the{' '}
+              <Link
+                href="/blog"
+                className="font-medium text-brutal-ink underline underline-offset-4 hover:opacity-75"
+              >
+                blog
+              </Link>{' '}
+              for other writing.
             </p>
           </div>
         </main>
@@ -162,12 +170,10 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-brutal-bg text-brutal-ink">
       <Header />
-      <main className="relative flex-grow px-4 py-12">
-        {/* Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-mesh opacity-30"></div>
-        <div className="relative z-10 mx-auto max-w-4xl">{post && <PostContent post={post} />}</div>
+      <main className="flex-grow px-6 py-12 lg:px-8 md:py-16">
+        <div className="mx-auto max-w-content">{post && <PostContent post={post} />}</div>
       </main>
       <Footer />
     </div>

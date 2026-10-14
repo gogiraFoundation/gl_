@@ -3,7 +3,7 @@
  */
 export type PortfolioCardCopy = {
   description: string
-  /** Shown as "Category: {categoryLabel}" when set */
+  /** Shown when the API has no category; empty when category is unresolved */
   categoryLabel: string
 }
 
@@ -11,42 +11,42 @@ export const PORTFOLIO_CARD_COPY: Record<string, PortfolioCardCopy> = {
   'afri-cleans-website': {
     categoryLabel: 'Website',
     description:
-      'A full-stack website developed for Afri Ltd, offering an efficient cleaning service platform for businesses and consumers. The platform integrates booking, service management, and user engagement features.',
+      'Full-stack site for Afri Ltd: booking, service management, and customer-facing pages for a cleaning business.',
   },
   'energy-management-dashboard': {
-    categoryLabel: 'Blockchain',
+    categoryLabel: '',
     description:
-      'A dashboard designed to monitor and manage energy consumption within commercial buildings, including features for ISO 50001 compliance. The platform enables real-time energy analytics and reporting, aiding businesses in achieving sustainable energy management.',
+      'Commercial building energy dashboard with live analytics and ISO 50001-oriented reporting.',
   },
   'api-gateway-service': {
-    categoryLabel: 'Blockchain',
+    categoryLabel: '',
     description:
-      'A high-performance API Gateway built with Django, optimised for managing microservices and API routing. This solution allows seamless integration across various services, ensuring robust API security and performance.',
+      'A Django API gateway for routing and securing microservice traffic—rate limits, auth checks, and stable upstream routing without a separate gateway stack.',
   },
   'e-commerce-analytics-platform': {
     categoryLabel: 'SaaS',
     description:
-      'A comprehensive analytics platform tailored for e-commerce businesses, providing real-time dashboards, sales analytics, and predictive insights to inform business strategy and drive growth.',
+      'E-commerce analytics with live dashboards, sales reporting, and predictive views so operators can act on what sold—and what will.',
   },
   urbana: {
     categoryLabel: 'SaaS',
     description:
-      'A business management platform for streamlining operations, providing tools for project management, collaboration, and reporting. Tailored to meet the needs of growing organisations.',
+      'Operations platform for growing teams: projects, collaboration, and reporting in one place.',
   },
   'pipe-pop': {
-    categoryLabel: 'Blockchain',
+    categoryLabel: '',
     description:
-      'A suite of tools designed for monitoring and managing Point of Presence (PoP) nodes in pipe networks. The platform provides real-time insights and health monitoring for network infrastructure.',
+      'Monitoring and health tools for Point of Presence (PoP) nodes in pipe networks—live status, not spreadsheets.',
   },
   bria: {
     categoryLabel: 'Renewable Technology',
     description:
-      'Bria is an enterprise-grade renewable power forecasting platform that combines meteorological data, physical modelling, and machine learning to deliver accurate generation forecasts for solar and wind farms. This case study outlines the design, development, and deployment of the platform, which is integral to renewable energy projects.',
+      'Renewable power forecasting for solar and wind: weather data, physical models, and ML generation forecasts.',
   },
   invenire: {
     categoryLabel: 'FinTech',
     description:
-      'Invenire is an advanced machine learning-driven software designed for web scraping and data mining. It efficiently extracts valuable insights, trends, and data points from a wide range of online sources using natural language processing (NLP) algorithms, enabling businesses to gather key information for strategic decision-making.',
+      'ML-assisted web scraping and data mining—NLP over public sources to surface trends teams can act on.',
   },
 }
 

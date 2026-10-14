@@ -9,12 +9,31 @@ const api = axios.create({
 
 type RequestConfigWithRetry = InternalAxiosRequestConfig & { _retry?: boolean }
 
+let refreshPromise: Promise<string | null> | null = null
+
 function getTokenStorage(): Storage | null {
   if (typeof window === 'undefined') return null
   try {
     return window.sessionStorage
   } catch {
     return null
+  }
+}
+
+function getStoredRefreshToken(): string | null {
+  const storage = getTokenStorage()
+  return storage?.getItem('refresh_token') ?? localStorage.getItem('refresh_token')
+}
+
+function persistTokens(access: string, refresh?: string) {
+  const storage = getTokenStorage()
+  try {
+    storage?.setItem('access_token', access)
+    if (refresh) {
+      storage?.setItem('refresh_token', refresh)
+    }
+  } catch {
+    /* ignore (private mode / storage blocked) */
   }
 }
 
@@ -44,8 +63,50 @@ function stripAuthorizationHeader(config: InternalAxiosRequestConfig) {
   }
 }
 
-// Attach JWT from localStorage for protected admin endpoints (Django + DRF SimpleJWT).
-// Runs only in the browser.
+function isAuthTokenUrl(url: string | undefined): boolean {
+  if (!url) return false
+  return (
+    url.includes('/auth/token/') ||
+    url.includes('/auth/token/refresh/') ||
+    url.includes('/auth/token/blacklist/')
+  )
+}
+
+/**
+ * Rotate the access token (and refresh when the API returns a new one).
+ * Uses a bare axios call so the api interceptor cannot recurse.
+ */
+async function refreshAccessToken(): Promise<string | null> {
+  if (refreshPromise) return refreshPromise
+
+  refreshPromise = (async () => {
+    const refresh = getStoredRefreshToken()
+    if (!refresh) return null
+
+    try {
+      const { data } = await axios.post<{ access: string; refresh?: string }>(
+        `${baseURL}/auth/token/refresh/`,
+        { refresh },
+        { withCredentials: true }
+      )
+      if (!data?.access) {
+        clearStoredTokens()
+        return null
+      }
+      persistTokens(data.access, data.refresh)
+      return data.access
+    } catch {
+      clearStoredTokens()
+      return null
+    } finally {
+      refreshPromise = null
+    }
+  })()
+
+  return refreshPromise
+}
+
+// Attach JWT from sessionStorage for protected admin endpoints.
 api.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
     const storage = getTokenStorage()
@@ -58,8 +119,8 @@ api.interceptors.request.use((config) => {
   return config
 })
 
-// If a stale/invalid JWT is stored, DRF SimpleJWT returns 401 *before* AllowAny is applied.
-// Retry once without Authorization so public routes (portfolio, blog, etc.) still work.
+// On 401: refresh once (rotating refresh tokens), then retry. If refresh fails,
+// strip Authorization and retry so public routes still work with a stale token.
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
@@ -70,7 +131,8 @@ api.interceptors.response.use(
       status !== 401 ||
       !originalRequest ||
       originalRequest._retry ||
-      typeof window === 'undefined'
+      typeof window === 'undefined' ||
+      isAuthTokenUrl(originalRequest.url)
     ) {
       return Promise.reject(error)
     }
@@ -85,7 +147,14 @@ api.interceptors.response.use(
     }
 
     originalRequest._retry = true
-    clearStoredTokens()
+
+    const access = await refreshAccessToken()
+    if (access) {
+      originalRequest.headers = originalRequest.headers ?? {}
+      ;(originalRequest.headers as Record<string, string>).Authorization = `Bearer ${access}`
+      return api.request(originalRequest)
+    }
+
     stripAuthorizationHeader(originalRequest)
     return api.request(originalRequest)
   }

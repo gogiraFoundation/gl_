@@ -1,181 +1,174 @@
 # Gogir Labs - Portfolio Website
 
-A production-ready portfolio website built with Django REST Framework (backend) and Next.js (frontend), featuring blog, portfolio showcase, contact forms, newsletter, notifications, and analytics.
+Portfolio site with Django REST Framework (API) and Next.js (frontend): blog, portfolio, resume, contact, newsletter, testimonials, notifications, analytics, and site settings.
+
+## Live topology
+
+| Surface | Host |
+|---------|------|
+| `www.gogirlabs.uk` | Cloudflare Workers (OpenNext) |
+| `api.gogirlabs.uk` | N4020 Compose + TLS on ikon |
+
+See [docs/HOMELAB_API.md](docs/HOMELAB_API.md) and [docs/CLOUDFLARE_PAGES.md](docs/CLOUDFLARE_PAGES.md).
 
 ## Quick Start
 
-### Using Docker Compose (Recommended)
+### Using Docker Compose (local)
 
 ```bash
-# Start all services
 ./start.sh
-
-# Or manually
-docker-compose up -d
+# Or: docker-compose up -d
 ```
 
 ### Local Development
 
 ```bash
-# Backend
 ./start-backend.sh
-
-# Frontend (in another terminal)
-./start-frontend.sh
+./start-frontend.sh   # separate terminal
 ```
 
 ## Features
 
-- **Portfolio Showcase**: Display projects with images, videos, and descriptions
-- **Blog System**: Rich text blog posts with categories, tags, and comments
-- **Contact Forms**: Secure contact form with spam protection
-- **Newsletter**: Email subscription with verification
-- **Notifications**: System-wide and granular notification system
-- **Analytics**: Page view and event tracking
-- **Admin Panel**: Full Django admin for content management
-- **Responsive Design**: Mobile-friendly with dark/light theme toggle
-- **SEO Optimized**: Meta tags, structured data, semantic HTML
+- Portfolio showcase with outcomes, filters, and related projects
+- Blog with categories, tags, comments, scheduled publish, and RSS/Atom
+- Contact form with honeypot, throttles, and admin reply
+- Newsletter subscribe / verify / unsubscribe; optional post announcements
+- Testimonials (public approved list + invite-token submit)
+- Resume API-backed content
+- Analytics events (consent-aware) and admin dashboard
+- Site preferences / notifications for the owner
+- Admin UI routes under `/admin/*` on the frontend plus Django admin
+- Responsive layout with light/dark theme
+- SEO: meta tags, feeds, semantic HTML
 
 ## Testing
 
-### Run All Tests
-
 ```bash
 ./run-tests.sh
+
+cd gogir-labs-be && pytest
+cd gogir-labs-fe && npm test
 ```
 
-### Backend Tests Only
-
-```bash
-cd gogir-labs-be
-pytest
-```
-
-### Frontend Tests Only
-
-```bash
-cd gogir-labs-fe
-npm test
-```
-
-**Test Coverage**:
-- Backend: 170 tests passing (100%)
-- Frontend: 31 tests passing (96.9%)
+Do not treat hardcoded pass counts in older docs as current — run the suites above.
 
 ## Architecture
 
-### Backend (Django/DRF)
-- Django 4.2.7
-- Django REST Framework
-- PostgreSQL database
-- JWT authentication
-- CKEditor for rich text
-- Redis for caching (optional)
+### Backend (Django / DRF)
+
+- Django 4.2 + Django REST Framework
+- PostgreSQL; Redis in Compose (homelab/prod)
+- SimpleJWT (access + refresh, rotation + blacklist)
+- CKEditor 5 for staff-authored HTML
+- Public writes are narrow and throttled (see `.cursor/skills/backend-engineering/`)
 
 ### Frontend (Next.js)
-- Next.js 14 (App Router)
-- TypeScript
-- Tailwind CSS
+
+- Next.js App Router + TypeScript + Tailwind
 - React Query for data fetching
-- Framer Motion for animations
+- Deployed with `@opennextjs/cloudflare` to Workers (not Pages + `next-on-pages`)
 
 ## Deployment
 
 ### Prerequisites
-- Docker and Docker Compose
-- Domain name with DNS configured
-- SSL certificates
-- Server with 2GB+ RAM
 
-### Quick Deployment
+- Docker / Docker Compose (API host)
+- Domain DNS for `api` and `www`
+- TLS on the public edge (ikon for API; Cloudflare for www)
+- Secrets only in gitignored env files or CI secrets
+
+### Quick commands
 
 ```bash
-# Staging
-./deploy.sh staging
+# Homelab API (primary)
+HOMELAB_HOST='user@api-host' HOMELAB_SSH_KEY=~/.ssh/key ./deploy-homelab.sh
 
-# Production
+# Classic same-host Compose
+./deploy.sh staging
 ./deploy.sh production
+
+# Frontend Worker (local one-shot)
+cd gogir-labs-fe && NEXT_PUBLIC_API_URL=https://api.gogirlabs.uk/api/v1 npm run deploy
 ```
 
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed instructions.
+Details: [README_DEPLOYMENT.md](./README_DEPLOYMENT.md), [DEPLOYMENT.md](./DEPLOYMENT.md), [docs/HOMELAB_API.md](./docs/HOMELAB_API.md).
 
-## CI/CD Pipeline
+## CI/CD
 
-The project includes automated CI/CD pipelines:
+- **CI** (`.github/workflows/ci.yml`): backend tests, frontend lint/type/tests, security scan
+- **Code quality** (`.github/workflows/code-quality.yml`): black/isort/flake8, ESLint/Prettier
+- **CD** (`.github/workflows/cd.yml`): build/push Docker images on `main` / `dev`
+- **Frontend Workers** (`.github/workflows/frontend-cloudflare-workers.yml`): OpenNext deploy
+- **Backend checks** (`.github/workflows/backend-cloudflare-setup.yml`): production config sanity
 
-- **CI Pipeline** (`.github/workflows/ci.yml`): backend tests (PostgreSQL), frontend lint/type/tests, and security scan
-- **Code Quality** (`.github/workflows/code-quality.yml`): backend `black/isort/flake8` and frontend ESLint/Prettier checks
-- **CD Pipeline** (`.github/workflows/cd.yml`): builds and pushes backend/frontend Docker images on `main` and `dev`
-- **Cloudflare Backend Validation** (`.github/workflows/backend-cloudflare-setup.yml`): deploy checks + SQLite test validation; optional manual backend image publish
+Homelab API deploys are manual (runners cannot reach the LAN host).
 
-### Required Actions Secrets
+### Common Actions secrets
 
-- `DOCKER_USERNAME`
-- `DOCKER_PASSWORD`
-- `API_ALLOWED_HOSTS` (recommended for production config checks)
-- `CLOUDFLARE_PAGES_URL` (recommended for production config checks)
+- `DOCKER_USERNAME` / `DOCKER_PASSWORD` — image publish
+- `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` — Workers deploy
+- Optional: `API_ALLOWED_HOSTS`, `CLOUDFLARE_PAGES_URL` for config checks
+
+Never put live passwords, `SECRET_KEY`, or API tokens in the repo or markdown examples.
 
 ## Documentation
 
-- [DEPLOYMENT.md](./DEPLOYMENT.md) - Deployment guide
-- [TESTING.md](./TESTING.md) - Testing guide
-- [PRODUCTION_CHECKLIST.md](./PRODUCTION_CHECKLIST.md) - Pre-deployment checklist
-- [ADMIN_GUIDE.md](./ADMIN_GUIDE.md) - Admin user guide
+| Doc | Topic |
+|-----|--------|
+| [ENV_EXAMPLE.md](./ENV_EXAMPLE.md) | Environment variables |
+| [docs/HOMELAB_API.md](./docs/HOMELAB_API.md) | Homelab API runbook |
+| [docs/CLOUDFLARE_PAGES.md](./docs/CLOUDFLARE_PAGES.md) | Frontend Workers deploy |
+| [DEPLOYMENT.md](./DEPLOYMENT.md) | Classic Compose deploy |
+| [README_DEPLOYMENT.md](./README_DEPLOYMENT.md) | Short deploy cheat sheet |
+| [TESTING.md](./TESTING.md) | Testing guide |
+| [PRODUCTION_CHECKLIST.md](./PRODUCTION_CHECKLIST.md) | Pre-deploy checklist |
+| [ADMIN_GUIDE.md](./ADMIN_GUIDE.md) | Content / admin guide |
+| [CONTRIBUTING.md](./CONTRIBUTING.md) | PR checks |
 
 ## Security
 
-- SSL/TLS encryption
-- Security headers (HSTS, CSP, etc.)
-- Rate limiting
-- Input validation and sanitization
-- JWT token authentication
-- CORS configuration
-- SQL injection prevention
-- XSS protection
+- TLS at the edge; Django `DEBUG=False` in production
+- Security headers on nginx (ikon snippet)
+- Rate limits on auth and public writes
+- Honeypot fields on contact / newsletter
+- JWT in `sessionStorage` on the client; Bearer on the API
+- CORS / CSRF origins restricted to the real frontend hosts
+- Secrets via environment only (see `.gitignore`)
 
 ## Project Structure
 
 ```
 gogir_labs/
-├── gogir-labs-be/          # Django backend
-│   ├── apps/               # Django applications
-│   │   ├── blog/
-│   │   ├── portfolio/
-│   │   ├── contact/
-│   │   ├── newsletter/
-│   │   ├── notifications/
-│   │   └── ...
-│   ├── config/             # Django settings
+├── gogir-labs-be/             # Django API
+│   ├── apps/                  # blog, portfolio, contact, newsletter, …
+│   ├── config/                # settings, urls, pagination
 │   └── requirements.txt
-├── gogir-labs-fe/          # Next.js frontend
-│   ├── app/                # Next.js app router
-│   ├── components/         # React components
-│   ├── lib/               # Utilities
-│   └── package.json
-├── nginx/                  # Nginx configuration
-├── .github/workflows/      # CI/CD pipelines
-├── docker-compose.yml         # Development
-├── docker-compose.prod.yml    # Full-stack production (same host)
-├── docker-compose.homelab.yml # API on N4020 (see docs/HOMELAB_API.md)
+├── gogir-labs-fe/             # Next.js frontend + wrangler / OpenNext
+├── nginx/                     # Edge snippets (homelab API, etc.)
+├── docs/                      # Homelab + Cloudflare runbooks
+├── .github/workflows/         # CI/CD
+├── docker-compose.yml         # Local
+├── docker-compose.prod.yml    # Same-host production
+├── docker-compose.homelab.yml # API on N4020
 ├── deploy.sh                  # Classic Compose deploy
-└── deploy-homelab.sh          # Homelab API deploy (N4020 + ikon)
+└── deploy-homelab.sh          # Homelab API deploy
 ```
 
 ## Development
 
-### Backend Setup
+### Backend
 
 ```bash
 cd gogir-labs-be
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py createsuperuser
 python manage.py runserver
 ```
 
-### Frontend Setup
+### Frontend
 
 ```bash
 cd gogir-labs-fe
@@ -185,14 +178,17 @@ npm run dev
 
 ## Environment Variables
 
-See `.env.production.example` and `.env.staging.example` for required environment variables.
+See [ENV_EXAMPLE.md](./ENV_EXAMPLE.md). Templates:
+
+- Local / Compose / Heroku / Workers: blocks in `ENV_EXAMPLE.md`
+- Homelab: copy [`.env.homelab.example`](./.env.homelab.example) → `.env.homelab` (gitignored)
 
 ## Contributing
 
 1. Create a feature branch
-2. Make your changes
-3. Run tests: `./run-tests.sh`
-4. Submit a pull request
+2. Make changes
+3. Run `./run-tests.sh` and the checks in [CONTRIBUTING.md](./CONTRIBUTING.md)
+4. Open a pull request
 
 ## License
 
@@ -204,7 +200,4 @@ Emmanuel Ugbaije - Software Engineer
 
 ## Acknowledgments
 
-- Django REST Framework
-- Next.js
-- Tailwind CSS
-- All open-source contributors
+- Django REST Framework, Next.js, Tailwind CSS, and other open-source projects

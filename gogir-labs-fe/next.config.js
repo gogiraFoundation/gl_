@@ -26,11 +26,6 @@ const nextConfig = {
         hostname: 'api.gogirlabs.uk',
         pathname: '/media/**',
       },
-      {
-        protocol: 'https',
-        hostname: 'picsum.photos',
-        pathname: '/**',
-      },
     ],
   },
   env: {

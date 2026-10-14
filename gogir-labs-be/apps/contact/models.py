@@ -10,6 +10,8 @@ class ContactMessage(models.Model):
     message = models.TextField()
     read = models.BooleanField(default=False)
     replied = models.BooleanField(default=False)
+    reply_body = models.TextField(blank=True, null=True)
+    replied_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

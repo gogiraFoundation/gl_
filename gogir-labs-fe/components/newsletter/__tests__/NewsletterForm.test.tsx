@@ -91,6 +91,7 @@ describe('NewsletterForm', () => {
         email: 'test@example.com',
         name: '',
         source: 'unknown',
+        website: '',
       })
     })
   })

@@ -1,6 +1,10 @@
+import secrets
+from datetime import timedelta
+
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 from django.db import models
+from django.utils import timezone
 
 
 def validate_image_file_size(value):
@@ -54,3 +58,31 @@ class Testimonial(models.Model):
 
     def __str__(self):
         return f"Testimonial from {self.client_name}"
+
+
+class TestimonialInvite(models.Model):
+    """One-time invite for a client to submit an unpublished testimonial."""
+
+    email = models.EmailField()
+    token = models.CharField(max_length=64, unique=True, db_index=True)
+    expires_at = models.DateTimeField()
+    used_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"Invite for {self.email}"
+
+    def save(self, *args, **kwargs):
+        if not self.token:
+            self.token = secrets.token_urlsafe(32)
+        if not self.expires_at:
+            self.expires_at = timezone.now() + timedelta(days=14)
+        super().save(*args, **kwargs)
+
+    @property
+    def is_valid(self) -> bool:
+        return self.used_at is None and self.expires_at >= timezone.now()
+

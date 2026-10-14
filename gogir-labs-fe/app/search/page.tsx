@@ -41,6 +41,18 @@ interface SearchResult {
     featured: boolean
     created_at: string
   }>
+  testimonials: Array<{
+    id: number
+    client_name: string
+    client_role: string
+    company: string
+    content: string
+    rating: number
+  }>
+  resume: {
+    experience: Array<{ id: number; title: string; company: string }>
+    skills: Array<{ id: number; name: string; category: string }>
+  }
   total: number
 }
 
@@ -53,7 +65,14 @@ function SearchPageContent() {
     queryKey: ['search', query],
     queryFn: async () => {
       if (!query.trim()) {
-        return { query: '', blog_posts: [], projects: [], total: 0 }
+        return {
+          query: '',
+          blog_posts: [],
+          projects: [],
+          testimonials: [],
+          resume: { experience: [], skills: [] },
+          total: 0,
+        }
       }
       const response = await api.get('/search/', {
         params: { q: query },
@@ -78,58 +97,64 @@ function SearchPageContent() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-brutal-bg text-brutal-ink">
       <Header />
-      <main className="relative flex-grow px-4 py-12">
-        <div className="absolute inset-0 bg-gradient-mesh opacity-30"></div>
-        <div className="relative z-10 mx-auto max-w-7xl">
-          {/* Search Header */}
-          <div className="mb-8">
-            <h1 className="gradient-text mb-4 text-4xl font-bold md:text-5xl">Search</h1>
+      <main className="flex-grow px-6 py-16 lg:px-8 md:py-24">
+        <div className="mx-auto max-w-shell">
+          <header className="mb-10 text-left">
+            <h1 className="mb-6 font-serif text-4xl font-semibold tracking-tight md:text-5xl">
+              Search
+            </h1>
             <form onSubmit={handleSearch} className="max-w-2xl">
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 transform text-gray-400" />
+                <Search
+                  className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brutal-muted"
+                  aria-hidden
+                />
                 <input
-                  type="text"
+                  type="search"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search blog posts, projects..."
-                  className="w-full rounded-lg border-2 border-gray-600 bg-gray-900 py-3 pl-12 pr-4 text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  placeholder="Search posts and projects…"
+                  className="min-h-12 w-full border border-brutal-ink bg-brutal-bg py-3 pl-12 pr-28 text-brutal-ink placeholder:text-brutal-muted focus:border-[orangered] focus:outline-none focus:ring-1 focus:ring-[orangered]/40"
+                  aria-label="Search query"
                 />
                 <button
                   type="submit"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 transform rounded-lg bg-gradient-primary px-6 py-2 font-semibold text-white transition-all hover:scale-105"
+                  className="btn-brutal btn-brutal-sm absolute right-2 top-1/2 -translate-y-1/2"
                 >
                   Search
                 </button>
               </div>
             </form>
-          </div>
+          </header>
 
-          {/* Results */}
-          {isLoading && <div className="py-12 text-center text-gray-400">Searching...</div>}
+          {isLoading && (
+            <p className="py-12 text-left text-brutal-muted">Searching…</p>
+          )}
 
           {!isLoading && query && results && (
             <>
               {results.total === 0 ? (
-                <div className="py-12 text-center">
-                  <p className="mb-2 text-xl text-gray-400">
-                    No results found for &quot;{query}&quot;
+                <div className="py-12 text-left">
+                  <p className="mb-2 text-xl text-brutal-ink">
+                    No results for &quot;{query}&quot;
                   </p>
-                  <p className="text-gray-500">Try different keywords or check your spelling.</p>
+                  <p className="text-brutal-muted">Try different keywords, or browse instead.</p>
                 </div>
               ) : (
                 <>
-                  <div className="mb-6 text-gray-400">
-                    Found {results.total} result{results.total !== 1 ? 's' : ''} for &quot;{query}
-                    &quot;
-                  </div>
+                  <p className="mb-8 text-left text-brutal-muted">
+                    {results.total} result{results.total !== 1 ? 's' : ''} for &quot;{query}&quot;
+                  </p>
 
-                  {/* Blog Posts */}
                   {results.blog_posts.length > 0 && (
-                    <section className="mb-12">
-                      <h2 className="mb-6 text-2xl font-bold text-white">
-                        Blog Posts ({results.blog_posts.length})
+                    <section className="mb-12" aria-labelledby="search-posts">
+                      <h2
+                        id="search-posts"
+                        className="mb-6 font-serif text-2xl font-semibold text-brutal-ink"
+                      >
+                        Blog ({results.blog_posts.length})
                       </h2>
                       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                         {results.blog_posts.map((post) => (
@@ -139,16 +164,78 @@ function SearchPageContent() {
                     </section>
                   )}
 
-                  {/* Projects */}
                   {results.projects.length > 0 && (
-                    <section>
-                      <h2 className="mb-6 text-2xl font-bold text-white">
-                        Projects ({results.projects.length})
+                    <section className="mb-12" aria-labelledby="search-projects">
+                      <h2
+                        id="search-projects"
+                        className="mb-6 font-serif text-2xl font-semibold text-brutal-ink"
+                      >
+                        Portfolio ({results.projects.length})
                       </h2>
                       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                         {results.projects.map((project) => (
                           <ProjectCard key={project.id} project={project} />
                         ))}
+                      </div>
+                    </section>
+                  )}
+
+                  {(results.testimonials?.length || 0) > 0 && (
+                    <section className="mb-12" aria-labelledby="search-testimonials">
+                      <h2
+                        id="search-testimonials"
+                        className="mb-6 font-serif text-2xl font-semibold text-brutal-ink"
+                      >
+                        Testimonials ({results.testimonials.length})
+                      </h2>
+                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        {results.testimonials.map((item) => (
+                          <div
+                            key={item.id}
+                            className="border border-brutal-ink/15 bg-brutal-bg p-4 text-left text-brutal-ink"
+                          >
+                            <p className="mb-2 text-sm leading-relaxed text-brutal-muted">
+                              &ldquo;{item.content}&rdquo;
+                            </p>
+                            <p className="text-sm font-semibold">
+                              {item.client_name}
+                              {item.client_role ? ` · ${item.client_role}` : ''}
+                              {item.company ? ` · ${item.company}` : ''}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+                  )}
+
+                  {((results.resume?.experience?.length || 0) > 0 ||
+                    (results.resume?.skills?.length || 0) > 0) && (
+                    <section className="mb-12" aria-labelledby="search-resume">
+                      <h2
+                        id="search-resume"
+                        className="mb-6 font-serif text-2xl font-semibold text-brutal-ink"
+                      >
+                        Resume
+                      </h2>
+                      <div className="space-y-4 text-left text-brutal-ink">
+                        {results.resume.experience.map((exp) => (
+                          <div key={exp.id} className="border border-brutal-ink/15 p-4">
+                            <p className="font-semibold">{exp.title}</p>
+                            <p className="text-sm text-brutal-muted">{exp.company}</p>
+                          </div>
+                        ))}
+                        {results.resume.skills.length > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                            {results.resume.skills.map((skill) => (
+                              <span
+                                key={skill.id}
+                                className="border border-brutal-ink/20 px-3 py-1 text-sm text-brutal-ink"
+                              >
+                                {skill.name}
+                              </span>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </section>
                   )}
@@ -158,20 +245,22 @@ function SearchPageContent() {
           )}
 
           {!query && (
-            <div className="py-12 text-center">
-              <p className="mb-4 text-xl text-gray-400">Enter a search query to find content</p>
-              <div className="mt-6 flex flex-wrap justify-center gap-4">
+            <div className="py-12 text-left">
+              <p className="mb-4 text-xl text-brutal-muted">
+                Enter a query to search posts and projects.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-4">
                 <Link
                   href="/blog"
-                  className="rounded-lg bg-purple-500/20 px-4 py-2 text-purple-300 transition-colors hover:bg-purple-500/30"
+                  className="inline-flex min-h-11 items-center border border-brutal-ink px-4 py-2 font-semibold text-brutal-ink transition-opacity hover:opacity-70"
                 >
-                  Browse Blog
+                  Browse blog
                 </Link>
                 <Link
                   href="/portfolio"
-                  className="rounded-lg bg-purple-500/20 px-4 py-2 text-purple-300 transition-colors hover:bg-purple-500/30"
+                  className="btn-brutal btn-brutal-sm"
                 >
-                  Browse Portfolio
+                  Browse portfolio
                 </Link>
               </div>
             </div>
@@ -187,12 +276,10 @@ export default function SearchPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen flex-col">
+        <div className="flex min-h-screen flex-col bg-brutal-bg text-brutal-ink">
           <Header />
-          <main className="flex-grow px-4 py-12">
-            <div className="mx-auto max-w-4xl text-center text-gray-400">
-              Loading search results...
-            </div>
+          <main className="flex-grow px-6 py-16 lg:px-8">
+            <p className="mx-auto max-w-shell text-left text-brutal-muted">Loading search…</p>
           </main>
           <Footer />
         </div>

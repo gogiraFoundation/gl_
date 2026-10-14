@@ -1,6 +1,7 @@
 'use client'
 
-import { Search, ChevronDown } from 'lucide-react'
+import { useEffect, useId, useRef, useState } from 'react'
+import { ListFilter, Search, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface Category {
@@ -26,10 +27,8 @@ interface ProjectFiltersProps {
   onSearchChange: (query: string) => void
 }
 
-const TECH_SELECT_THRESHOLD = 16
-
-const chipBase =
-  'filter-chip shrink-0 border border-brutal-ink/20 bg-transparent px-4 py-2 text-sm font-medium text-brutal-ink transition-opacity duration-200 ease-out hover:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brutal-ink'
+const optionClass =
+  'flex min-h-11 w-full items-center px-3 text-left text-sm text-brutal-ink transition-colors hover:bg-brutal-ink/5 focus-visible:bg-brutal-ink/5 focus-visible:outline-none'
 
 export function ProjectFilters({
   categories,
@@ -41,152 +40,205 @@ export function ProjectFilters({
   onTechnologyChange,
   onSearchChange,
 }: ProjectFiltersProps) {
-  const useTechSelect = technologies.length > TECH_SELECT_THRESHOLD
+  const [open, setOpen] = useState(false)
+  const panelId = useId()
+  const rootRef = useRef<HTMLDivElement>(null)
   const hasFilters = selectedCategory !== null || selectedTechnology !== null
+  const activeCount = (selectedCategory !== null ? 1 : 0) + (selectedTechnology !== null ? 1 : 0)
 
-  const inputSurface = cn(
-    'w-full border border-brutal-ink/20 bg-brutal-bg text-brutal-ink transition-opacity duration-200',
-    'placeholder:text-brutal-muted',
-    'focus-visible:border-brutal-ink focus-visible:outline-none'
-  )
+  const selectedCategoryName =
+    selectedCategory === null
+      ? 'All'
+      : categories.find((c) => c.id === selectedCategory)?.name ?? 'All'
+  const selectedTechnologyName =
+    selectedTechnology === null
+      ? 'All'
+      : technologies.find((t) => t.id === selectedTechnology)?.name ?? 'All'
+
+  useEffect(() => {
+    if (!open) return
+
+    const onPointerDown = (event: MouseEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) {
+        setOpen(false)
+      }
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false)
+    }
+
+    document.addEventListener('mousedown', onPointerDown)
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown)
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [open])
 
   return (
-    <div className="mb-10 space-y-6">
-      <div className="relative">
-        <Search
-          className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brutal-muted"
-          aria-hidden
-        />
-        <input
-          type="search"
-          id="project-search"
-          name="project-search"
-          placeholder="Search projects..."
-          value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
-          className={cn(
-            inputSurface,
-            'rounded-2xl py-3 pl-11 pr-4 text-[15px] transition-colors duration-200'
-          )}
-          autoComplete="off"
-        />
-      </div>
+    <div className="mb-10 space-y-4">
+      <div className="flex items-stretch gap-3">
+        <div className="relative min-w-0 flex-1">
+          <Search
+            className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brutal-muted"
+            aria-hidden
+          />
+          <input
+            type="search"
+            id="project-search"
+            name="project-search"
+            placeholder="Search projects…"
+            value={searchQuery}
+            onChange={(e) => onSearchChange(e.target.value)}
+            className="min-h-12 w-full rounded-sm border border-brutal-ink/20 bg-brutal-bg py-3 pl-11 pr-4 text-[15px] text-brutal-ink placeholder:text-brutal-muted focus-visible:border-brutal-ink focus-visible:outline-none"
+            autoComplete="off"
+          />
+        </div>
 
-      <div>
-        <p className="mb-2.5 text-left text-xs font-semibold uppercase tracking-wider text-brutal-muted">
-          Categories
-        </p>
-        <div className="-mx-1 flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="relative shrink-0" ref={rootRef}>
           <button
             type="button"
+            onClick={() => setOpen((value) => !value)}
             className={cn(
-              chipBase,
-              selectedCategory === null
-                ? 'border-brutal-ink bg-brutal-ink text-brutal-bg'
-                : 'opacity-90'
+              'btn-brutal inline-flex min-h-12 min-w-12 !px-0',
+              open && 'btn-brutal-active',
+              hasFilters && 'btn-brutal-active'
             )}
-            onClick={() => onCategoryChange(null)}
-            aria-pressed={selectedCategory === null}
+            aria-label={
+              hasFilters
+                ? `Open filters, ${activeCount} active`
+                : 'Open filters'
+            }
+            aria-expanded={open}
+            aria-controls={panelId}
           >
-            All
+            <ListFilter className="h-5 w-5" aria-hidden />
+            {hasFilters && (
+              <span className="sr-only">
+                Category {selectedCategoryName}, technology {selectedTechnologyName}
+              </span>
+            )}
           </button>
-          {categories.map((category) => {
-            const active = selectedCategory === category.id
-            return (
-              <button
-                key={category.id}
-                type="button"
-                className={cn(
-                  chipBase,
-                  active ? 'border-brutal-ink bg-brutal-ink text-brutal-bg' : 'opacity-90'
-                )}
-                onClick={() => onCategoryChange(category.id)}
-                aria-pressed={active}
-              >
-                {category.name}
-              </button>
-            )
-          })}
-        </div>
-      </div>
 
-      <div>
-        <p className="mb-2.5 text-left text-xs font-semibold uppercase tracking-wider text-brutal-muted">
-          Technologies
-        </p>
-        {useTechSelect ? (
-          <div className="relative max-w-md">
-            <select
-              id="project-technology"
-              name="project-technology"
-              value={selectedTechnology || ''}
-              onChange={(e) => onTechnologyChange(e.target.value ? Number(e.target.value) : null)}
-              className={cn(
-                inputSurface,
-                'min-h-[44px] cursor-pointer appearance-none rounded-2xl py-3 pl-4 pr-11 text-[15px]'
-              )}
+          {open && (
+            <div
+              id={panelId}
+              role="dialog"
+              aria-label="Project filters"
+              className="absolute right-0 z-30 mt-2 w-[min(100vw-3rem,20rem)] border border-brutal-ink bg-brutal-bg p-4 shadow-[0_12px_32px_rgba(0,0,0,0.1)]"
             >
-              <option value="">All technologies</option>
-              {technologies.map((tech) => (
-                <option key={tech.id} value={tech.id}>
-                  {tech.name}
-                </option>
-              ))}
-            </select>
-            <ChevronDown
-              className="pointer-events-none absolute right-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-brutal-muted"
-              aria-hidden
-            />
-          </div>
-        ) : (
-          <div className="-mx-1 flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            <button
-              type="button"
-              className={cn(
-                chipBase,
-                selectedTechnology === null
-                  ? 'border-brutal-ink bg-brutal-ink text-brutal-bg'
-                  : 'opacity-90'
-              )}
-              onClick={() => onTechnologyChange(null)}
-              aria-pressed={selectedTechnology === null}
-            >
-              All
-            </button>
-            {technologies.map((tech) => {
-              const active = selectedTechnology === tech.id
-              return (
+              <div className="mb-4 flex items-center justify-between gap-3">
+                <p className="font-sans text-xs font-semibold uppercase tracking-wider text-brutal-muted">
+                  Filters
+                </p>
                 <button
-                  key={tech.id}
                   type="button"
-                  className={cn(
-                    chipBase,
-                    active ? 'border-brutal-ink bg-brutal-ink text-brutal-bg' : 'opacity-90'
-                  )}
-                  onClick={() => onTechnologyChange(tech.id)}
-                  aria-pressed={active}
+                  onClick={() => setOpen(false)}
+                  className="inline-flex min-h-11 min-w-11 items-center justify-center text-brutal-muted transition-opacity hover:opacity-70"
+                  aria-label="Close filters"
                 >
-                  {tech.name}
+                  <X className="h-4 w-4" aria-hidden />
                 </button>
-              )
-            })}
-          </div>
-        )}
+              </div>
+
+              <div className="space-y-5">
+                <fieldset>
+                  <legend className="mb-2 text-left text-xs font-semibold uppercase tracking-wider text-brutal-muted">
+                    Categories
+                  </legend>
+                  <div className="max-h-48 space-y-0.5 overflow-y-auto border border-brutal-ink/15">
+                    <button
+                      type="button"
+                      className={cn(
+                        optionClass,
+                        selectedCategory === null && 'btn-brutal-active'
+                      )}
+                      onClick={() => onCategoryChange(null)}
+                      aria-pressed={selectedCategory === null}
+                    >
+                      All
+                    </button>
+                    {categories.map((category) => {
+                      const active = selectedCategory === category.id
+                      return (
+                        <button
+                          key={category.id}
+                          type="button"
+                          className={cn(
+                            optionClass,
+                            active && 'btn-brutal-active'
+                          )}
+                          onClick={() => onCategoryChange(category.id)}
+                          aria-pressed={active}
+                        >
+                          {category.name}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </fieldset>
+
+                <fieldset>
+                  <legend className="mb-2 text-left text-xs font-semibold uppercase tracking-wider text-brutal-muted">
+                    Technologies
+                  </legend>
+                  <div className="max-h-48 space-y-0.5 overflow-y-auto border border-brutal-ink/15">
+                    <button
+                      type="button"
+                      className={cn(
+                        optionClass,
+                        selectedTechnology === null && 'btn-brutal-active'
+                      )}
+                      onClick={() => onTechnologyChange(null)}
+                      aria-pressed={selectedTechnology === null}
+                    >
+                      All
+                    </button>
+                    {technologies.map((tech) => {
+                      const active = selectedTechnology === tech.id
+                      return (
+                        <button
+                          key={tech.id}
+                          type="button"
+                          className={cn(
+                            optionClass,
+                            active && 'btn-brutal-active'
+                          )}
+                          onClick={() => onTechnologyChange(tech.id)}
+                          aria-pressed={active}
+                        >
+                          {tech.name}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </fieldset>
+              </div>
+
+              {hasFilters && (
+                <button
+                  type="button"
+                  className="mt-4 inline-flex min-h-11 items-center text-sm font-medium text-brutal-ink underline underline-offset-4 transition-opacity hover:opacity-70"
+                  onClick={() => {
+                    onCategoryChange(null)
+                    onTechnologyChange(null)
+                  }}
+                >
+                  Clear filters
+                </button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       {hasFilters && (
-        <div className="flex justify-start pt-1">
-          <button
-            type="button"
-            className="filter-chip border-0 bg-transparent px-4 py-2 text-sm font-medium text-brutal-ink underline-offset-4 transition-opacity duration-200 hover:underline hover:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brutal-ink"
-            onClick={() => {
-              onCategoryChange(null)
-              onTechnologyChange(null)
-            }}
-          >
-            Clear filters
-          </button>
-        </div>
+        <p className="text-left text-xs text-brutal-muted">
+          Showing{' '}
+          <span className="font-medium text-brutal-ink">{selectedCategoryName}</span>
+          {' · '}
+          <span className="font-medium text-brutal-ink">{selectedTechnologyName}</span>
+        </p>
       )}
     </div>
   )

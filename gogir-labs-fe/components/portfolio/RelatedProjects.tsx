@@ -25,10 +25,10 @@ export function RelatedProjects({ projectId }: RelatedProjectsProps) {
   }
 
   return (
-    <section className="mt-12 border-t border-gray-700 pt-8">
+    <section className="mt-12 border-t border-brutal-ink/15 pt-8">
       <div className="mb-6 flex items-center gap-2">
-        <Code className="h-6 w-6 text-purple-400" />
-        <h2 className="text-2xl font-bold text-white">Related Projects</h2>
+        <Code className="h-6 w-6 text-brutal-ink" aria-hidden />
+        <h2 className="font-serif text-2xl font-semibold text-brutal-ink">Related projects</h2>
       </div>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {relatedProjects.map((project: any) => (
