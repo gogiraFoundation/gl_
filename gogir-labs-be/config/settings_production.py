@@ -79,8 +79,8 @@ if "file" in _log_handlers:
         "formatter": "verbose",
     }
 
-# Email backend (use SMTP in production)
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# SMTP is selected in settings.py when DEBUG is false. Do not set
+# EMAIL_BACKEND here: that import runs before the email block and is overwritten.
 
 # Cache configuration (use Redis in production if available)
 REDIS_URL = config("REDIS_URL", default=None)

@@ -96,6 +96,10 @@ class Project(models.Model):
         Category, on_delete=models.SET_NULL, null=True, blank=True
     )
     technologies = models.ManyToManyField(Technology, related_name="projects")
+    role = models.CharField(max_length=200, blank=True)
+    year = models.PositiveSmallIntegerField(null=True, blank=True)
+    client = models.CharField(max_length=200, blank=True)
+    outcomes = models.JSONField(default=list, blank=True)
     featured = models.BooleanField(default=False, help_text="Show on homepage")
     published = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)

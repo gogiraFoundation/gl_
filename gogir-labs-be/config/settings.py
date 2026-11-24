@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     # Third-party apps
     "rest_framework",
     "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
     "django_ckeditor_5",
     "drf_spectacular",
@@ -62,6 +63,7 @@ INSTALLED_APPS = [
     "apps.newsletter",
     "apps.search",
     "apps.resume",
+    "apps.site",
 ]
 
 MIDDLEWARE = [
@@ -169,7 +171,7 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.AllowAny",
+        "rest_framework.permissions.IsAdminUser",
     ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
@@ -195,7 +197,9 @@ REST_FRAMEWORK = {
         "analytics_track": "120/minute",
         "search": "60/minute",
         "comments": "10/minute",
+        "views": "30/minute",
         "post_views": "30/minute",
+        "testimonial_submit": "5/minute",
         "resume_download": "10/minute",
     },
 }
@@ -290,15 +294,45 @@ CKEDITOR_5_CONFIGS = {
 }
 
 # Email Configuration
-EMAIL_BACKEND = config(
-    "EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend"
+# Console locally. SMTP when DEBUG is false, unless EMAIL_BACKEND is set.
+# Cloudflare submission is implicit TLS on port 465: EMAIL_USE_SSL=True and
+# EMAIL_USE_TLS=False. Those two flags cannot both be true.
+_default_email_backend = (
+    "django.core.mail.backends.smtp.EmailBackend"
+    if not DEBUG
+    else "django.core.mail.backends.console.EmailBackend"
 )
+EMAIL_BACKEND = config("EMAIL_BACKEND", default=_default_email_backend)
 EMAIL_HOST = config("EMAIL_HOST", default="localhost")
 EMAIL_PORT = config("EMAIL_PORT", default=587, cast=int)
 EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
+EMAIL_USE_SSL = config("EMAIL_USE_SSL", default=False, cast=bool)
 EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="noreply@localhost")
+DEFAULT_FROM_NAME = config("DEFAULT_FROM_NAME", default="")
+# Lifecycle mail (verify, welcome, unsubscribe). Empty falls back to DEFAULT_FROM_EMAIL.
+NEWSLETTER_FROM_EMAIL = config("NEWSLETTER_FROM_EMAIL", default="")
+# Public inbox for replies. Empty omits the Reply-To header.
+EMAIL_REPLY_TO = config("EMAIL_REPLY_TO", default="")
+# Campaign fan-out is off. Cloudflare Email Sending is transactional only.
+NEWSLETTER_BROADCASTS_ENABLED = config(
+    "NEWSLETTER_BROADCASTS_ENABLED", default=False, cast=bool
+)
+ANALYTICS_IP_RETENTION_DAYS = config(
+    "ANALYTICS_IP_RETENTION_DAYS", default=30, cast=int
+)
+ANALYTICS_ROW_RETENTION_DAYS = config(
+    "ANALYTICS_ROW_RETENTION_DAYS", default=365, cast=int
+)
+
+if EMAIL_USE_TLS and EMAIL_USE_SSL:
+    from django.core.exceptions import ImproperlyConfigured
+
+    raise ImproperlyConfigured(
+        "EMAIL_USE_TLS and EMAIL_USE_SSL are mutually exclusive. "
+        "Cloudflare SMTP uses EMAIL_USE_SSL=True on port 465."
+    )
 
 # Frontend URL
 FRONTEND_URL = config("FRONTEND_URL", default="http://localhost:3000")
@@ -318,3 +352,10 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
 }
+
+# settings_production is star-imported early when DEBUG is false, then STATIC_ROOT /
+# MEDIA_ROOT are assigned again above. Re-apply production container paths last so
+# they win and match the homelab volumes (/app/staticfiles, /app/media).
+if not DEBUG:
+    STATIC_ROOT = "/app/staticfiles"
+    MEDIA_ROOT = "/app/media"

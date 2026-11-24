@@ -142,16 +142,15 @@ export default function BlogClient({
       <Header />
       <main className="relative flex-grow px-4 py-20">
         <div className="relative z-10 mx-auto max-w-7xl">
-          <div className="mb-12 text-center">
-            <h1 className="mb-4 font-serif text-5xl font-semibold text-brutal-ink md:text-6xl">
+          <header className="mb-12 max-w-2xl text-left">
+            <h1 className="mb-4 font-serif text-4xl font-semibold tracking-tight text-brutal-ink md:text-5xl">
               Blog
             </h1>
-            <p className="mx-auto max-w-2xl text-lg text-brutal-muted">
-              Insights on Infrastructure, DevOps, Cloud Technologies, and Software Engineering. From
-              Terraform to Kubernetes, CI/CD to scalable architecture, explore my thoughts and
-              tutorials on the modern tools and practices shaping the industry.
+            <p className="text-left text-base leading-relaxed text-brutal-muted md:text-justify md:text-lg">
+              Notes on infrastructure, DevOps, cloud, and software engineering—Terraform,
+              Kubernetes, CI/CD, and architecture that holds up in production.
             </p>
-          </div>
+          </header>
 
           <BlogFilters
             categories={categories || []}
@@ -179,24 +178,23 @@ export default function BlogClient({
             />
           )}
 
-          {/* Optional: Newsletter or Follow CTA */}
-          <div className="mt-16 flex justify-center px-4">
-            <p className="w-full max-w-2xl text-center text-xs leading-relaxed text-brutal-muted sm:text-sm md:mx-auto md:max-w-xl">
-              Like what you're reading? Follow me on{' '}
+          <div className="mt-16 max-w-2xl border-t border-brutal-ink/15 pt-10">
+            <p className="text-left text-sm leading-relaxed text-brutal-muted md:text-justify">
+              Like what you&apos;re reading? Follow on{' '}
               <Link
                 href="https://www.linkedin.com/in/emmanuel-ugbaje-b19227161/"
-                className="font-medium text-[#ff4500]/85 no-underline transition-colors duration-200 ease-out hover:text-[#ff4500] focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ff4500]/45"
+                className="font-medium text-brutal-ink underline underline-offset-4 transition-opacity duration-200 hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brutal-ink"
               >
                 LinkedIn
               </Link>{' '}
               or{' '}
               <Link
                 href="https://medium.com/@aigbemanuel"
-                className="font-medium text-[#ff4500]/85 no-underline transition-colors duration-200 ease-out hover:text-[#ff4500] focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ff4500]/45"
+                className="font-medium text-brutal-ink underline underline-offset-4 transition-opacity duration-200 hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brutal-ink"
               >
                 Medium
               </Link>{' '}
-              for more insights on software engineering, DevOps, and backend development.
+              for more on software engineering, DevOps, and backends.
             </p>
           </div>
         </div>

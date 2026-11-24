@@ -1,16 +1,24 @@
 from django.contrib.syndication.views import Feed
 from django.utils.feedgenerator import Atom1Feed
 
+from apps.site.models import SiteProfile
+
 from .models import Post
 
 
 class BlogFeed(Feed):
     """RSS feed for blog posts."""
 
-    title = "Emmanuel Ugbaije - Blog"
     link = "/blog/"
-    description = "Latest blog posts from Emmanuel Ugbaije"
     feed_type = Atom1Feed
+
+    def title(self):
+        name = SiteProfile.load().display_name
+        return f"{name} - Blog"
+
+    def description(self):
+        name = SiteProfile.load().display_name
+        return f"Latest blog posts from {name}"
 
     def items(self):
         return Post.objects.filter(published=True).order_by(

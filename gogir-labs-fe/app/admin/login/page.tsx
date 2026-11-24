@@ -69,11 +69,7 @@ export default function AdminLoginPage() {
                 type="text"
                 id="username"
                 {...register('username')}
-                className="flex-1 rounded-lg border border-gray-600 px-4 py-2 transition focus:border-purple-500 focus:ring-2 focus:ring-purple-500"
-                style={{
-                  backgroundColor: 'var(--bg-secondary)',
-                  color: 'var(--text-primary)',
-                }}
+                className="flex-1 rounded-lg border border-gray-600 bg-gray-800 px-4 py-2 text-white transition focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400"
               />
             </div>
             {errors.username && (
@@ -94,11 +90,7 @@ export default function AdminLoginPage() {
                 type="password"
                 id="password"
                 {...register('password')}
-                className="flex-1 rounded-lg border border-gray-600 px-4 py-2 transition focus:border-purple-500 focus:ring-2 focus:ring-purple-500"
-                style={{
-                  backgroundColor: 'var(--bg-secondary)',
-                  color: 'var(--text-primary)',
-                }}
+                className="flex-1 rounded-lg border border-gray-600 bg-gray-800 px-4 py-2 text-white transition focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400"
               />
             </div>
             {errors.password && (
@@ -115,7 +107,7 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full rounded-lg bg-gradient-primary px-6 py-3 font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full rounded-lg bg-gray-900 px-6 py-3 font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-100 dark:text-gray-900"
           >
             {isSubmitting ? 'Logging in...' : 'Login'}
           </button>

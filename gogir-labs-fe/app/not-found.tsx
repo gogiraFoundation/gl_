@@ -19,24 +19,15 @@ export default function NotFound() {
             The page you&apos;re looking for doesn&apos;t exist or has been moved.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Link
-              href="/"
-              className="flex items-center gap-2 border border-brutal-ink bg-transparent px-6 py-3 font-semibold text-brutal-ink transition-opacity hover:opacity-70"
-            >
+            <Link href="/" className="btn-brutal btn-brutal-md gap-2">
               <Home className="h-5 w-5" />
               Go home
             </Link>
-            <Link
-              href="/blog"
-              className="flex items-center gap-2 border border-brutal-ink/20 bg-transparent px-6 py-3 font-semibold text-brutal-ink transition-opacity hover:opacity-70"
-            >
+            <Link href="/blog" className="btn-brutal btn-brutal-md gap-2">
               <Search className="h-5 w-5" />
               Browse blog
             </Link>
-            <Link
-              href="/portfolio"
-              className="flex items-center gap-2 border border-brutal-ink/20 bg-transparent px-6 py-3 font-semibold text-brutal-ink transition-opacity hover:opacity-70"
-            >
+            <Link href="/portfolio" className="btn-brutal btn-brutal-md gap-2">
               <ArrowLeft className="h-5 w-5" />
               View portfolio
             </Link>

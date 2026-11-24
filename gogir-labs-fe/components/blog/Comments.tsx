@@ -66,6 +66,7 @@ export function Comments({ postId }: CommentsProps) {
         name: data.name,
         email: data.email,
         content: data.content,
+        website: data.website || '',
       })
       return response.data
     },
@@ -112,7 +113,7 @@ export function Comments({ postId }: CommentsProps) {
       <button
         type="button"
         onClick={() => setShowForm((prev) => !prev)}
-        className="mb-6 inline-flex items-center gap-2 border border-brutal-ink bg-brutal-ink px-6 py-3 font-semibold text-brutal-bg transition-[transform,box-shadow,opacity] duration-300 hover:-translate-y-0.5 hover:opacity-95 hover:shadow-[0_10px_24px_rgba(0,0,0,0.16)] motion-reduce:hover:translate-y-0"
+        className="btn-brutal btn-brutal-md mb-6 gap-2"
         aria-expanded={showForm}
         aria-controls="post-comment-form"
       >
@@ -191,11 +192,7 @@ export function Comments({ postId }: CommentsProps) {
             )}
           </div>
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="flex items-center gap-2 border border-brutal-ink bg-brutal-ink px-6 py-3 font-semibold text-brutal-bg transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-          >
+          <button type="submit" disabled={isSubmitting} className="btn-brutal btn-brutal-md gap-2">
             {isSubmitting ? (
               <>
                 <Loader2 className="h-5 w-5 animate-spin" />

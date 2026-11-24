@@ -1,10 +1,17 @@
-# Environment files
+# Environment files (never commit real secrets)
 .env
 .env.local
 .env.production
 .env.staging
 .env.homelab
 .env.*.local
+!.env.homelab.example
+# Local private keys / certs outside nginx/ssl rules
+*.pem
+!nginx/ssl/.gitkeep
+id_rsa
+id_ed25519
+*.ppk
 
 # Python
 __pycache__/
@@ -81,4 +88,8 @@ nginx/ssl/*.key
 # Backups
 *.sql
 backup_*.sql
+
+# Local session dumps (may contain mail or credentials)
+*.ses
+:memory:.ses
 

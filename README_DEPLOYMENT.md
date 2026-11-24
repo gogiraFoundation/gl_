@@ -1,103 +1,95 @@
 # Deployment Quick Start
 
-## Quick Deployment Commands
+Primary production path today:
 
-### Staging
+| Surface | How |
+|---------|-----|
+| API (`api.gogirlabs.uk`) | Homelab Compose on N4020 + TLS on ikon — [`docs/HOMELAB_API.md`](docs/HOMELAB_API.md) |
+| Frontend (`www.gogirlabs.uk`) | Cloudflare Workers (OpenNext) — [`docs/CLOUDFLARE_PAGES.md`](docs/CLOUDFLARE_PAGES.md) |
+
+Classic same-host stack (`docker-compose.prod.yml` + `./deploy.sh`) is documented in [`DEPLOYMENT.md`](DEPLOYMENT.md) for alternate hosts.
+
+## Homelab API
+
 ```bash
-./deploy.sh staging
+cp .env.homelab.example .env.homelab
+chmod 600 .env.homelab
+# Fill secrets. Never commit .env.homelab.
+
+HOMELAB_HOST='user@api-host' \
+HOMELAB_SSH_KEY="$HOME/.ssh/your-homelab-key" \
+./deploy-homelab.sh
+
+# Off LAN:
+HOMELAB_USE_JUMP=1 \
+HOMELAB_HOST='user@api-host' \
+HOMELAB_SSH_KEY="$HOME/.ssh/your-homelab-key" \
+SSH_JUMP='user@ikon' \
+SSH_JUMP_KEY="$HOME/.ssh/your-ikon-key" \
+./deploy-homelab.sh
 ```
 
-### Production
-```bash
-./deploy.sh production
-```
+Generate a Django secret:
 
-## Environment Setup
-
-1. Copy environment example files:
-```bash
-cp .env.production.example .env.production
-cp .env.staging.example .env.staging
-```
-
-2. Edit `.env.production` and `.env.staging` with your values
-
-3. Generate secret key:
 ```bash
 python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
 ```
 
-## CI/CD Pipeline
+Full env blocks: [`ENV_EXAMPLE.md`](ENV_EXAMPLE.md).
 
-The project includes three GitHub Actions workflows:
-
-1. **CI Pipeline** (`.github/workflows/ci.yml`):
-   - Runs tests on every push/PR
-   - Builds Docker images
-   - Security scanning
-
-2. **CD Pipeline** (`.github/workflows/cd.yml`):
-   - Auto-deploys to staging
-   - Deploys to production after staging verification
-   - Includes rollback on failure
-
-3. **Code Quality** (`.github/workflows/code-quality.yml`):
-   - Linting and code formatting checks
-
-## Required GitHub Secrets
-
-Configure these in your GitHub repository settings:
-
-- `DOCKER_USERNAME`: Docker Hub username
-- `DOCKER_PASSWORD`: Docker Hub password/token
-- `STAGING_HOST`: Staging server IP/hostname
-- `STAGING_USER`: SSH username for staging
-- `STAGING_SSH_KEY`: SSH private key for staging
-- `PRODUCTION_HOST`: Production server IP/hostname
-- `PRODUCTION_USER`: SSH username for production
-- `PRODUCTION_SSH_KEY`: SSH private key for production
-- `SLACK_WEBHOOK_URL`: (Optional) Slack webhook for notifications
-
-## Database Backups
-
-### Create Backup
-```bash
-./backup.sh production
-```
-
-### Restore Backup
-```bash
-./restore.sh backups/backup_production_20240220_120000.sql.gz production
-```
-
-## Health Checks
-
-After deployment, verify services:
+## Frontend (Workers)
 
 ```bash
-# Backend
-curl http://localhost:8000/api/v1/
-
-# Frontend
-curl http://localhost:3000/
-
-# Nginx
-curl http://localhost/health
+# GitHub Actions on push to main (gogir-labs-fe/**), or:
+cd gogir-labs-fe
+NEXT_PUBLIC_API_URL=https://api.gogirlabs.uk/api/v1 npm run deploy
 ```
 
-## Monitoring
+Required Actions secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`.
 
-View logs:
+## Classic Compose (staging / production)
+
 ```bash
-docker-compose -f docker-compose.prod.yml logs -f
+# Requires a root .env (see ENV_EXAMPLE.md § Full stack)
+./deploy.sh staging
+./deploy.sh production
 ```
 
-Check container status:
+There are no committed `.env.production.example` / `.env.staging.example` files — use [`ENV_EXAMPLE.md`](ENV_EXAMPLE.md) §3 (classic) or §5 (homelab).
+
+## CI/CD (GitHub Actions)
+
+| Workflow | Role |
+|----------|------|
+| `.github/workflows/ci.yml` | Tests, image build, security scan |
+| `.github/workflows/code-quality.yml` | Lint / format |
+| `.github/workflows/cd.yml` | Push backend/frontend images on `main` / `dev` |
+| `.github/workflows/frontend-cloudflare-workers.yml` | Deploy OpenNext Worker |
+| `.github/workflows/backend-cloudflare-setup.yml` | Backend config checks |
+
+Homelab API deploy is **manual** (runners cannot reach the LAN host).
+
+## Health checks
+
 ```bash
-docker-compose -f docker-compose.prod.yml ps
+curl -sSI https://api.gogirlabs.uk/api/v1/
+curl -sSI https://www.gogirlabs.uk/
 ```
+
+On the API host after homelab deploy:
+
+```bash
+docker compose -f docker-compose.homelab.yml --env-file .env ps
+docker compose -f docker-compose.homelab.yml --env-file .env logs -f backend
+```
+
+## Backups
+
+Homelab: see backup section in [`docs/HOMELAB_API.md`](docs/HOMELAB_API.md).  
+Classic Compose: `./backup.sh production` / `./restore.sh …` when those scripts are on the host.
 
 ## Troubleshooting
 
-See `DEPLOYMENT.md` for detailed troubleshooting guide.
-
+- Homelab / ikon / WireGuard: [`docs/HOMELAB_API.md`](docs/HOMELAB_API.md)
+- Workers cutover / OpenNext: [`docs/CLOUDFLARE_PAGES.md`](docs/CLOUDFLARE_PAGES.md)
+- Same-host Compose: [`DEPLOYMENT.md`](DEPLOYMENT.md)

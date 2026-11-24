@@ -23,7 +23,7 @@ interface ProjectGridProps {
 export function ProjectGrid({ projects }: ProjectGridProps) {
   if (!projects || projects.length === 0) {
     return (
-      <div className="py-12 text-center font-sans text-brutal-muted">
+      <div className="py-12 text-left font-sans text-brutal-muted">
         <p className="mb-2 text-brutal-ink">No projects found.</p>
         <p className="text-sm">Try adjusting your filters or check back later.</p>
       </div>

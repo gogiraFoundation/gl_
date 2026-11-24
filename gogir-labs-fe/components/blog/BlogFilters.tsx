@@ -25,6 +25,9 @@ interface BlogFiltersProps {
   onSearchChange: (query: string) => void
 }
 
+const fieldClass =
+  'min-h-12 border border-brutal-ink bg-brutal-bg px-4 py-3 text-brutal-ink transition-[border-color,box-shadow] duration-200 placeholder:text-brutal-muted focus:border-[orangered] focus:outline-none focus:ring-1 focus:ring-[orangered]/40'
+
 export function BlogFilters({
   categories,
   tags,
@@ -37,43 +40,45 @@ export function BlogFilters({
 }: BlogFiltersProps) {
   return (
     <div className="mb-12 space-y-6">
-      {/* Search Bar */}
-      <div className="relative mx-auto w-full max-w-2xl">
-        <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 transform text-gray-400" />
+      <div className="relative w-full max-w-2xl">
+        <Search
+          className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brutal-muted"
+          aria-hidden
+        />
         <input
           type="search"
           id="blog-search"
           name="blog-search"
-          placeholder="Search posts..."
+          placeholder="Search posts…"
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="glass w-full rounded-sm border border-white/10 py-3.5 pl-12 pr-10 text-white placeholder-gray-400 shadow-[0_8px_18px_rgba(112,128,144,0.35)] transition-[box-shadow,border-color] duration-300 ease-out hover:border-orange-500/45 hover:shadow-[0_10px_26px_rgba(255,69,0,0.32)] focus:border-orange-500/55 focus:shadow-[0_12px_30px_rgba(255,69,0,0.45)] focus:outline-none focus:ring-0 active:shadow-[0_8px_22px_rgba(255,69,0,0.38)]"
+          className={`${fieldClass} w-full rounded-sm py-3.5 pl-12 pr-10`}
           autoComplete="off"
         />
         {searchQuery && (
           <button
+            type="button"
             onClick={() => onSearchChange('')}
-            className="absolute right-4 top-1/2 -translate-y-1/2 transform text-gray-400 transition-colors hover:text-white"
+            className="absolute right-4 top-1/2 flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center text-brutal-muted transition-colors hover:text-brutal-ink"
+            aria-label="Clear search"
           >
             <X className="h-5 w-5" />
           </button>
         )}
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-wrap justify-center gap-4">
+      <div className="flex flex-wrap justify-start gap-4">
         <select
           id="blog-category"
           name="blog-category"
           value={selectedCategory || ''}
           onChange={(e) => onCategoryChange(e.target.value ? Number(e.target.value) : null)}
-          className="glass cursor-pointer rounded-lg border border-white/15 px-4 py-2 text-white shadow-[0_6px_14px_rgba(112,128,144,0.25)] transition-[box-shadow,border-color] duration-300 ease-out hover:border-orange-500/40 hover:shadow-[0_8px_18px_rgba(255,69,0,0.28)] focus:border-orange-500/50 focus:shadow-[0_10px_22px_rgba(255,69,0,0.38)] focus:outline-none focus:ring-0"
+          className={`${fieldClass} cursor-pointer rounded-sm`}
+          aria-label="Filter by category"
         >
-          <option value="" className="bg-gray-900">
-            All Categories
-          </option>
+          <option value="">All categories</option>
           {categories.map((category) => (
-            <option key={category.id} value={category.id} className="bg-gray-900">
+            <option key={category.id} value={category.id}>
               {category.name}
             </option>
           ))}
@@ -83,27 +88,27 @@ export function BlogFilters({
           name="blog-tag"
           value={selectedTag || ''}
           onChange={(e) => onTagChange(e.target.value ? Number(e.target.value) : null)}
-          className="glass cursor-pointer rounded-lg border border-white/15 px-4 py-2 text-white shadow-[0_6px_14px_rgba(112,128,144,0.25)] transition-[box-shadow,border-color] duration-300 ease-out hover:border-orange-500/40 hover:shadow-[0_8px_18px_rgba(255,69,0,0.28)] focus:border-orange-500/50 focus:shadow-[0_10px_22px_rgba(255,69,0,0.38)] focus:outline-none focus:ring-0"
+          className={`${fieldClass} cursor-pointer rounded-sm`}
+          aria-label="Filter by tag"
         >
-          <option value="" className="bg-gray-900">
-            All Tags
-          </option>
+          <option value="">All tags</option>
           {tags.map((tag) => (
-            <option key={tag.id} value={tag.id} className="bg-gray-900">
+            <option key={tag.id} value={tag.id}>
               {tag.name}
             </option>
           ))}
         </select>
         {(selectedCategory || selectedTag || searchQuery) && (
           <button
+            type="button"
             onClick={() => {
               onCategoryChange(null)
               onTagChange(null)
               onSearchChange('')
             }}
-            className="glass rounded-lg border border-white/15 px-4 py-2 text-white shadow-[0_6px_14px_rgba(112,128,144,0.25)] transition-[box-shadow,border-color] duration-300 ease-out hover:border-orange-500/45 hover:shadow-[0_8px_18px_rgba(255,69,0,0.28)] focus:outline-none focus:ring-0 active:shadow-[0_6px_14px_rgba(255,69,0,0.35)]"
+            className={`${fieldClass} rounded-sm font-medium transition-opacity hover:opacity-70`}
           >
-            Clear Filters
+            Clear filters
           </button>
         )}
       </div>

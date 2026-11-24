@@ -14,6 +14,9 @@ class Experience(models.Model):
     )
     is_current = models.BooleanField(default=False)
     description = models.TextField(help_text="Job description and achievements")
+    highlights = models.JSONField(
+        default=list, blank=True, help_text="Bullet points for the resume page"
+    )
     technologies = models.CharField(
         max_length=500, blank=True, help_text="Comma-separated list of technologies"
     )
@@ -40,6 +43,9 @@ class Education(models.Model):
     end_date = models.DateField(null=True, blank=True)
     is_current = models.BooleanField(default=False)
     description = models.TextField(blank=True)
+    highlights = models.JSONField(
+        default=list, blank=True, help_text="Bullet points for the resume page"
+    )
     gpa = models.CharField(max_length=20, blank=True)
     order = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)

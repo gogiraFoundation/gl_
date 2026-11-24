@@ -81,4 +81,38 @@ describe('PostContent', () => {
     renderWithProviders(<PostContent post={featuredPost} />)
     expect(screen.getByRole('heading', { name: 'Test Post' })).toBeInTheDocument()
   })
+
+  it('shows the title on first paint without a scroll wrapper', () => {
+    renderWithProviders(<PostContent post={mockPost} />)
+    const heading = screen.getByRole('heading', { name: 'Test Post' })
+    expect(heading).toBeInTheDocument()
+    expect(heading.parentElement).not.toHaveClass('fade-in-on-scroll')
+  })
+
+  it('shows the title immediately when reduced motion is preferred', () => {
+    const originalMatchMedia = window.matchMedia
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: jest.fn().mockImplementation((query: string) => ({
+        matches: query.includes('prefers-reduced-motion'),
+        media: query,
+        onchange: null,
+        addListener: jest.fn(),
+        removeListener: jest.fn(),
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+        dispatchEvent: jest.fn(),
+      })),
+    })
+
+    try {
+      renderWithProviders(<PostContent post={mockPost} />)
+      expect(screen.getByRole('heading', { name: 'Test Post' })).toBeInTheDocument()
+    } finally {
+      Object.defineProperty(window, 'matchMedia', {
+        writable: true,
+        value: originalMatchMedia,
+      })
+    }
+  })
 })

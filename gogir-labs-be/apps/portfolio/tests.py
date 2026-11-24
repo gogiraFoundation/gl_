@@ -269,3 +269,83 @@ class ProjectImageModelTest(TestCase):
 
         # Image should be deleted
         self.assertFalse(ProjectImage.objects.filter(id=image_id).exists())
+
+
+class SeedPortfolioTest(TestCase):
+    """Test idempotent portfolio seed command behaviour."""
+
+    EXPECTED_SLUGS = [
+        "afri-cleans-website",
+        "energy-management-dashboard",
+        "api-gateway-service",
+        "e-commerce-analytics-platform",
+        "urbana",
+        "pipe-pop",
+        "bria",
+        "invenire",
+    ]
+
+    CATEGORISED = {
+        "afri-cleans-website": "Website",
+        "e-commerce-analytics-platform": "SaaS",
+        "urbana": "SaaS",
+        "bria": "Renewable Technology",
+        "invenire": "FinTech",
+    }
+
+    UNCATEGORISED = {
+        "energy-management-dashboard",
+        "api-gateway-service",
+        "pipe-pop",
+    }
+
+    @patch("apps.notifications.services.NotificationService.notify_admins")
+    def test_seed_creates_published_catalogue(self, mock_notify):
+        from apps.portfolio.portfolio_seed import PORTFOLIO_PROJECTS, seed_portfolio
+
+        result = seed_portfolio()
+
+        self.assertEqual(result["created_projects"], 8)
+        self.assertEqual(result["skipped_projects"], 0)
+        self.assertEqual(Project.objects.count(), 8)
+        self.assertEqual(
+            set(Project.objects.values_list("slug", flat=True)),
+            set(self.EXPECTED_SLUGS),
+        )
+        self.assertTrue(all(p.published for p in Project.objects.all()))
+        self.assertFalse(any(p.featured for p in Project.objects.all()))
+        self.assertEqual(
+            sum(p.technologies.count() for p in Project.objects.all()),
+            0,
+        )
+        mock_notify.assert_not_called()
+
+        by_slug = {e["slug"]: e for e in PORTFOLIO_PROJECTS}
+        for project in Project.objects.select_related("category"):
+            self.assertEqual(project.description, by_slug[project.slug]["description"])
+            if project.slug in self.CATEGORISED:
+                self.assertIsNotNone(project.category)
+                self.assertEqual(project.category.name, self.CATEGORISED[project.slug])
+            else:
+                self.assertIn(project.slug, self.UNCATEGORISED)
+                self.assertIsNone(project.category)
+
+        ordered = list(Project.objects.values_list("slug", flat=True))
+        self.assertEqual(ordered, self.EXPECTED_SLUGS)
+
+    @patch("apps.notifications.services.NotificationService.notify_admins")
+    def test_seed_second_run_does_not_overwrite(self, mock_notify):
+        from apps.portfolio.portfolio_seed import seed_portfolio
+
+        seed_portfolio()
+        Project.objects.filter(slug="bria").update(description="Edited by admin")
+        mock_notify.reset_mock()
+
+        result = seed_portfolio()
+
+        self.assertEqual(result["created_projects"], 0)
+        self.assertEqual(result["skipped_projects"], 8)
+        self.assertEqual(Project.objects.count(), 8)
+        project = Project.objects.get(slug="bria")
+        self.assertEqual(project.description, "Edited by admin")
+        mock_notify.assert_not_called()

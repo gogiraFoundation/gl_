@@ -4,12 +4,10 @@ import { useEffect } from 'react'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { NewsletterForm } from '@/components/newsletter/NewsletterForm'
-import { GradientText } from '@/components/ui/GradientText'
 import { Mail } from 'lucide-react'
 
 export default function NewsletterSubscribePage() {
   useEffect(() => {
-    // Update document title and meta description for SEO
     document.title = 'Newsletter | Emmanuel Ugbaje — Software Engineering & Platform Insights'
     const metaDescription = document.querySelector('meta[name="description"]')
     const descriptionContent =
@@ -25,50 +23,60 @@ export default function NewsletterSubscribePage() {
   }, [])
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-brutal-bg text-brutal-ink">
       <Header />
-      <main className="relative flex-grow px-4 py-20">
-        {/* Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-mesh opacity-30"></div>
-
-        <div className="relative z-10 mx-auto max-w-2xl">
-          <div className="mb-12 animate-fade-in-up text-center">
-            <div className="bg-gradient-primary/20 mb-6 inline-block rounded-full p-4">
-              <Mail className="h-12 w-12 text-purple-400" />
+      <main className="flex-grow px-6 py-16 md:py-24 lg:px-8">
+        <div className="mx-auto max-w-2xl">
+          <header className="mb-10 text-left">
+            <div className="mb-6 inline-flex h-14 w-14 items-center justify-center border border-brutal-ink">
+              <Mail className="h-7 w-7 text-brutal-ink" aria-hidden />
             </div>
-            <h1 className="mb-4 text-4xl font-bold sm:text-5xl md:text-6xl">
-              <GradientText>Subscribe to the Newsletter</GradientText>
+            <h1 className="mb-4 font-serif text-4xl font-semibold tracking-tight sm:text-5xl">
+              Newsletter
             </h1>
-            <p className="mx-auto max-w-2xl text-xl text-gray-300">
-              Stay updated with the latest insights on technology and engineering.
+            <p className="max-w-xl text-left text-base leading-relaxed text-brutal-muted md:text-lg">
+              Practical notes on backends, security, CI/CD, and data systems. Occasional updates
+              when there is something worth reading.
             </p>
-          </div>
+          </header>
 
-          <div className="glass scroll-fade-in rounded-2xl p-8">
+          <div className="border border-brutal-ink bg-brutal-bg p-6 md:p-8">
             <NewsletterForm source="subscribe-page" showNameField={true} />
 
-            <div className="mt-8 border-t border-purple-500/20 pt-8">
-              <h3 className="mb-3 text-lg font-semibold text-white">What you'll receive:</h3>
-              <ul className="space-y-2 text-gray-300">
+            <div className="mt-8 border-t border-brutal-ink/15 pt-8">
+              <h2 className="mb-3 font-sans text-sm font-semibold uppercase tracking-wide text-brutal-ink">
+                What you receive
+              </h2>
+              <ul className="space-y-2 text-left text-sm leading-relaxed text-brutal-muted">
                 <li className="flex items-start gap-2">
-                  <span className="text-purple-400">•</span>
-                  <span>Deep dives into technological systems and architectures</span>
+                  <span className="text-brutal-ink" aria-hidden>
+                    —
+                  </span>
+                  <span>Deep dives into backend systems and architecture</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-purple-400">•</span>
-                  <span>CI/CD pipeline strategies and automation best practices</span>
+                  <span className="text-brutal-ink" aria-hidden>
+                    —
+                  </span>
+                  <span>CI/CD and automation practices that hold up in production</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-purple-400">•</span>
-                  <span>Cloud architecture patterns (AWS, Azure, GCP)</span>
+                  <span className="text-brutal-ink" aria-hidden>
+                    —
+                  </span>
+                  <span>Cloud patterns for AWS, Azure, and GCP</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-purple-400">•</span>
-                  <span>Security and scalability insights for modern platforms</span>
+                  <span className="text-brutal-ink" aria-hidden>
+                    —
+                  </span>
+                  <span>Security and scalability notes for modern platforms</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-purple-400">•</span>
-                  <span>New projects, portfolio updates, and industry trends</span>
+                  <span className="text-brutal-ink" aria-hidden>
+                    —
+                  </span>
+                  <span>New projects and writing when they ship</span>
                 </li>
               </ul>
             </div>

@@ -51,7 +51,7 @@ export function ThemeToggle() {
         disabled
       >
         <div className="relative h-5 w-5">
-          <Moon className="absolute inset-0 h-5 w-5 text-indigo-500 dark:text-blue-300" />
+          <Moon className="absolute inset-0 h-5 w-5 text-gray-700 dark:text-gray-300" />
         </div>
       </button>
     )
@@ -70,7 +70,7 @@ export function ThemeToggle() {
           }`}
         />
         <Moon
-          className={`absolute inset-0 h-5 w-5 text-indigo-500 transition-all duration-300 dark:text-blue-300 ${
+          className={`absolute inset-0 h-5 w-5 text-gray-700 transition-[opacity,transform] duration-300 dark:text-gray-300 ${
             theme === 'light' ? '-rotate-90 opacity-0' : 'rotate-0 opacity-100'
           }`}
         />

@@ -8,5 +8,5 @@ class ContactMessageAdmin(admin.ModelAdmin):
     list_display = ["name", "email", "subject", "read", "replied", "created_at"]
     list_filter = ["read", "replied", "created_at"]
     search_fields = ["name", "email", "subject", "message"]
-    readonly_fields = ["created_at"]
+    readonly_fields = ["created_at", "replied_at", "reply_body"]
     ordering = ["-created_at"]

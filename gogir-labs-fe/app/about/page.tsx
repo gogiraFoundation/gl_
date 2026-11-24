@@ -1,78 +1,58 @@
 'use client'
 
 import Link from 'next/link'
+import { useQuery } from '@tanstack/react-query'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import type { Testimonial } from '@/components/testimonials/TestimonialCard'
 import { TestimonialsCarousel } from '@/components/testimonials/TestimonialsCarousel'
 import { Github, Linkedin, BookOpen, Code, Users, BarChart, Zap, Mail } from 'lucide-react'
-import { GradientText } from '@/components/ui/GradientText'
-import { OrbitingIcons } from '@/components/ui/OrbitingIcons'
 import { GlowCard } from '@/components/ui/GlowCard'
-
-const STATIC_TESTIMONIALS: Testimonial[] = [
-  {
-    id: 1,
-    client_name: 'Emily Rodriguez',
-    client_role: 'Founder',
-    company: 'GreenEnergy Co',
-    content:
-      "Emmanuel's expertise in renewable energy systems and software development helped us build a cutting-edge platform. Outstanding work!",
-    rating: 5,
-    client_image: null,
-    company_logo: null,
-    featured: true,
-    created_at: '',
-  },
-  {
-    id: 2,
-    client_name: 'Michael Chen',
-    client_role: 'Product Manager',
-    company: 'DataFlow Systems',
-    content:
-      'Working with Emmanuel was a pleasure. He transformed our data pipeline and improved performance significantly. Highly recommended!',
-    rating: 5,
-    client_image: null,
-    company_logo: null,
-    featured: true,
-    created_at: '',
-  },
-  {
-    id: 3,
-    client_name: 'Sarah Johnson',
-    client_role: 'CTO',
-    company: 'TechStart Inc',
-    content:
-      'Emmanuel delivered an exceptional Django application that exceeded our expectations. His attention to detail and technical expertise made the project a huge success.',
-    rating: 5,
-    client_image: null,
-    company_logo: null,
-    featured: true,
-    created_at: '',
-  },
-]
+import api from '@/lib/api'
 
 const CONNECT_LINK_CLASS =
-  'connect-social-link group inline-flex shrink-0 items-center gap-1.5 rounded-sm px-2 py-1 text-sm font-medium text-brutal-ink whitespace-nowrap transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-brutal-ink/[0.06] hover:shadow-[0_4px_14px_rgba(0,0,0,0.07)] motion-reduce:hover:translate-y-0'
+  'connect-social-link group inline-flex shrink-0 items-center gap-1.5 rounded-sm px-2 py-1 text-sm font-medium text-brutal-ink whitespace-nowrap transition-colors duration-200 hover:text-brutal-muted'
 
-const CONNECT_ICON_CLASS =
-  'block h-3.5 w-3.5 shrink-0 leading-none transition-transform duration-300 group-hover:scale-105 sm:h-4 sm:w-4'
+const CONNECT_ICON_CLASS = 'block h-3.5 w-3.5 shrink-0 leading-none sm:h-4 sm:w-4'
+
+const EXPERTISE_ICONS = [
+  { Icon: Code, label: 'Development' },
+  { Icon: Users, label: 'Collaboration' },
+  { Icon: BarChart, label: 'Data' },
+  { Icon: Zap, label: 'Delivery' },
+] as const
+
+function getTestimonialsList(data: unknown): Testimonial[] {
+  if (!data) return []
+  if (Array.isArray(data)) return data as Testimonial[]
+  const results = (data as { results?: Testimonial[] }).results
+  return results || []
+}
 
 export default function AboutPage() {
+  const { data: testimonialsData } = useQuery({
+    queryKey: ['testimonials', 'featured'],
+    queryFn: async () => {
+      const response = await api.get('/testimonials/', { params: { featured: true } })
+      return response.data
+    },
+  })
+  const featuredTestimonials = getTestimonialsList(testimonialsData)
+
   return (
     <div className="flex min-h-screen flex-col bg-brutal-bg">
       <Header />
       <main className="relative flex-grow px-4 py-20 md:py-32 lg:py-40">
         <div className="relative z-10 mx-auto max-w-5xl space-y-24">
-          <header className="mx-auto my-0 w-full max-w-3xl animate-fade-in-up text-center">
-            <h1 className="mb-3 text-4xl font-bold text-brutal-ink md:text-5xl">
-              <GradientText>What I Do</GradientText>
+          <header className="mx-auto my-0 w-full max-w-3xl text-left">
+            <h1 className="mb-3 font-serif text-4xl font-semibold tracking-tight text-brutal-ink md:text-5xl">
+              About
             </h1>
-            <p className="mx-auto my-0 max-w-3xl text-sm leading-relaxed text-brutal-muted md:text-base">
-              Building secure, scalable backends and APIs with a focus on{' '}
+            <p className="my-0 max-w-3xl text-left text-base leading-relaxed text-brutal-muted md:text-justify">
+              Secure, scalable backends and APIs—with a focus on{' '}
               <strong className="font-medium text-brutal-ink">authentication</strong>,{' '}
               <strong className="font-medium text-brutal-ink">data pipelines</strong>, and{' '}
-              <strong className="font-medium text-brutal-ink">cloud-native solutions</strong>.
+              <strong className="font-medium text-brutal-ink">cloud-ready systems</strong>.
             </p>
           </header>
 
@@ -83,130 +63,91 @@ export default function AboutPage() {
             <h2 id="what-i-do-body" className="sr-only">
               Professional summary
             </h2>
-            <div className="group/summary mx-auto my-0 flex w-full max-w-3xl flex-col gap-4 rounded-sm bg-brutal-bg p-6 shadow-[0_4px_16px_rgba(0,0,0,0.07),0_1px_0_rgba(255,255,255,0.04)_inset] transition-[transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-[0_10px_28px_rgba(0,0,0,0.1)] motion-reduce:transition-none motion-reduce:hover:translate-y-0 md:p-8 [&_p]:m-0">
-              <p className="text-center text-sm leading-relaxed text-brutal-muted md:text-justify md:text-[15px]">
+            <div className="mx-auto my-0 flex w-full max-w-3xl flex-col gap-4 border border-brutal-ink/15 bg-brutal-bg p-6 md:p-8 [&_p]:m-0">
+              <p className="text-left text-base leading-relaxed text-brutal-muted md:text-justify">
                 As a <strong className="font-medium text-brutal-ink">Software Engineer</strong> and{' '}
                 <strong className="font-medium text-brutal-ink">Lead Developer</strong>, I build
                 secure, scalable backend systems and APIs, specialising in{' '}
                 <strong className="font-medium text-brutal-ink">Python</strong>,{' '}
-                <strong className="font-medium text-brutal-ink">Django</strong>, and{' '}
-                <strong className="font-medium text-brutal-ink">cloud-native technologies</strong>.
-                With a strong foundation in{' '}
-                <strong className="font-medium text-brutal-ink">authentication systems</strong>,{' '}
-                <strong className="font-medium text-brutal-ink">data pipelines</strong>, and{' '}
-                <strong className="font-medium text-brutal-ink">production-grade services</strong>,
-                I focus on delivering high-performing solutions that are{' '}
-                <strong className="font-medium text-brutal-ink">reliable</strong>,{' '}
-                <strong className="font-medium text-brutal-ink">secure</strong>, and{' '}
-                <strong className="font-medium text-brutal-ink">scalable</strong>.
+                <strong className="font-medium text-brutal-ink">Django</strong>, and cloud-ready
+                platforms. The focus is{' '}
+                <strong className="font-medium text-brutal-ink">authentication</strong>,{' '}
+                <strong className="font-medium text-brutal-ink">data pipelines</strong>, and
+                production services that stay reliable under load.
               </p>
-              <p className="text-center text-sm leading-relaxed text-brutal-muted md:text-justify md:text-[15px]">
+              <p className="text-left text-base leading-relaxed text-brutal-muted md:text-justify">
                 I hold a{' '}
                 <strong className="font-medium text-brutal-ink">
                   Master&apos;s in Renewable Energy &amp; Sustainable Technology
                 </strong>
-                , and I apply this multidisciplinary approach to designing systems that optimise
-                both <strong className="font-medium text-brutal-ink">business</strong> and{' '}
-                <strong className="font-medium text-brutal-ink">environmental</strong> outcomes.
+                , and I bring that systems mindset to software that serves both business and
+                environmental goals.
               </p>
-              <p className="text-center text-sm leading-relaxed text-brutal-muted md:text-justify md:text-[15px]">
-                Currently, I serve as the{' '}
-                <strong className="font-medium text-brutal-ink">Lead Developer</strong> at{' '}
-                <strong className="font-medium text-brutal-ink">Traq Authenticator</strong>, a
-                cutting-edge{' '}
+              <p className="text-left text-base leading-relaxed text-brutal-muted md:text-justify">
+                I lead backend development at{' '}
+                <strong className="font-medium text-brutal-ink">Traq Authenticator</strong>, an{' '}
                 <strong className="font-medium text-brutal-ink">
                   Identity and Access Management (IAM)
                 </strong>{' '}
-                platform. Here, I architect backend solutions using{' '}
+                platform. The stack is{' '}
                 <strong className="font-medium text-brutal-ink">Django</strong> and{' '}
-                <strong className="font-medium text-brutal-ink">PostgreSQL</strong>, developing
-                secure <strong className="font-medium text-brutal-ink">REST APIs</strong> while
-                embedding advanced security features such as{' '}
-                <strong className="font-medium text-brutal-ink">password breach detection</strong>,{' '}
-                <strong className="font-medium text-brutal-ink">rate limiting with Redis</strong>,
-                and{' '}
-                <strong className="font-medium text-brutal-ink">file validation pipelines</strong>.
-                My role also involves driving{' '}
-                <strong className="font-medium text-brutal-ink">CI/CD</strong> automation for
-                seamless testing, deployment, and continuous integration.
+                <strong className="font-medium text-brutal-ink">PostgreSQL</strong>, with secure{' '}
+                <strong className="font-medium text-brutal-ink">REST APIs</strong>, password breach
+                detection, Redis rate limiting, file validation, and{' '}
+                <strong className="font-medium text-brutal-ink">CI/CD</strong> for testing and
+                deployment.
               </p>
-              <p className="text-center text-sm leading-relaxed text-brutal-muted md:text-justify md:text-[15px]">
-                I&apos;ve worked across a broad range of industries, including{' '}
-                <strong className="font-medium text-brutal-ink">energy</strong>,{' '}
-                <strong className="font-medium text-brutal-ink">blockchain</strong>, and{' '}
-                <strong className="font-medium text-brutal-ink">digital startups</strong>. From
-                building <strong className="font-medium text-brutal-ink">data pipelines</strong> and{' '}
-                <strong className="font-medium text-brutal-ink">energy performance systems</strong>{' '}
-                to optimising blockchain research tools and streamlining operational workflows,
-                I&apos;ve honed a versatile skill set that adapts to modern, high-impact technology
-                challenges.
+              <p className="text-left text-base leading-relaxed text-brutal-muted md:text-justify">
+                Earlier work spans <strong className="font-medium text-brutal-ink">energy</strong>,{' '}
+                <strong className="font-medium text-brutal-ink">blockchain</strong>, and digital
+                products—from data pipelines and energy performance systems to research tooling and
+                internal operations.
               </p>
-              <p className="text-center text-sm leading-relaxed text-brutal-muted md:text-justify md:text-[15px]">
-                I&apos;m deeply passionate about building technology that empowers organisations,
-                reduces operational friction, and contributes to environmental sustainability. You
-                can explore my{' '}
+              <p className="text-left text-base leading-relaxed text-brutal-muted md:text-justify">
+                See the{' '}
                 <Link
                   href="/portfolio"
-                  className="font-medium text-brutal-ink underline underline-offset-4 transition-opacity duration-200 ease-out hover:opacity-75"
+                  className="font-medium text-brutal-ink underline underline-offset-4 transition-opacity duration-200 hover:opacity-75"
                 >
                   portfolio
                 </Link>{' '}
-                or read my{' '}
+                or the{' '}
                 <Link
                   href="/blog"
-                  className="font-medium text-brutal-ink underline underline-offset-4 transition-opacity duration-200 ease-out hover:opacity-75"
+                  className="font-medium text-brutal-ink underline underline-offset-4 transition-opacity duration-200 hover:opacity-75"
                 >
                   blog
                 </Link>{' '}
-                to learn more about my work in{' '}
-                <strong className="font-medium text-brutal-ink">software development</strong>,{' '}
-                <strong className="font-medium text-brutal-ink">energy systems</strong>, and{' '}
-                <strong className="font-medium text-brutal-ink">digital transformation</strong>.
+                for the work in detail.
               </p>
             </div>
           </section>
 
           <section aria-labelledby="expertise-heading">
-            <div className="mx-auto my-0 w-full max-w-3xl px-1 text-center sm:px-0">
+            <div className="mx-auto my-0 w-full max-w-3xl px-1 text-left sm:px-0">
               <h2
                 id="expertise-heading"
-                className="mb-12 text-balance text-3xl font-bold text-brutal-ink md:text-4xl"
+                className="mb-12 font-serif text-3xl font-semibold tracking-tight text-brutal-ink md:text-4xl"
               >
-                <GradientText>Core Expertise &amp; Tech Stack</GradientText>
+                Core expertise &amp; tech stack
               </h2>
             </div>
 
-            <OrbitingIcons
-              centerIcon={<Code className="h-12 w-12 text-brutal-ink" aria-label="Code Icon" />}
-              icons={[
-                {
-                  icon: <Code className="h-6 w-6 text-brutal-ink" aria-label="Development Icon" />,
-                },
-                {
-                  icon: (
-                    <Users
-                      className="h-6 w-6 text-brutal-ink"
-                      aria-label="Project Management Icon"
-                    />
-                  ),
-                },
-                {
-                  icon: (
-                    <BarChart
-                      className="h-6 w-6 text-brutal-ink"
-                      aria-label="Data Analytics Icon"
-                    />
-                  ),
-                },
-                { icon: <Zap className="h-6 w-6 text-brutal-ink" aria-label="Energy Icon" /> },
-                {
-                  icon: <Code className="h-6 w-6 text-brutal-ink" aria-label="Programming Icon" />,
-                },
-                { icon: <Users className="h-6 w-6 text-brutal-ink" aria-label="Team Icon" /> },
-              ]}
-              radius={120}
-              className="mb-12"
-            />
+            <div
+              className="mb-12 flex flex-wrap items-center justify-start gap-4"
+              aria-label="Core expertise areas"
+            >
+              {EXPERTISE_ICONS.map(({ Icon, label }) => (
+                <div
+                  key={label}
+                  className="flex h-11 w-11 items-center justify-center border border-brutal-ink/15 text-brutal-ink"
+                  title={label}
+                  aria-label={label}
+                >
+                  <Icon className="h-5 w-5" aria-hidden />
+                </div>
+              ))}
+            </div>
 
             <div className="mx-auto my-0 grid w-full min-w-0 max-w-full grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-4 xl:gap-3">
               <GlowCard className="min-w-0 overflow-hidden p-3 text-left sm:p-4 md:p-4">
@@ -330,9 +271,9 @@ export default function AboutPage() {
           <section aria-labelledby="awards-heading">
             <h2
               id="awards-heading"
-              className="mb-8 text-3xl font-bold text-brutal-ink md:mb-12 md:text-4xl"
+              className="mb-8 text-left font-serif text-3xl font-semibold tracking-tight text-brutal-ink md:mb-12 md:text-4xl"
             >
-              Awards &amp; Certifications
+              Awards &amp; certifications
             </h2>
             <GlowCard className="p-8 md:p-12">
               <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
@@ -363,28 +304,27 @@ export default function AboutPage() {
             </GlowCard>
           </section>
 
-          <section aria-labelledby="testimonials-heading">
-            <h2
-              id="testimonials-heading"
-              className="mb-8 text-center font-serif text-3xl font-semibold text-brutal-ink md:mb-12 md:text-4xl"
-            >
-              <GradientText>Testimonials</GradientText>
-            </h2>
-            <TestimonialsCarousel testimonials={STATIC_TESTIMONIALS} />
-          </section>
+          {featuredTestimonials.length > 0 && (
+            <section aria-labelledby="testimonials-heading">
+              <h2
+                id="testimonials-heading"
+                className="mb-8 text-left font-serif text-3xl font-semibold tracking-tight text-brutal-ink md:mb-12 md:text-4xl"
+              >
+                Testimonials
+              </h2>
+              <TestimonialsCarousel testimonials={featuredTestimonials} />
+            </section>
+          )}
 
-          <section
-            aria-labelledby="connect-heading"
-            className="mx-auto w-full max-w-2xl text-center"
-          >
+          <section aria-labelledby="connect-heading" className="w-full max-w-2xl text-left">
             <h2
               id="connect-heading"
-              className="mb-6 text-center font-serif text-3xl font-semibold text-brutal-ink md:mb-8 md:text-4xl"
+              className="mb-6 text-left font-serif text-3xl font-semibold tracking-tight text-brutal-ink md:mb-8 md:text-4xl"
             >
-              Connect with me
+              Connect
             </h2>
-            <div className="flex w-full justify-center">
-              <div className="flex w-full flex-wrap items-center justify-center gap-2 sm:gap-3">
+            <div className="flex w-full justify-start">
+              <div className="flex w-full flex-wrap items-center justify-start gap-2 sm:gap-3">
                 <a
                   href="https://medium.com/@aigbemanuel"
                   target="_blank"
@@ -403,7 +343,7 @@ export default function AboutPage() {
                   <Linkedin className={CONNECT_ICON_CLASS} aria-hidden />
                   <span>LinkedIn</span>
                 </a>
-                <a href="mailto:dev@gogirlabs.uk" className={CONNECT_LINK_CLASS}>
+                <a href="mailto:hi@gogirlabs.uk" className={CONNECT_LINK_CLASS}>
                   <Mail className={CONNECT_ICON_CLASS} aria-hidden />
                   <span>Email</span>
                 </a>

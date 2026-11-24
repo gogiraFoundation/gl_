@@ -78,16 +78,20 @@ class NewsletterSubscriberModelTest(TestCase):
         self.assertTrue(subscriber.is_verified)
 
     def test_unsubscribe_workflow(self):
-        """Test unsubscribe workflow."""
+        """Test unsubscribe workflow rotates verification token."""
         subscriber = NewsletterSubscriber.objects.create(
             email="test@example.com",
+            is_verified=True,
         )
+        old_token = subscriber.verification_token
         self.assertTrue(subscriber.is_active)
         self.assertIsNone(subscriber.unsubscribed_at)
 
         subscriber.unsubscribe()
         self.assertFalse(subscriber.is_active)
         self.assertIsNotNone(subscriber.unsubscribed_at)
+        self.assertFalse(subscriber.is_verified)
+        self.assertNotEqual(subscriber.verification_token, old_token)
 
     def test_already_unsubscribed_user(self):
         """Test unsubscribing already unsubscribed user."""
@@ -104,30 +108,28 @@ class NewsletterSubscriberModelTest(TestCase):
         self.assertIsNotNone(subscriber.unsubscribed_at)
 
     def test_resubscribe_functionality(self):
-        """Test resubscribe functionality."""
+        """Test resubscribe requires fresh verification and rotates the token."""
         subscriber = NewsletterSubscriber.objects.create(
             email="test@example.com",
+            is_verified=True,
         )
+        old_token = subscriber.verification_token
         subscriber.unsubscribe()
         self.assertFalse(subscriber.is_active)
 
         subscriber.resubscribe()
         self.assertTrue(subscriber.is_active)
         self.assertIsNone(subscriber.unsubscribed_at)
+        self.assertFalse(subscriber.is_verified)
+        self.assertNotEqual(subscriber.verification_token, old_token)
 
-    def test_email_case_sensitivity(self):
-        """Test email case sensitivity."""
-        subscriber1 = NewsletterSubscriber.objects.create(
-            email="Test@Example.com",
-        )
-        # Email should be stored as provided, but uniqueness is case-sensitive
-        self.assertEqual(subscriber1.email, "Test@Example.com")
+    def test_email_is_normalized_to_lowercase(self):
+        """Emails are stored lowercased so case variants collide on uniqueness."""
+        subscriber = NewsletterSubscriber.objects.create(email="Test@Example.com")
+        self.assertEqual(subscriber.email, "test@example.com")
 
-        # Different case should be allowed (if not normalized)
-        subscriber2 = NewsletterSubscriber.objects.create(
-            email="test@example.com",
-        )
-        self.assertNotEqual(subscriber1.email, subscriber2.email)
+        with self.assertRaises(Exception):
+            NewsletterSubscriber.objects.create(email="TEST@example.com")
 
     def test_token_uniqueness(self):
         """Test token uniqueness (unlikely collision but testable)."""

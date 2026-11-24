@@ -2,7 +2,14 @@ from django.contrib import admin
 from django.utils import timezone
 from django.utils.html import format_html
 
-from .models import NewsletterSubscriber
+from .models import NewsletterSubscriber, PostAnnouncement
+
+
+@admin.register(PostAnnouncement)
+class PostAnnouncementAdmin(admin.ModelAdmin):
+    list_display = ["post", "status", "sent_count", "created_at", "sent_at"]
+    list_filter = ["status", "created_at"]
+    readonly_fields = ["delivered_to", "created_at", "sent_at"]
 
 
 @admin.register(NewsletterSubscriber)

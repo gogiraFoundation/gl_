@@ -1,3 +1,5 @@
+import logging
+
 from django.db.models import Q
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -8,12 +10,24 @@ from apps.blog.models import Post
 from apps.blog.serializers import PostListSerializer
 from apps.portfolio.models import Project
 from apps.portfolio.serializers import ProjectListSerializer
-from config.parsing import bounded_int
+from apps.resume.models import Experience, Skill
+from apps.resume.serializers import ExperienceSerializer, SkillSerializer
+from apps.testimonials.models import Testimonial
+from apps.testimonials.serializers import TestimonialListSerializer
+
+logger = logging.getLogger(__name__)
+
+MAX_QUERY_LENGTH = 200
+DEFAULT_LIMIT = 10
+MAX_LIMIT = 20
+ALLOWED_CONTENT_TYPES = frozenset(
+    {"all", "blog", "portfolio", "testimonials", "resume"}
+)
 
 
 class SearchViewSet(viewsets.ViewSet):
     """
-    Unified search across blog posts and portfolio projects.
+    Unified search across blog posts, portfolio projects, testimonials, and resume.
     """
 
     permission_classes = [AllowAny]
@@ -21,35 +35,80 @@ class SearchViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=["get"], url_path="")
     def search(self, request):
-        """
-        Search across blog posts and portfolio projects.
-
-        Query parameters:
-        - q: Search query (required)
-        - type: Filter by type ('blog', 'portfolio', or 'all')
-        - category: Filter by category ID
-        - limit: Limit results per type (default: 10)
-        """
-        query = request.query_params.get("q", "").strip()[:200]
+        query = request.query_params.get("q", "").strip()
         content_type = request.query_params.get("type", "all")
-        category_id = request.query_params.get("category")
-        limit = bounded_int(
-            request.query_params.get("limit", 10),
-            default=10,
-            minimum=1,
-            maximum=50,
-        )
+
+        empty = {
+            "query": "",
+            "blog_posts": [],
+            "projects": [],
+            "testimonials": [],
+            "resume": {"experience": [], "skills": []},
+            "total": 0,
+        }
 
         if not query:
-            return Response({"query": "", "blog_posts": [], "projects": [], "total": 0})
+            return Response(empty)
 
-        results = {"query": query, "blog_posts": [], "projects": [], "total": 0}
+        if content_type not in ALLOWED_CONTENT_TYPES:
+            return Response(
+                {
+                    "detail": (
+                        "type must be one of: all, blog, portfolio, "
+                        "testimonials, resume."
+                    )
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-        # Search blog posts
+        if len(query) > MAX_QUERY_LENGTH:
+            return Response(
+                {"detail": f"Query must be at most {MAX_QUERY_LENGTH} characters."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        limit_raw = request.query_params.get("limit", str(DEFAULT_LIMIT))
+        try:
+            limit = int(limit_raw)
+        except (TypeError, ValueError):
+            return Response(
+                {"detail": "limit must be an integer."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if limit < 1:
+            return Response(
+                {"detail": "limit must be at least 1."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        limit = min(limit, MAX_LIMIT)
+
+        category_id = request.query_params.get("category")
+        if category_id is not None and category_id != "":
+            try:
+                category_id = int(category_id)
+            except (TypeError, ValueError):
+                return Response(
+                    {"detail": "category must be an integer."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        else:
+            category_id = None
+
+        results = {
+            "query": query,
+            "blog_posts": [],
+            "projects": [],
+            "testimonials": [],
+            "resume": {"experience": [], "skills": []},
+            "total": 0,
+        }
+
         if content_type in ["all", "blog"]:
-            blog_query = Post.objects.filter(published=True)
-
-            # Apply search
+            blog_query = (
+                Post.objects.filter(published=True)
+                .select_related("author", "category")
+                .prefetch_related("tags")
+            )
             blog_query = blog_query.filter(
                 Q(title__icontains=query)
                 | Q(excerpt__icontains=query)
@@ -57,21 +116,18 @@ class SearchViewSet(viewsets.ViewSet):
                 | Q(tags__name__icontains=query)
                 | Q(category__name__icontains=query)
             ).distinct()
-
-            # Filter by category if provided
-            if category_id:
+            if category_id is not None:
                 blog_query = blog_query.filter(category_id=category_id)
-
-            blog_posts = blog_query[:limit]
             results["blog_posts"] = PostListSerializer(
-                blog_posts, many=True, context={"request": request}
+                blog_query[:limit], many=True, context={"request": request}
             ).data
 
-        # Search portfolio projects
         if content_type in ["all", "portfolio"]:
-            project_query = Project.objects.filter(published=True)
-
-            # Apply search
+            project_query = (
+                Project.objects.filter(published=True)
+                .select_related("category")
+                .prefetch_related("technologies")
+            )
             project_query = project_query.filter(
                 Q(title__icontains=query)
                 | Q(description__icontains=query)
@@ -79,32 +135,49 @@ class SearchViewSet(viewsets.ViewSet):
                 | Q(technologies__name__icontains=query)
                 | Q(category__name__icontains=query)
             ).distinct()
-
-            # Filter by category if provided
-            if category_id:
+            if category_id is not None:
                 project_query = project_query.filter(category_id=category_id)
-
-            projects = project_query[:limit]
             results["projects"] = ProjectListSerializer(
-                projects, many=True, context={"request": request}
+                project_query[:limit], many=True, context={"request": request}
             ).data
 
-        results["total"] = len(results["blog_posts"]) + len(results["projects"])
+        if content_type in ["all", "testimonials"]:
+            testimonials = Testimonial.objects.filter(published=True).filter(
+                Q(client_name__icontains=query)
+                | Q(company__icontains=query)
+                | Q(client_role__icontains=query)
+                | Q(content__icontains=query)
+            )[:limit]
+            results["testimonials"] = TestimonialListSerializer(
+                testimonials, many=True, context={"request": request}
+            ).data
 
-        # Track search event
+        if content_type in ["all", "resume"]:
+            experience = Experience.objects.filter(
+                Q(title__icontains=query) | Q(company__icontains=query)
+            )[:limit]
+            skills = Skill.objects.filter(name__icontains=query)[:limit]
+            results["resume"] = {
+                "experience": ExperienceSerializer(
+                    experience, many=True, context={"request": request}
+                ).data,
+                "skills": SkillSerializer(
+                    skills, many=True, context={"request": request}
+                ).data,
+            }
+
+        results["total"] = (
+            len(results["blog_posts"])
+            + len(results["projects"])
+            + len(results["testimonials"])
+            + len(results["resume"]["experience"])
+            + len(results["resume"]["skills"])
+        )
+
         try:
-            from django.utils import timezone
-
             from apps.analytics.models import Event
 
-            # Extract IP and user agent
-            ip_address = request.META.get("HTTP_X_FORWARDED_FOR")
-            if ip_address:
-                ip_address = ip_address.split(",")[0].strip()
-            else:
-                ip_address = request.META.get("REMOTE_ADDR", "")
-
-            user_agent = request.META.get("HTTP_USER_AGENT", "")
+            user_agent = (request.META.get("HTTP_USER_AGENT", "") or "")[:200]
             session_id = request.session.session_key or ""
 
             Event.objects.create(
@@ -117,11 +190,10 @@ class SearchViewSet(viewsets.ViewSet):
                     "results_count": results["total"],
                 },
                 user_agent=user_agent,
-                ip_address=ip_address,
+                ip_address=None,
                 session_id=session_id,
-                created_at=timezone.now(),
             )
         except Exception:
-            pass  # Silently fail if tracking doesn't work
+            logger.exception("Failed to track search analytics event")
 
         return Response(results)

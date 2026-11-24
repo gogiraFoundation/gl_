@@ -19,32 +19,37 @@ export function ScrollAnimation({
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      if (prefersReduced) {
+        setIsVisible(true)
+        return
+      }
+    }
+
     // Check if element is already visible on mount (above the fold)
     if (ref.current) {
       const rect = ref.current.getBoundingClientRect()
       const isInViewport = rect.top < window.innerHeight && rect.bottom > 0
 
       if (isInViewport) {
-        // Show immediately if already visible
         setIsVisible(true)
         return
       }
     }
 
-    // Use Intersection Observer for elements below the fold
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setTimeout(() => {
             setIsVisible(true)
           }, delay)
-          // Disconnect after animation to improve performance
           observer.disconnect()
         }
       },
       {
-        threshold: 0.01, // Trigger as soon as 1% is visible
-        rootMargin: '100px 0px 0px 0px', // Start animation 100px before element enters viewport
+        threshold: 0.01,
+        rootMargin: '100px 0px 0px 0px',
       }
     )
 
@@ -53,9 +58,6 @@ export function ScrollAnimation({
     }
 
     return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current)
-      }
       observer.disconnect()
     }
   }, [delay])

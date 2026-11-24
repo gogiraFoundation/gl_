@@ -13,6 +13,7 @@ from drf_spectacular.views import (
     SpectacularRedocView,
     SpectacularSwaggerView,
 )
+from rest_framework.permissions import AllowAny
 
 from apps.blog.feeds import BlogFeed, BlogRSSFeed
 from config.sitemaps import BlogSitemap, PortfolioSitemap, StaticSitemap
@@ -22,6 +23,9 @@ sitemaps = {
     "portfolio": PortfolioSitemap,
     "static": StaticSitemap,
 }
+
+# Docs stay public; DEFAULT_PERMISSION_CLASSES is IsAdminUser for API handlers.
+_schema_kwargs = {"permission_classes": [AllowAny]}
 
 
 def service_root(_request):
@@ -41,13 +45,21 @@ urlpatterns = [
     path("ckeditor5/", include("django_ckeditor_5.urls")),
     path("api/v1/", include("config.api_urls")),
     # API Documentation
-    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path(
+        "api/schema/",
+        SpectacularAPIView.as_view(**_schema_kwargs),
+        name="schema",
+    ),
     path(
         "api/docs/",
-        SpectacularSwaggerView.as_view(url_name="schema"),
+        SpectacularSwaggerView.as_view(url_name="schema", **_schema_kwargs),
         name="swagger-ui",
     ),
-    path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
+    path(
+        "api/redoc/",
+        SpectacularRedocView.as_view(url_name="schema", **_schema_kwargs),
+        name="redoc",
+    ),
     # RSS Feeds - Feed classes are callable views
     path("feed/", BlogRSSFeed(), name="blog_feed"),
     path("feed/atom/", BlogFeed(), name="blog_feed_atom"),

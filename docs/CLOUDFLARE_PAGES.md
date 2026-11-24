@@ -1,9 +1,12 @@
-# Cloudflare frontend (www.gogirlabs.uk)
+# Cloudflare frontend — Workers / OpenNext (www.gogirlabs.uk)
+
+Filename kept as `CLOUDFLARE_PAGES.md` for existing links. The live path is **Workers**, not classic Pages.
 
 - **Domain**: **www.gogirlabs.uk** (and apex → www)
 - **API**: **api.gogirlabs.uk** (homelab via ikon — see [HOMELAB_API.md](HOMELAB_API.md))
 - **App**: Next.js in `gogir-labs-fe`
 - **Adapter**: **OpenNext** (`@opennextjs/cloudflare`) on **Workers** — not Pages + `next-on-pages`
+- **Secrets**: `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` live only in GitHub Actions secrets (or local Wrangler auth). Do not commit them.
 
 ## Why Pages builds keep failing
 
@@ -88,7 +91,7 @@ Requires `npx wrangler login` (or API token env vars). Then attach `www.gogirlab
 
 | Variable | Value |
 |----------|--------|
-| `ALLOWED_HOSTS` | `api.gogirlabs.uk` |
+| `ALLOWED_HOSTS` | `api.gogirlabs.uk` (+ `localhost`, `127.0.0.1`, and `HOMELAB_BIND_IP` on the N4020) |
 | `CORS_ALLOWED_ORIGINS` | `https://www.gogirlabs.uk,https://gogirlabs.uk` |
 | `CSRF_TRUSTED_ORIGINS` | `https://www.gogirlabs.uk,https://gogirlabs.uk` |
 | `FRONTEND_URL` | `https://www.gogirlabs.uk` |

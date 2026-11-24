@@ -3,14 +3,14 @@ Notification service for sending notifications.
 """
 
 import logging
+from email.utils import formataddr
 from typing import Any, Dict, List, Optional
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
 from django.template import Context, Template
-from django.utils import timezone
 
 from .models import (
     Notification,
@@ -23,6 +23,15 @@ User = get_user_model()
 logger = logging.getLogger(__name__)
 
 
+def format_from_address(address: str, display_name: str = "") -> str:
+    """Build a From header. Addresses that already include a display name stay as-is."""
+    address = (address or "").strip()
+    display_name = (display_name or "").strip()
+    if not address or "<" in address or not display_name:
+        return address
+    return formataddr((display_name, address))
+
+
 class EmailService:
     """Service for rendering and sending emails."""
 
@@ -33,24 +42,42 @@ class EmailService:
         return template.render(Context(context))
 
     @staticmethod
+    def resolve_reply_to(reply_to: Optional[List[str]] = None) -> List[str]:
+        """Use the caller's Reply-To, or EMAIL_REPLY_TO when the caller passes None."""
+        if reply_to is not None:
+            return [addr for addr in reply_to if addr]
+        configured = (getattr(settings, "EMAIL_REPLY_TO", "") or "").strip()
+        return [configured] if configured else []
+
+    @staticmethod
     def send_email(
         recipient: str,
         subject: str,
         body: str,
         html_body: Optional[str] = None,
         from_email: Optional[str] = None,
+        reply_to: Optional[List[str]] = None,
     ) -> bool:
         """Send an email notification."""
         try:
-            from_email = from_email or settings.DEFAULT_FROM_EMAIL
-            send_mail(
+            if from_email:
+                sender = from_email
+            else:
+                sender = format_from_address(
+                    settings.DEFAULT_FROM_EMAIL,
+                    getattr(settings, "DEFAULT_FROM_NAME", ""),
+                )
+            reply_to_list = EmailService.resolve_reply_to(reply_to)
+            message = EmailMultiAlternatives(
                 subject=subject,
-                message=body,
-                from_email=from_email,
-                recipient_list=[recipient],
-                html_message=html_body,
-                fail_silently=False,
+                body=body,
+                from_email=sender,
+                to=[recipient],
+                reply_to=reply_to_list or None,
             )
+            if html_body:
+                message.attach_alternative(html_body, "text/html")
+            message.send(fail_silently=False)
             return True
         except Exception as e:
             logger.error("Failed to send email notification: %s", e)
@@ -63,11 +90,14 @@ class EmailService:
         body: str,
         html_body: Optional[str] = None,
         from_email: Optional[str] = None,
+        reply_to: Optional[List[str]] = None,
     ) -> int:
         """Send email to multiple recipients."""
         success_count = 0
         for recipient in recipients:
-            if EmailService.send_email(recipient, subject, body, html_body, from_email):
+            if EmailService.send_email(
+                recipient, subject, body, html_body, from_email, reply_to
+            ):
                 success_count += 1
         return success_count
 
@@ -149,6 +179,36 @@ class NotificationService:
         )
 
     @staticmethod
+    def send_template_to_address(
+        recipient: str,
+        notification_type: str,
+        context: Dict[str, Any],
+        custom_subject: Optional[str] = None,
+        custom_body: Optional[str] = None,
+    ) -> bool:
+        """Send a templated email to an address that may not have a User account."""
+        try:
+            template = NotificationTemplate.objects.get(
+                notification_type=notification_type, enabled=True
+            )
+        except NotificationTemplate.DoesNotExist:
+            subject = custom_subject or f"Notification: {notification_type}"
+            body = custom_body or context.get("message", "You have a new notification.")
+            html_body = None
+        else:
+            subject = EmailService.render_template(template.subject_template, context)
+            body = EmailService.render_template(template.body_template, context)
+            html_body = (
+                EmailService.render_template(template.html_template, context)
+                if template.html_template
+                else None
+            )
+
+        return EmailService.send_email(
+            recipient=recipient, subject=subject, body=body, html_body=html_body
+        )
+
+    @staticmethod
     def send_notification(
         user: User,
         notification_type: str,
@@ -217,6 +277,7 @@ class NotificationService:
         title: str,
         message: str,
         data: Optional[Dict[str, Any]] = None,
+        related_object: Optional[Any] = None,
         send_email: Optional[bool] = None,
         send_in_app: Optional[bool] = None,
     ) -> List[Notification]:
@@ -229,6 +290,7 @@ class NotificationService:
                 title=title,
                 message=message,
                 data=data,
+                related_object=related_object,
                 send_email=send_email,
                 send_in_app=send_in_app,
             )
@@ -243,6 +305,8 @@ class NotificationService:
         message: str,
         data: Optional[Dict[str, Any]] = None,
         related_object: Optional[Any] = None,
+        send_email: Optional[bool] = None,
+        send_in_app: Optional[bool] = None,
     ) -> List[Notification]:
         """Send notification to all admin users."""
         admin_users = User.objects.filter(is_staff=True, is_active=True)
@@ -252,4 +316,7 @@ class NotificationService:
             title=title,
             message=message,
             data=data,
+            related_object=related_object,
+            send_email=send_email,
+            send_in_app=send_in_app,
         )

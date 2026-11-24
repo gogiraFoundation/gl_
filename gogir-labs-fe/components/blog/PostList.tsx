@@ -28,11 +28,14 @@ function PostSkeleton() {
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
       {[...Array(6)].map((_, i) => (
-        <div key={i} className="glass h-80 animate-pulse rounded-2xl p-6">
-          <div className="mb-4 h-48 rounded-lg bg-gray-700"></div>
-          <div className="mb-2 h-4 w-3/4 rounded bg-gray-700"></div>
-          <div className="mb-2 h-4 w-full rounded bg-gray-700"></div>
-          <div className="h-4 w-5/6 rounded bg-gray-700"></div>
+        <div
+          key={i}
+          className="h-80 animate-pulse border border-brutal-ink/15 bg-brutal-bg p-6 motion-reduce:animate-none"
+        >
+          <div className="mb-4 h-48 bg-brutal-ink/10"></div>
+          <div className="mb-2 h-4 w-3/4 bg-brutal-ink/10"></div>
+          <div className="mb-2 h-4 w-full bg-brutal-ink/10"></div>
+          <div className="h-4 w-5/6 bg-brutal-ink/10"></div>
         </div>
       ))}
     </div>
@@ -48,7 +51,7 @@ export function PostList({ posts, isLoading }: PostListProps) {
   // No posts state
   if (!posts || posts.length === 0) {
     return (
-      <div className="py-12 text-center text-gray-400">
+      <div className="py-12 text-left text-brutal-muted">
         No posts found. Try adjusting your filters.
       </div>
     )
@@ -65,9 +68,9 @@ export function PostList({ posts, isLoading }: PostListProps) {
       {/* Featured Posts */}
       {hasFeatured && (
         <section aria-label="Featured Posts" className="space-y-6">
-          <div className="mb-4 text-center">
-            <span className="text-sm font-semibold uppercase tracking-wide text-blue-400">
-              Featured Post{featuredPosts.length > 1 ? 's' : ''}
+          <div className="mb-4 text-left">
+            <span className="text-sm font-semibold uppercase tracking-wide text-brutal-muted">
+              Featured post{featuredPosts.length > 1 ? 's' : ''}
             </span>
           </div>
           <div
@@ -78,7 +81,7 @@ export function PostList({ posts, isLoading }: PostListProps) {
             }
           >
             {featuredPosts.map((post, i) => (
-              <ScrollAnimation key={post.id} animationType="fade-in" delay={i * 50}>
+              <ScrollAnimation key={post.id} animationType="fade-in" delay={Math.min(i, 3) * 50}>
                 <PostCard post={post} featured={true} />
               </ScrollAnimation>
             ))}
@@ -90,19 +93,15 @@ export function PostList({ posts, isLoading }: PostListProps) {
       {hasRegular && (
         <section aria-label="All Posts" className="space-y-6">
           {hasFeatured && (
-            <div className="mb-4 text-center">
-              <span className="text-sm font-semibold uppercase tracking-wide text-purple-400">
-                All Posts
+            <div className="mb-4 text-left">
+              <span className="text-sm font-semibold uppercase tracking-wide text-brutal-muted">
+                All posts
               </span>
             </div>
           )}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {regularPosts.map((post, i) => (
-              <ScrollAnimation
-                key={post.id}
-                animationType="fade-in"
-                delay={(i + featuredPosts.length) * 50}
-              >
+              <ScrollAnimation key={post.id} animationType="fade-in" delay={Math.min(i, 3) * 50}>
                 <PostCard post={post} featured={false} />
               </ScrollAnimation>
             ))}

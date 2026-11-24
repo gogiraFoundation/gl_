@@ -1,11 +1,14 @@
-from django.db.models import Count, Q
+from django.db import IntegrityError
+from django.db.models import Count
 from django.utils import timezone
-from rest_framework import generics, status, viewsets
+from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .models import Notification, NotificationPreference, NotificationType
+from config.pagination import StaffListPagination
+
+from .models import Notification, NotificationPreference
 from .serializers import (
     NotificationListSerializer,
     NotificationPreferenceSerializer,
@@ -13,12 +16,19 @@ from .serializers import (
 )
 
 
-class NotificationViewSet(viewsets.ModelViewSet):
+class NotificationViewSet(
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet,
+):
     """
-    ViewSet for managing user notifications.
+    List, retrieve, and delete notifications for the current user.
+    Notifications are created by the service layer, not by clients.
     """
 
     permission_classes = [IsAuthenticated]
+    pagination_class = StaffListPagination
 
     def get_queryset(self):
         """Return notifications for the current user."""
@@ -89,8 +99,20 @@ class NotificationPreferenceViewSet(viewsets.ModelViewSet):
         """Return preferences for the current user."""
         return NotificationPreference.objects.filter(user=self.request.user)
 
-    def get_serializer(self, *args, **kwargs):
-        """Ensure user is set automatically."""
-        if "data" in kwargs:
-            kwargs["data"] = {**kwargs["data"], "user": self.request.user.id}
-        return super().get_serializer(*args, **kwargs)
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            self.perform_create(serializer)
+        except IntegrityError:
+            return Response(
+                {"detail": "A preference for this notification type already exists."},
+                status=status.HTTP_409_CONFLICT,
+            )
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )

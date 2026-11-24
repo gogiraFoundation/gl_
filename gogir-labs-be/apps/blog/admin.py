@@ -35,8 +35,13 @@ class PostAdmin(admin.ModelAdmin):
     actions = ["publish_posts", "unpublish_posts", "mark_featured", "unmark_featured"]
 
     def publish_posts(self, request, queryset):
-        """Bulk publish selected posts."""
-        count = queryset.update(published=True)
+        """Bulk publish selected posts via save() so published_at and notifications run."""
+        count = 0
+        for post in queryset:
+            if not post.published:
+                post.published = True
+                post.save()
+                count += 1
         self.message_user(request, f"{count} post(s) published successfully.")
 
     publish_posts.short_description = "Publish selected posts"

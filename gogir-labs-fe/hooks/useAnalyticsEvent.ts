@@ -3,7 +3,7 @@
 import { useCallback } from 'react'
 import { useAnalytics } from '@/contexts/AnalyticsContext'
 
-export type EventType = 'click' | 'download' | 'form_submit' | 'video_play' | 'custom'
+export type EventType = 'click' | 'download' | 'form_submit' | 'video_play' | 'search' | 'custom'
 
 interface TrackEventOptions {
   eventType?: EventType

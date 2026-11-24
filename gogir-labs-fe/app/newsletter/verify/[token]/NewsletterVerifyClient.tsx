@@ -1,25 +1,33 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
-import { GradientText } from '@/components/ui/GradientText'
-import { CheckCircle, XCircle, Loader2 } from 'lucide-react'
+import { CheckCircle, XCircle, Loader2, Mail } from 'lucide-react'
 import api from '@/lib/api'
+
+const primaryBtn = 'btn-brutal btn-brutal-md'
+const secondaryBtn = 'btn-brutal btn-brutal-md w-full'
 
 export default function NewsletterVerifyClient() {
   const params = useParams()
   const router = useRouter()
   const token = params.token as string
-  const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [message, setMessage] = useState('')
 
-  const verifyEmail = useCallback(async (verificationToken: string) => {
+  const verifyEmail = async () => {
+    if (!token) {
+      setStatus('error')
+      setMessage('Missing verification token.')
+      return
+    }
+    setStatus('loading')
     try {
-      const response = await api.get(`/newsletter/verify/${verificationToken}/`)
+      const response = await api.post(`/newsletter/verify/${token}/`)
       setStatus('success')
-      setMessage(response.data.message || 'Email verified successfully!')
+      setMessage(response.data.message || 'Email verified successfully.')
     } catch (error: unknown) {
       setStatus('error')
       const err = error as { response?: { data?: { error?: string; message?: string } } }
@@ -28,80 +36,92 @@ export default function NewsletterVerifyClient() {
       } else if (err.response?.data?.message) {
         setMessage(err.response.data.message)
       } else {
-        setMessage('Failed to verify email. The verification link may be invalid or expired.')
+        setMessage('Verification failed. The link may be invalid or expired.')
       }
     }
-  }, [])
-
-  useEffect(() => {
-    if (token) {
-      verifyEmail(token)
-    }
-  }, [token, verifyEmail])
+  }
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-brutal-bg text-brutal-ink">
       <Header />
-      <main className="relative flex-grow px-4 py-20">
-        {/* Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-mesh opacity-30"></div>
-
-        <div className="relative z-10 mx-auto max-w-2xl">
-          <div className="mb-12 animate-fade-in-up text-center">
-            <h1 className="mb-4 text-4xl font-bold sm:text-5xl md:text-6xl">
-              <GradientText>Email Verification</GradientText>
+      <main className="flex-grow px-6 py-16 md:py-24 lg:px-8">
+        <div className="mx-auto max-w-2xl">
+          <header className="mb-10 text-left">
+            <h1 className="mb-2 font-serif text-4xl font-semibold tracking-tight sm:text-5xl">
+              Email verification
             </h1>
-          </div>
+            <p className="text-left text-base text-brutal-muted">
+              Confirm your newsletter subscription.
+            </p>
+          </header>
 
-          <div className="glass scroll-fade-in rounded-2xl p-8 text-center">
+          <div className="border border-brutal-ink bg-brutal-bg p-6 text-left md:p-8">
+            {status === 'idle' && (
+              <div>
+                <div className="mb-6 inline-flex h-14 w-14 items-center justify-center border border-brutal-ink">
+                  <Mail className="h-7 w-7 text-brutal-ink" aria-hidden />
+                </div>
+                <h2 className="mb-4 font-serif text-2xl font-semibold">Confirm your email</h2>
+                <p className="mb-6 text-base leading-relaxed text-brutal-muted">
+                  Click below to verify ownership of this mailbox. Your subscription stays inactive
+                  until you confirm.
+                </p>
+                <button type="button" onClick={verifyEmail} className={primaryBtn}>
+                  Verify email address
+                </button>
+              </div>
+            )}
+
             {status === 'loading' && (
               <div>
-                <div className="mb-6 inline-block rounded-full bg-purple-500/20 p-4">
-                  <Loader2 className="h-12 w-12 animate-spin text-purple-400" />
+                <div className="mb-6 inline-flex h-14 w-14 items-center justify-center border border-brutal-ink">
+                  <Loader2 className="h-7 w-7 animate-spin text-brutal-ink" aria-hidden />
                 </div>
-                <h2 className="mb-4 text-2xl font-bold text-white">Verifying your email...</h2>
-                <p className="text-gray-300">Please wait while we verify your subscription.</p>
+                <h2 className="mb-4 font-serif text-2xl font-semibold">Verifying…</h2>
+                <p className="text-base text-brutal-muted">Please wait a moment.</p>
               </div>
             )}
 
             {status === 'success' && (
               <div>
-                <div className="mb-6 inline-block rounded-full bg-green-500/20 p-4">
-                  <CheckCircle className="h-12 w-12 text-green-400" />
+                <div className="mb-6 inline-flex h-14 w-14 items-center justify-center border border-brutal-ink">
+                  <CheckCircle className="h-7 w-7 text-brutal-ink" aria-hidden />
                 </div>
-                <h2 className="mb-4 text-2xl font-bold text-white">Email Verified!</h2>
-                <p className="mb-6 text-gray-300">{message}</p>
-                <p className="mb-6 text-sm text-gray-400">
-                  You're all set! You'll start receiving our newsletter updates.
-                </p>
-                <button
-                  onClick={() => router.push('/')}
-                  className="rounded-lg bg-gradient-primary px-6 py-3 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-glow-purple"
-                >
-                  Go to Homepage
+                <h2 className="mb-4 font-serif text-2xl font-semibold">Email verified</h2>
+                <p className="mb-6 text-base leading-relaxed text-brutal-muted">{message}</p>
+                <button type="button" onClick={() => router.push('/')} className={primaryBtn}>
+                  Back to home
                 </button>
               </div>
             )}
 
             {status === 'error' && (
               <div>
-                <div className="mb-6 inline-block rounded-full bg-red-500/20 p-4">
-                  <XCircle className="h-12 w-12 text-red-400" />
+                <div className="mb-6 inline-flex h-14 w-14 items-center justify-center border border-brutal-ink">
+                  <XCircle className="h-7 w-7 text-brutal-ink" aria-hidden />
                 </div>
-                <h2 className="mb-4 text-2xl font-bold text-white">Verification Failed</h2>
-                <p className="mb-6 text-gray-300">{message}</p>
+                <h2 className="mb-4 font-serif text-2xl font-semibold">Verification failed</h2>
+                <p className="mb-6 text-base leading-relaxed text-brutal-muted">{message}</p>
                 <div className="space-y-3">
                   <button
-                    onClick={() => router.push('/newsletter/subscribe')}
-                    className="rounded-lg bg-gradient-primary px-6 py-3 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-glow-purple"
+                    type="button"
+                    onClick={() => {
+                      setStatus('idle')
+                      setMessage('')
+                    }}
+                    className={primaryBtn}
                   >
-                    Subscribe Again
+                    Try again
                   </button>
                   <button
-                    onClick={() => router.push('/')}
-                    className="block w-full rounded-lg border-2 border-purple-500 px-6 py-3 font-semibold text-purple-400 transition-all duration-300 hover:bg-purple-500/10"
+                    type="button"
+                    onClick={() => router.push('/newsletter/subscribe')}
+                    className={secondaryBtn}
                   >
-                    Go to Homepage
+                    Subscribe again
+                  </button>
+                  <button type="button" onClick={() => router.push('/')} className={secondaryBtn}>
+                    Back to home
                   </button>
                 </div>
               </div>
