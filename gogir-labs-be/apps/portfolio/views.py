@@ -1,8 +1,11 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+
+from config.parsing import bounded_int
+from config.permissions import IsStaffOrReadOnly
 
 from .models import Category, Project, Technology
 from .serializers import (
@@ -23,7 +26,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         .select_related("category")
         .prefetch_related("technologies", "images")
     )
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsStaffOrReadOnly]
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
@@ -81,7 +84,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def related(self, request, pk=None):
         """Get related projects based on technologies and category."""
         project = self.get_object()
-        limit = int(request.query_params.get("limit", 3))
+        limit = bounded_int(
+            request.query_params.get("limit", 3),
+            default=3,
+            minimum=1,
+            maximum=12,
+        )
 
         # Get projects with same technologies or category
         related_projects = Project.objects.filter(published=True).exclude(pk=project.pk)

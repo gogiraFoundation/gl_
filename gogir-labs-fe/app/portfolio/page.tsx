@@ -6,6 +6,7 @@ import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { ProjectGrid } from '@/components/portfolio/ProjectGrid'
 import { ProjectFilters } from '@/components/portfolio/ProjectFilters'
+import { FetchError, describeQueryError } from '@/components/ui/FetchError'
 import Link from 'next/link'
 import api from '@/lib/api'
 
@@ -61,6 +62,7 @@ export default function PortfolioPage() {
     isLoading,
     error,
     isFetching,
+    refetch,
   } = useQuery<Project[]>({
     queryKey: ['projects', selectedCategory, selectedTechnology, searchQuery],
     queryFn: async () => {
@@ -87,6 +89,7 @@ export default function PortfolioPage() {
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false,
+    retry: 1,
   })
   const typedProjects = (projects ?? []) as Project[]
 
@@ -132,15 +135,16 @@ export default function PortfolioPage() {
             onSearchChange={setSearchQuery}
           />
 
-          {(isLoading || isFetching) && !typedProjects.length ? (
+          {(isLoading || isFetching) && !typedProjects.length && !error ? (
             <div className="py-12 text-center font-sans text-brutal-muted">Loading projects…</div>
-          ) : error ? (
-            <div className="py-12 text-center text-red-700">
-              <p className="mb-2 font-medium">Error loading projects</p>
-              <p className="text-sm text-brutal-muted">
-                {error instanceof Error ? error.message : 'Unknown error'}
-              </p>
-            </div>
+          ) : error && !typedProjects.length ? (
+            <FetchError
+              title="Couldn't load projects"
+              message={describeQueryError(error)}
+              onRetry={() => {
+                void refetch()
+              }}
+            />
           ) : (
             <ProjectGrid projects={typedProjects} />
           )}

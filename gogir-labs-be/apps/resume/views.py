@@ -1,3 +1,5 @@
+from xml.sax.saxutils import escape
+
 from django.http import HttpResponse
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_LEFT
@@ -13,9 +15,10 @@ from reportlab.platypus import (
     TableStyle,
 )
 from rest_framework import viewsets
-from rest_framework.decorators import action
+from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.throttling import AnonRateThrottle
 
 from .models import Certification, Education, Experience, Skill
 from .serializers import (
@@ -58,6 +61,18 @@ class SkillViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [AllowAny]
 
 
+class ResumeDownloadThrottle(AnonRateThrottle):
+    scope = "resume_download"
+
+
+def _pdf(value) -> str:
+    """Escape resume text before it is placed in a ReportLab paragraph."""
+    return escape("" if value is None else str(value))
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+@throttle_classes([ResumeDownloadThrottle])
 def download_resume_pdf(request):
     """Generate and download resume as PDF."""
     from io import BytesIO
@@ -114,9 +129,9 @@ def download_resume_pdf(request):
         story.append(Paragraph("EXPERIENCE", heading_style))
         for exp in experience:
             # Title and Company
-            title_text = f"<b>{exp.title}</b> - {exp.company}"
+            title_text = f"<b>{_pdf(exp.title)}</b> - {_pdf(exp.company)}"
             if exp.location:
-                title_text += f" | {exp.location}"
+                title_text += f" | {_pdf(exp.location)}"
             story.append(Paragraph(title_text, normal_style))
 
             # Date range
@@ -134,12 +149,14 @@ def download_resume_pdf(request):
             # Description
             if exp.description:
                 story.append(
-                    Paragraph(exp.description.replace("\n", "<br/>"), normal_style)
+                    Paragraph(
+                        _pdf(exp.description).replace("\n", "<br/>"), normal_style
+                    )
                 )
 
             # Technologies
             if exp.technologies:
-                tech_text = f"<b>Technologies:</b> {exp.technologies}"
+                tech_text = f"<b>Technologies:</b> {_pdf(exp.technologies)}"
                 story.append(Paragraph(tech_text, normal_style))
 
             story.append(Spacer(1, 0.2 * inch))
@@ -149,15 +166,17 @@ def download_resume_pdf(request):
         story.append(PageBreak())
         story.append(Paragraph("EDUCATION", heading_style))
         for edu in education:
-            story.append(Paragraph(f"<b>{edu.degree}</b>", normal_style))
-            story.append(Paragraph(edu.institution, normal_style))
+            story.append(Paragraph(f"<b>{_pdf(edu.degree)}</b>", normal_style))
+            story.append(Paragraph(_pdf(edu.institution), normal_style))
             if edu.field_of_study:
-                story.append(Paragraph(edu.field_of_study, normal_style))
+                story.append(Paragraph(_pdf(edu.field_of_study), normal_style))
             if edu.gpa:
-                story.append(Paragraph(f"GPA: {edu.gpa}", normal_style))
+                story.append(Paragraph(f"GPA: {_pdf(edu.gpa)}", normal_style))
             if edu.description:
                 story.append(
-                    Paragraph(edu.description.replace("\n", "<br/>"), normal_style)
+                    Paragraph(
+                        _pdf(edu.description).replace("\n", "<br/>"), normal_style
+                    )
                 )
             story.append(Spacer(1, 0.2 * inch))
 
@@ -166,8 +185,8 @@ def download_resume_pdf(request):
         story.append(PageBreak())
         story.append(Paragraph("CERTIFICATIONS", heading_style))
         for cert in certifications:
-            story.append(Paragraph(f"<b>{cert.name}</b>", normal_style))
-            story.append(Paragraph(cert.issuer, normal_style))
+            story.append(Paragraph(f"<b>{_pdf(cert.name)}</b>", normal_style))
+            story.append(Paragraph(_pdf(cert.issuer), normal_style))
             if cert.issue_date:
                 issue_date = cert.issue_date.strftime("%B %Y")
                 if cert.expiry_date:
@@ -182,7 +201,9 @@ def download_resume_pdf(request):
                     story.append(Paragraph(f"Issued: {issue_date}", normal_style))
             if cert.credential_id:
                 story.append(
-                    Paragraph(f"Credential ID: {cert.credential_id}", normal_style)
+                    Paragraph(
+                        f"Credential ID: {_pdf(cert.credential_id)}", normal_style
+                    )
                 )
             story.append(Spacer(1, 0.2 * inch))
 
@@ -208,9 +229,9 @@ def download_resume_pdf(request):
             skill_names = []
             for s in category_skills:
                 if s.proficiency is not None:
-                    skill_names.append(f"{s.name} ({s.proficiency}/10)")
+                    skill_names.append(f"{_pdf(s.name)} ({_pdf(s.proficiency)}/10)")
                 else:
-                    skill_names.append(s.name)
+                    skill_names.append(_pdf(s.name))
             story.append(Paragraph(", ".join(skill_names), normal_style))
             story.append(Spacer(1, 0.15 * inch))
 

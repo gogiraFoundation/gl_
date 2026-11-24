@@ -5,7 +5,9 @@ import { useParams } from 'next/navigation'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { ProjectContent } from '@/components/portfolio/ProjectContent'
+import { FetchError, describeQueryError } from '@/components/ui/FetchError'
 import api from '@/lib/api'
+import axios from 'axios'
 import { useEffect } from 'react'
 
 interface Project {
@@ -35,6 +37,7 @@ export default function PortfolioProjectClient() {
     data: project,
     isLoading,
     error,
+    refetch,
   } = useQuery<Project>({
     queryKey: ['project', slug],
     queryFn: async () => {
@@ -76,17 +79,31 @@ export default function PortfolioProjectClient() {
   }
 
   if (error || !project) {
+    const status = axios.isAxiosError(error) ? error.response?.status : undefined
+    const missing = status === 404
     return (
       <div className="flex min-h-screen flex-col bg-brutal-bg">
         <Header />
         <main className="flex-grow px-4 py-12">
-          <div className="mx-auto max-w-4xl text-center">
-            <h1 className="mb-4 font-serif text-2xl font-semibold text-brutal-ink">
-              Project not found
-            </h1>
-            <p className="text-brutal-muted">
-              The project you&apos;re looking for doesn&apos;t exist or has been removed.
-            </p>
+          <div className="mx-auto max-w-4xl">
+            {missing ? (
+              <div className="text-center">
+                <h1 className="mb-4 font-serif text-2xl font-semibold text-brutal-ink">
+                  Project not found
+                </h1>
+                <p className="text-brutal-muted">
+                  The project you&apos;re looking for doesn&apos;t exist or has been removed.
+                </p>
+              </div>
+            ) : (
+              <FetchError
+                title="Couldn't load this project"
+                message={describeQueryError(error)}
+                onRetry={() => {
+                  void refetch()
+                }}
+              />
+            )}
           </div>
         </main>
         <Footer />

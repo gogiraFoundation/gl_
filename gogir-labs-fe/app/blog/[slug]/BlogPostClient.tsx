@@ -4,10 +4,12 @@ import { useQuery } from '@tanstack/react-query'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { PostContent } from '@/components/blog/PostContent'
+import { FetchError, describeQueryError } from '@/components/ui/FetchError'
 import api from '@/lib/api'
+import axios from 'axios'
 import { useEffect } from 'react'
 
-interface Post {
+export interface Post {
   id: number
   title: string
   slug: string
@@ -27,13 +29,15 @@ interface Post {
 
 interface BlogPostClientProps {
   slug: string
+  initialPost?: Post | null
 }
 
-export default function BlogPostClient({ slug }: BlogPostClientProps) {
+export default function BlogPostClient({ slug, initialPost = null }: BlogPostClientProps) {
   const {
     data: post,
     isLoading,
     error,
+    refetch,
   } = useQuery<Post>({
     queryKey: ['post', slug],
     queryFn: async () => {
@@ -52,6 +56,7 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
         throw err
       }
     },
+    initialData: initialPost ?? undefined,
     enabled: true,
     retry: 1,
   })
@@ -145,15 +150,31 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
   }
 
   if (error || !post) {
+    const status = axios.isAxiosError(error) ? error.response?.status : undefined
+    const missing = status === 404
     return (
       <div className="flex min-h-screen flex-col">
         <Header />
         <main className="flex-grow px-4 py-12">
-          <div className="mx-auto max-w-4xl text-center">
-            <h1 className="mb-4 text-2xl font-bold">Post not found</h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              The blog post you're looking for doesn't exist or has been removed.
-            </p>
+          <div className="mx-auto max-w-4xl">
+            {missing ? (
+              <div className="text-center">
+                <h1 className="mb-4 font-serif text-2xl font-semibold text-brutal-ink">
+                  Post not found
+                </h1>
+                <p className="text-brutal-muted">
+                  The blog post you&apos;re looking for doesn&apos;t exist or has been removed.
+                </p>
+              </div>
+            ) : (
+              <FetchError
+                title="Couldn't load this post"
+                message={describeQueryError(error)}
+                onRetry={() => {
+                  void refetch()
+                }}
+              />
+            )}
           </div>
         </main>
         <Footer />

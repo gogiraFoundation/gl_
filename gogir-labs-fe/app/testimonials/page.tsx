@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { TestimonialCard } from '@/components/testimonials/TestimonialCard'
+import { FetchError, describeQueryError } from '@/components/ui/FetchError'
 import api from '@/lib/api'
 import { useEffect } from 'react'
 import { Quote } from 'lucide-react'
@@ -22,13 +23,19 @@ interface Testimonial {
 }
 
 export default function TestimonialsPage() {
-  const { data: testimonials = [], isLoading } = useQuery<Testimonial[]>({
+  const {
+    data: testimonials = [],
+    isLoading,
+    error,
+    refetch,
+  } = useQuery<Testimonial[]>({
     queryKey: ['testimonials'],
     queryFn: async () => {
       const response = await api.get('/testimonials/', { params: { published: true } })
       return response.data.results || response.data
     },
     staleTime: 10 * 60 * 1000,
+    retry: 1,
   })
 
   useEffect(() => {
@@ -53,6 +60,14 @@ export default function TestimonialsPage() {
 
           {isLoading ? (
             <div className="py-12 text-center text-gray-400">Loading testimonials...</div>
+          ) : error ? (
+            <FetchError
+              title="Couldn't load testimonials"
+              message={describeQueryError(error)}
+              onRetry={() => {
+                void refetch()
+              }}
+            />
           ) : testimonials.length === 0 ? (
             <div className="py-12 text-center">
               <p className="text-gray-400">No testimonials available yet.</p>

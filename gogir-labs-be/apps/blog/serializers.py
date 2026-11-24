@@ -114,6 +114,8 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class CommentCreateSerializer(serializers.ModelSerializer):
+    content = serializers.CharField(max_length=5000)
+
     class Meta:
         model = Comment
         fields = ["post", "name", "email", "content"]

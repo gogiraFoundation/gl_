@@ -6,11 +6,12 @@ import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { PostList } from '@/components/blog/PostList'
 import { BlogFilters } from '@/components/blog/BlogFilters'
+import { FetchError, describeQueryError } from '@/components/ui/FetchError'
 import { useState } from 'react'
 import Link from 'next/link'
 import api from '@/lib/api'
 
-interface Post {
+export interface Post {
   id: number
   title: string
   slug: string
@@ -26,23 +27,34 @@ interface Post {
   published_at: string | null
 }
 
-interface Category {
+export interface Category {
   id: number
   name: string
   slug: string
 }
 
-interface Tag {
+export interface Tag {
   id: number
   name: string
   slug: string
 }
 
-export default function BlogClient() {
+interface BlogClientProps {
+  initialPosts?: Post[] | null
+  initialCategories?: Category[] | null
+  initialTags?: Tag[] | null
+}
+
+export default function BlogClient({
+  initialPosts = null,
+  initialCategories = null,
+  initialTags = null,
+}: BlogClientProps) {
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
   const [selectedTag, setSelectedTag] = useState<number | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedSearch] = useDebounce(searchQuery, 400)
+  const unfiltered = selectedCategory == null && selectedTag == null && !debouncedSearch
 
   // Improved query key structure with object for stable hashing
   const {
@@ -50,6 +62,7 @@ export default function BlogClient() {
     isLoading,
     isFetching,
     error,
+    refetch,
   } = useQuery<Post[]>({
     queryKey: [
       'posts',
@@ -92,8 +105,10 @@ export default function BlogClient() {
         throw err
       }
     },
+    initialData: unfiltered && initialPosts ? initialPosts : undefined,
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: false,
+    retry: 1,
   })
 
   const typedPosts = (posts ?? []) as Post[]
@@ -104,8 +119,10 @@ export default function BlogClient() {
       const response = await api.get('/blog/categories/')
       return response.data.results || response.data
     },
+    initialData: initialCategories ?? undefined,
     staleTime: 1000 * 60 * 10, // 10 minutes - categories change rarely
     refetchOnWindowFocus: false,
+    retry: 1,
   })
 
   const { data: tags } = useQuery<Tag[]>({
@@ -114,8 +131,10 @@ export default function BlogClient() {
       const response = await api.get('/blog/tags/')
       return response.data.results || response.data
     },
+    initialData: initialTags ?? undefined,
     staleTime: 1000 * 60 * 10, // 10 minutes - tags change rarely
     refetchOnWindowFocus: false,
+    retry: 1,
   })
 
   return (
@@ -145,20 +164,20 @@ export default function BlogClient() {
             onSearchChange={setSearchQuery}
           />
 
-          {error && (
-            <div className="mb-8 rounded-lg border border-red-500/50 bg-red-500/20 p-4 text-red-300">
-              <p className="mb-2 font-semibold">Error loading posts</p>
-              <p className="text-sm">
-                {error instanceof Error ? error.message : 'An unexpected error occurred'}
-              </p>
-              <p className="mt-2 text-xs opacity-75">Check the browser console for more details.</p>
-            </div>
+          {error && typedPosts.length === 0 ? (
+            <FetchError
+              title="Couldn't load posts"
+              message={describeQueryError(error)}
+              onRetry={() => {
+                void refetch()
+              }}
+            />
+          ) : (
+            <PostList
+              posts={Array.isArray(typedPosts) ? typedPosts : []}
+              isLoading={isLoading || (isFetching && !typedPosts.length)}
+            />
           )}
-
-          <PostList
-            posts={Array.isArray(typedPosts) ? typedPosts : []}
-            isLoading={isLoading || (isFetching && !typedPosts.length)}
-          />
 
           {/* Optional: Newsletter or Follow CTA */}
           <div className="mt-16 flex justify-center px-4">

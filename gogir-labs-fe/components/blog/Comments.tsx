@@ -36,13 +36,19 @@ export function Comments({ postId }: CommentsProps) {
   const { trackFormSubmit } = useAnalyticsEvent()
   const queryClient = useQueryClient()
 
-  const { data: comments = [], isLoading } = useQuery<Comment[]>({
+  const {
+    data: comments = [],
+    isLoading,
+    error,
+    refetch,
+  } = useQuery<Comment[]>({
     queryKey: ['comments', postId],
     queryFn: async () => {
       const response = await api.get(`/blog/posts/${postId}/comments/`)
       return response.data
     },
     staleTime: 5 * 60 * 1000,
+    retry: 1,
   })
 
   const {
@@ -236,6 +242,19 @@ export function Comments({ postId }: CommentsProps) {
       {/* Comments List */}
       {isLoading ? (
         <div className="py-8 text-center text-brutal-muted">Loading comments...</div>
+      ) : error ? (
+        <div className="py-8 text-center" role="alert">
+          <p className="mb-2 text-brutal-ink">Comments could not be loaded.</p>
+          <button
+            type="button"
+            onClick={() => {
+              void refetch()
+            }}
+            className="text-sm font-semibold text-brutal-ink underline underline-offset-4"
+          >
+            Try again
+          </button>
+        </div>
       ) : comments.length === 0 ? (
         <div className="py-8 text-center text-brutal-muted">
           No comments yet. Be the first to comment!

@@ -4,11 +4,11 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from apps.analytics.models import Event
 from apps.blog.models import Post
 from apps.blog.serializers import PostListSerializer
 from apps.portfolio.models import Project
 from apps.portfolio.serializers import ProjectListSerializer
+from config.parsing import bounded_int
 
 
 class SearchViewSet(viewsets.ViewSet):
@@ -30,10 +30,15 @@ class SearchViewSet(viewsets.ViewSet):
         - category: Filter by category ID
         - limit: Limit results per type (default: 10)
         """
-        query = request.query_params.get("q", "").strip()
+        query = request.query_params.get("q", "").strip()[:200]
         content_type = request.query_params.get("type", "all")
         category_id = request.query_params.get("category")
-        limit = int(request.query_params.get("limit", 10))
+        limit = bounded_int(
+            request.query_params.get("limit", 10),
+            default=10,
+            minimum=1,
+            maximum=50,
+        )
 
         if not query:
             return Response({"query": "", "blog_posts": [], "projects": [], "total": 0})

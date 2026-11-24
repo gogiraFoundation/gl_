@@ -8,6 +8,7 @@ from rest_framework.response import Response
 
 from apps.notifications.models import NotificationType
 from apps.notifications.services import NotificationService
+from config.parsing import bounded_int
 
 from .models import Event, PageView
 from .serializers import (
@@ -82,7 +83,12 @@ class PageViewStatsView(generics.GenericAPIView):
 
     def get(self, request):
         # Get date range from query params
-        days = int(request.query_params.get("days", 30))
+        days = bounded_int(
+            request.query_params.get("days", 30),
+            default=30,
+            minimum=1,
+            maximum=366,
+        )
         start_date = timezone.now() - timedelta(days=days)
 
         # Total page views
@@ -161,7 +167,12 @@ class EventStatsView(generics.GenericAPIView):
 
     def get(self, request):
         # Get date range from query params
-        days = int(request.query_params.get("days", 30))
+        days = bounded_int(
+            request.query_params.get("days", 30),
+            default=30,
+            minimum=1,
+            maximum=366,
+        )
         start_date = timezone.now() - timedelta(days=days)
 
         # Total events

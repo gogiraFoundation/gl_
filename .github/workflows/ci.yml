@@ -113,6 +113,12 @@ jobs:
         working-directory: ./gogir-labs-fe
         run: npm test -- --coverage --watchAll=false
 
+      - name: Build frontend
+        working-directory: ./gogir-labs-fe
+        env:
+          NEXT_PUBLIC_API_URL: https://api.gogirlabs.uk/api/v1
+        run: npm run build
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:

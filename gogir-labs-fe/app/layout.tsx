@@ -3,6 +3,8 @@ import { EB_Garamond, Inter } from 'next/font/google'
 import './globals.css'
 import { Providers } from './providers'
 import { AnalyticsTracker } from '@/components/analytics/AnalyticsTracker'
+import { SkipLink } from '@/components/a11y/SkipLink'
+import { getApiOrigin } from '@/lib/apiBase'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const ebGaramond = EB_Garamond({
@@ -42,6 +44,8 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const feedOrigin = getApiOrigin()
+
   return (
     <html
       lang="en"
@@ -50,10 +54,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       data-design="brutalist"
     >
       <head>
-        <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/feed/" />
-        <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/feed/atom/" />
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="RSS Feed"
+          href={`${feedOrigin}/feed/`}
+        />
+        <link
+          rel="alternate"
+          type="application/atom+xml"
+          title="Atom Feed"
+          href={`${feedOrigin}/feed/atom/`}
+        />
       </head>
       <body>
+        <SkipLink />
         <Providers>
           {children}
           <AnalyticsTracker />
