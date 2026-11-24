@@ -3,11 +3,13 @@ from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 
 from apps.notifications.models import NotificationType
 from apps.notifications.services import NotificationService
+from config.parsing import bounded_int
+from config.permissions import IsStaffOrReadOnly
 
 from .models import Category, Comment, Post, Tag
 
@@ -32,7 +34,7 @@ class PostViewSet(viewsets.ModelViewSet):
         .select_related("author", "category")
         .prefetch_related("tags", "comments")
     )
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsStaffOrReadOnly]
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
@@ -58,6 +60,16 @@ class PostViewSet(viewsets.ModelViewSet):
                 .prefetch_related("tags", "comments")
             )
         return queryset
+
+    def get_throttles(self):
+        # Scope public writes that stay anonymous: comments and view counts.
+        if self.action == "comments" and self.request.method == "POST":
+            self.throttle_scope = "comments"
+        elif self.action == "increment_views":
+            self.throttle_scope = "post_views"
+        else:
+            self.throttle_scope = None
+        return super().get_throttles()
 
     @action(
         detail=False, methods=["get"], url_path="by-slug", permission_classes=[AllowAny]
@@ -131,7 +143,12 @@ class PostViewSet(viewsets.ModelViewSet):
     def related(self, request, pk=None):
         """Get related posts based on tags and category."""
         post = self.get_object()
-        limit = int(request.query_params.get("limit", 3))
+        limit = bounded_int(
+            request.query_params.get("limit", 3),
+            default=3,
+            minimum=1,
+            maximum=12,
+        )
 
         # Get posts with same tags or category
         related_posts = Post.objects.filter(published=True).exclude(pk=post.pk)

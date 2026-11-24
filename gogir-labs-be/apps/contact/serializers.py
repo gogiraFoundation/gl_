@@ -6,6 +6,7 @@ from .models import ContactMessage
 class ContactMessageSerializer(serializers.ModelSerializer):
     # Honeypot field for spam protection
     website = serializers.CharField(required=False, allow_blank=True, write_only=True)
+    message = serializers.CharField(max_length=5000)
 
     class Meta:
         model = ContactMessage

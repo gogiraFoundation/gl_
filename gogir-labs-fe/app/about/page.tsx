@@ -64,7 +64,7 @@ export default function AboutPage() {
       <Header />
       <main className="relative flex-grow px-4 py-20 md:py-32 lg:py-40">
         <div className="relative z-10 mx-auto max-w-5xl space-y-24">
-          <header className="animate-fade-in-up mx-auto my-0 w-full max-w-3xl text-center">
+          <header className="mx-auto my-0 w-full max-w-3xl animate-fade-in-up text-center">
             <h1 className="mb-3 text-4xl font-bold text-brutal-ink md:text-5xl">
               <GradientText>What I Do</GradientText>
             </h1>
@@ -78,7 +78,7 @@ export default function AboutPage() {
 
           <section
             aria-labelledby="what-i-do-body"
-            className="mx-auto my-0 w-full max-w-3xl !mt-6 md:!mt-8"
+            className="mx-auto my-0 !mt-6 w-full max-w-3xl md:!mt-8"
           >
             <h2 id="what-i-do-body" className="sr-only">
               Professional summary

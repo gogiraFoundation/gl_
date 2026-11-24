@@ -210,6 +210,20 @@ class BlogAPITest(TestCase):
         self.post.refresh_from_db()
         self.assertEqual(self.post.views, initial_views + 1)
 
+    def test_related_invalid_limit_is_safe(self):
+        """A non-numeric limit must not raise and 500."""
+        url = f"/api/v1/blog/posts/{self.post.id}/related/"
+        response = self.client.get(url, {"limit": "nope"})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsInstance(response.data, list)
+
+    def test_non_staff_cannot_delete_post(self):
+        self.client.force_authenticate(user=self.user)
+        url = f"/api/v1/blog/posts/{self.post.id}/"
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue(Post.objects.filter(pk=self.post.id).exists())
+
     def test_increment_views_not_found(self):
         """Test increment views with non-existent post."""
         url = "/api/v1/blog/posts/99999/increment_views/"

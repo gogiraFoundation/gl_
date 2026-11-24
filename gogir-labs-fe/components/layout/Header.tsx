@@ -93,6 +93,7 @@ export function Header() {
                     key={item.name}
                     href={item.href}
                     className={cn('brutal-nav-link', isActive && 'opacity-100')}
+                    aria-current={isActive ? 'page' : undefined}
                     data-active={isActive ? 'true' : undefined}
                     onClick={() =>
                       trackClick('nav_link', {
@@ -170,7 +171,7 @@ export function Header() {
             <>
               <button
                 type="button"
-                className="fixed inset-0 z-[9998] bg-[#0b0d11]/82 backdrop-blur-md"
+                className="bg-[#0b0d11]/82 fixed inset-0 z-[9998] backdrop-blur-md"
                 aria-label="Close menu"
                 onClick={closeMenu}
               />
@@ -205,7 +206,8 @@ export function Header() {
                 <div className="flex flex-col gap-1 px-6 py-6">
                   {navigation.map((item, i) => {
                     const isActive =
-                      pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))
+                      pathname === item.href ||
+                      (item.href !== '/' && pathname.startsWith(item.href))
                     return (
                       <Link
                         key={item.name}
@@ -223,6 +225,7 @@ export function Header() {
                           'py-3 font-sans text-sm font-semibold uppercase tracking-wider text-white/90 transition-opacity hover:opacity-70',
                           isActive && 'border-b-2 border-white'
                         )}
+                        aria-current={isActive ? 'page' : undefined}
                       >
                         {item.name}
                       </Link>

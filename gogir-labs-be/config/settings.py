@@ -195,6 +195,8 @@ REST_FRAMEWORK = {
         "analytics_track": "120/minute",
         "search": "60/minute",
         "comments": "10/minute",
+        "post_views": "30/minute",
+        "resume_download": "10/minute",
     },
 }
 

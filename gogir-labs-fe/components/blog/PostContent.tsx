@@ -12,8 +12,35 @@ import { Clock, Eye } from 'lucide-react'
 
 // Dynamic import for DOMPurify (Next.js client-side only)
 let DOMPurify: any
+const TRUSTED_IFRAME_HOSTS = new Set([
+  'www.youtube.com',
+  'www.youtube-nocookie.com',
+  'player.vimeo.com',
+])
+
+function installSanitizerHooks(purify: {
+  addHook?: (name: string, hook: (node: Element, data: { tagName: string }) => void) => void
+  __gogirHook?: boolean
+}) {
+  if (!purify?.addHook || purify.__gogirHook) return
+  purify.addHook('uponSanitizeElement', (node, data) => {
+    if (data.tagName !== 'iframe') return
+    const src = node.getAttribute('src') || ''
+    let allowed = false
+    try {
+      const url = new URL(src)
+      allowed = url.protocol === 'https:' && TRUSTED_IFRAME_HOSTS.has(url.hostname)
+    } catch {
+      allowed = false
+    }
+    if (!allowed) node.remove()
+  })
+  purify.__gogirHook = true
+}
+
 if (typeof window !== 'undefined') {
   DOMPurify = require('dompurify')
+  installSanitizerHooks(DOMPurify)
 }
 
 interface Post {

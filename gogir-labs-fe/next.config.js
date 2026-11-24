@@ -7,6 +7,19 @@ const nextConfig = {
   async redirects() {
     return [{ source: '/favicon.ico', destination: '/icon.svg', permanent: false }]
   },
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+        ],
+      },
+    ]
+  },
   images: {
     remotePatterns: [
       {
@@ -43,7 +56,6 @@ module.exports = nextConfig
 // Bindings for local `next dev` when the OpenNext adapter is installed (devDependency).
 if (process.env.NODE_ENV === 'development') {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
     require('@opennextjs/cloudflare').initOpenNextCloudflareForDev()
   } catch {
     // Ignore when adapter is not installed (e.g. production Docker image).

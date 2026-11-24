@@ -17,9 +17,10 @@ RUN apt-get update && apt-get upgrade -y --no-install-recommends && apt-get inst
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies (upgrade setuptools/wheel to address CVE-2026-24049)
+# Install Python dependencies. simplejwt 5.5.1 does not import pkg_resources, so
+# setuptools is unpinned and can include releases that removed pkg_resources.
 COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip "setuptools>=65,<82" "wheel>=0.46.2" && \
+RUN pip install --no-cache-dir --upgrade pip setuptools "wheel>=0.46.2" && \
     pip install --no-cache-dir -r requirements.txt
 
 # Copy project

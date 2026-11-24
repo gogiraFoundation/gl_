@@ -8,6 +8,7 @@ import { Footer } from '@/components/layout/Footer'
 import { PostCard } from '@/components/blog/PostCard'
 import { ProjectCard } from '@/components/portfolio/ProjectCard'
 import api from '@/lib/api'
+import { FetchError, describeQueryError } from '@/components/ui/FetchError'
 import Link from 'next/link'
 import { Search } from 'lucide-react'
 
@@ -49,7 +50,12 @@ function SearchPageContent() {
   const query = searchParams.get('q') || ''
   const [searchQuery, setSearchQuery] = useState(query)
 
-  const { data: results, isLoading } = useQuery<SearchResult>({
+  const {
+    data: results,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery<SearchResult>({
     queryKey: ['search', query],
     queryFn: async () => {
       if (!query.trim()) {
@@ -62,6 +68,7 @@ function SearchPageContent() {
     },
     enabled: query.length > 0,
     staleTime: 5 * 60 * 1000,
+    retry: 1,
   })
 
   useEffect(() => {
@@ -90,9 +97,10 @@ function SearchPageContent() {
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 transform text-gray-400" />
                 <input
-                  type="text"
+                  type="search"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  aria-label="Search blog posts and projects"
                   placeholder="Search blog posts, projects..."
                   className="w-full rounded-lg border-2 border-gray-600 bg-gray-900 py-3 pl-12 pr-4 text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
@@ -109,7 +117,17 @@ function SearchPageContent() {
           {/* Results */}
           {isLoading && <div className="py-12 text-center text-gray-400">Searching...</div>}
 
-          {!isLoading && query && results && (
+          {!isLoading && error && (
+            <FetchError
+              title="Search failed"
+              message={describeQueryError(error)}
+              onRetry={() => {
+                void refetch()
+              }}
+            />
+          )}
+
+          {!isLoading && !error && query && results && (
             <>
               {results.total === 0 ? (
                 <div className="py-12 text-center">
