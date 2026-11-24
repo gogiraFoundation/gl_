@@ -5,6 +5,7 @@ from .views import (
     CertificationViewSet,
     EducationViewSet,
     ExperienceViewSet,
+    ResumeAggregateView,
     SkillViewSet,
     download_resume_pdf,
 )
@@ -16,6 +17,7 @@ router.register(r"certifications", CertificationViewSet, basename="certification
 router.register(r"skills", SkillViewSet, basename="skill")
 
 urlpatterns = [
-    path("", include(router.urls)),
+    path("", ResumeAggregateView.as_view(), name="resume-aggregate"),
     path("download/", download_resume_pdf, name="resume-download"),
+    path("", include(router.urls)),
 ]

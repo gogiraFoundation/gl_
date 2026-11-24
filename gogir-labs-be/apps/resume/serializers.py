@@ -27,6 +27,7 @@ class ExperienceSerializer(serializers.ModelSerializer):
             "end_date",
             "is_current",
             "description",
+            "highlights",
             "technologies",
             "order",
         ]
@@ -45,6 +46,7 @@ class EducationSerializer(serializers.ModelSerializer):
             "end_date",
             "is_current",
             "description",
+            "highlights",
             "gpa",
             "order",
         ]

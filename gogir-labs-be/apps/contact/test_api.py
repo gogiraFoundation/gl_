@@ -84,20 +84,33 @@ class ContactAPITest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_contact_message_honeypot_spam_detection(self):
-        """Test honeypot spam detection (if implemented in serializer)."""
+        """Filled honeypot is rejected."""
         url = "/api/v1/contact/"
         data = {
             "name": "John Doe",
             "email": "john@example.com",
             "subject": "Test Subject",
             "message": "Test message",
-            "website": "http://spam.com",  # Honeypot field
+            "website": "http://spam.com",
         }
-        # If honeypot is filled, should be rejected
         response = self.client.post(url, data)
-        # Should either succeed (if honeypot not checked) or fail (if checked)
-        self.assertIn(
-            response.status_code, [status.HTTP_201_CREATED, status.HTTP_400_BAD_REQUEST]
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @patch("apps.notifications.services.NotificationService.notify_admins")
+    def test_create_contact_message_empty_honeypot_succeeds(self, mock_notify):
+        """Empty honeypot field is stripped and does not crash create."""
+        url = "/api/v1/contact/"
+        data = {
+            "name": "John Doe",
+            "email": "empty-honey@example.com",
+            "subject": "Test Subject",
+            "message": "Test message body",
+            "website": "",
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(
+            ContactMessage.objects.filter(email="empty-honey@example.com").exists()
         )
 
     def test_create_contact_message_very_long(self):
@@ -203,3 +216,190 @@ class ContactAPITest(TestCase):
         # Check that unread message is in results
         unread_ids = [msg["id"] for msg in data]
         self.assertIn(unread_message.id, unread_ids)
+
+    def test_list_omits_message_body(self):
+        ContactMessage.objects.all().delete()
+        ContactMessage.objects.create(
+            name="John",
+            email="john@example.com",
+            subject="Sub",
+            message="Secret body",
+        )
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.get("/api/v1/contact/messages/")
+        data = (
+            response.data
+            if isinstance(response.data, list)
+            else response.data.get("results", [])
+        )
+        self.assertEqual(len(data), 1)
+        self.assertNotIn("message", data[0])
+        self.assertNotIn("website", data[0])
+
+    def test_list_filter_by_replied(self):
+        ContactMessage.objects.all().delete()
+        replied = ContactMessage.objects.create(
+            name="A",
+            email="a@example.com",
+            subject="A",
+            message="m",
+            replied=True,
+        )
+        ContactMessage.objects.create(
+            name="B",
+            email="b@example.com",
+            subject="B",
+            message="m",
+            replied=False,
+        )
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.get("/api/v1/contact/messages/", {"replied": "true"})
+        data = (
+            response.data
+            if isinstance(response.data, list)
+            else response.data.get("results", [])
+        )
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data[0]["id"], replied.id)
+
+    def test_detail_requires_staff(self):
+        msg = ContactMessage.objects.create(
+            name="John",
+            email="john@example.com",
+            subject="Sub",
+            message="Body text",
+        )
+        response = self.client.get(f"/api/v1/contact/messages/{msg.id}/")
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(f"/api/v1/contact/messages/{msg.id}/")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_detail_returns_body(self):
+        msg = ContactMessage.objects.create(
+            name="John",
+            email="john@example.com",
+            subject="Sub",
+            message="Body text",
+        )
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.get(f"/api/v1/contact/messages/{msg.id}/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["message"], "Body text")
+        self.assertIn("reply_body", response.data)
+
+    def test_patch_read_status(self):
+        msg = ContactMessage.objects.create(
+            name="John",
+            email="john@example.com",
+            subject="Sub",
+            message="Body",
+            read=False,
+        )
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.patch(
+            f"/api/v1/contact/messages/{msg.id}/",
+            {"read": True},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        msg.refresh_from_db()
+        self.assertTrue(msg.read)
+
+    def test_patch_cannot_set_replied_flag(self):
+        """replied is owned by the reply endpoint, not PATCH."""
+        msg = ContactMessage.objects.create(
+            name="John",
+            email="john@example.com",
+            subject="Sub",
+            message="Body",
+            replied=False,
+        )
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.patch(
+            f"/api/v1/contact/messages/{msg.id}/",
+            {"replied": True},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        msg.refresh_from_db()
+        self.assertFalse(msg.replied)
+
+    @patch("apps.contact.views.EmailService.send_email", return_value=True)
+    def test_reply_sends_email_and_marks_replied(self, mock_send):
+        msg = ContactMessage.objects.create(
+            name="John",
+            email="john@example.com",
+            subject="Hello",
+            message="Original",
+        )
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.post(
+            f"/api/v1/contact/messages/{msg.id}/reply/",
+            {"message": "Thanks for reaching out."},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        mock_send.assert_called_once()
+        self.assertEqual(mock_send.call_args.kwargs["recipient"], "john@example.com")
+        msg.refresh_from_db()
+        self.assertTrue(msg.replied)
+        self.assertTrue(msg.read)
+        self.assertEqual(msg.reply_body, "Thanks for reaching out.")
+        self.assertIsNotNone(msg.replied_at)
+
+    def test_reply_empty_message_is_400(self):
+        msg = ContactMessage.objects.create(
+            name="John",
+            email="john@example.com",
+            subject="Hello",
+            message="Original",
+        )
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.post(
+            f"/api/v1/contact/messages/{msg.id}/reply/",
+            {"message": ""},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @patch("apps.contact.views.EmailService.send_email", return_value=False)
+    def test_reply_mail_failure_leaves_unreplied(self, mock_send):
+        msg = ContactMessage.objects.create(
+            name="John",
+            email="john@example.com",
+            subject="Hello",
+            message="Original",
+        )
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.post(
+            f"/api/v1/contact/messages/{msg.id}/reply/",
+            {"message": "Thanks"},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+        msg.refresh_from_db()
+        self.assertFalse(msg.replied)
+        self.assertFalse(msg.read)
+
+    @patch("apps.contact.views.EmailService.send_email", return_value=True)
+    def test_reply_rejects_already_replied(self, mock_send):
+        msg = ContactMessage.objects.create(
+            name="John",
+            email="john@example.com",
+            subject="Hello",
+            message="Original",
+            replied=True,
+            reply_body="Already sent",
+        )
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.post(
+            f"/api/v1/contact/messages/{msg.id}/reply/",
+            {"message": "Second reply"},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
+        mock_send.assert_not_called()
+        msg.refresh_from_db()
+        self.assertEqual(msg.reply_body, "Already sent")

@@ -7,6 +7,7 @@ from django.urls import include, path
 from rest_framework.permissions import AllowAny
 from rest_framework.throttling import ScopedRateThrottle
 from rest_framework_simplejwt.views import (
+    TokenBlacklistView,
     TokenObtainPairView,
     TokenRefreshView,
 )
@@ -25,6 +26,14 @@ class PublicTokenRefreshView(TokenRefreshView):
     throttle_scope = "auth"
 
 
+class PublicTokenBlacklistView(TokenBlacklistView):
+    """Blacklist a refresh token on logout. Auth is the token itself."""
+
+    permission_classes = [AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "auth"
+
+
 def api_root(_request):
     # Probe target for homelab healthchecks and Uptime Kuma. Not an auth surface.
     return JsonResponse({"status": "ok"})
@@ -35,6 +44,11 @@ urlpatterns = [
     # Authentication - Allow unauthenticated access for login
     path("auth/token/", PublicTokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("auth/token/refresh/", PublicTokenRefreshView.as_view(), name="token_refresh"),
+    path(
+        "auth/token/blacklist/",
+        PublicTokenBlacklistView.as_view(),
+        name="token_blacklist",
+    ),
     # App endpoints
     path("portfolio/", include("apps.portfolio.urls")),
     path("blog/", include("apps.blog.urls")),
@@ -45,4 +59,5 @@ urlpatterns = [
     path("newsletter/", include("apps.newsletter.urls")),
     path("search/", include("apps.search.urls")),
     path("resume/", include("apps.resume.urls")),
+    path("site/", include("apps.site.urls")),
 ]

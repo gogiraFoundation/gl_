@@ -1,48 +1,46 @@
 # Homelab API (N4020 + ikon)
 
-Run the Gogir Labs **backend** on `gogir-server` (Celeron N4020). Terminate public TLS for `api.gogirlabs.uk` on Oracle VPS **ikon**. Keep **www** / apex on Cloudflare Pages.
+Run the Gogir Labs **backend** on the N4020 host (`gogir-server`). Terminate public TLS for `api.gogirlabs.uk` on the Oracle VPS **ikon**. Keep **www** / apex on Cloudflare Workers (OpenNext).
 
 Do **not** deploy this stack onto Traq’s Ampere box (`traqauth`). Do **not** put Postgres on the Pi. Do **not** write to `/mnt/nas`.
 
-## Status (2026-09-27)
+## Security note
+
+Do not commit LAN addresses, public VPS IPs, SSH usernames, or private-key paths. Those live in:
+
+- Local shell env when you run `./deploy-homelab.sh` (`HOMELAB_HOST`, `HOMELAB_SSH_KEY`, optional `SSH_JUMP` / `SSH_JUMP_KEY`)
+- `.env.homelab` (gitignored) → synced as remote `.env` with mode `600`
+- The live nginx upstream on ikon (`API_LAN_HOST` placeholder in the repo snippet)
+
+Personal inventory stays in your private homelab notes, not this repo.
+
+## Status
 
 | Item | State |
 |------|--------|
-| ikon TLS (`api.gogirlabs.uk`) | **Live** — Let’s Encrypt (renews; noted expiry ~2026-12-26), HTTP→HTTPS, fail-closed on bare IP |
-| `https://api.gogirlabs.uk/api/v1/` | **200** `{"status":"ok"}` |
-| Blog list via API | **200** |
-| Cloudflare Pages `NEXT_PUBLIC_API_URL` | **Open** — live `gl-frontend` still builds against Heroku until env is updated and redeployed (below) |
-
-### Pages cutover (remaining)
-
-In Cloudflare → **Workers & Pages** → **`gl-frontend`** → **Settings → Environment variables**, set for **Production** and **Preview**:
-
-```text
-NEXT_PUBLIC_API_URL=https://api.gogirlabs.uk/api/v1
-```
-
-Then **Retry deployment** (or push a no-op commit). This is a **build-time** variable — changing it without a new build leaves the Heroku URL in the bundle.
-
-Verify after deploy (browser or DevTools → Network): API calls go to `api.gogirlabs.uk`, not `*.herokuapp.com`.
+| ikon TLS (`api.gogirlabs.uk`) | Live — Let’s Encrypt, HTTP→HTTPS |
+| `https://api.gogirlabs.uk/api/v1/` | Live |
+| Frontend | Cloudflare Worker `gogir-labs-fe` (OpenNext) — see [CLOUDFLARE_PAGES.md](CLOUDFLARE_PAGES.md) |
+| `NEXT_PUBLIC_API_URL` | `https://api.gogirlabs.uk/api/v1` (build-time; set in the Workers workflow / Wrangler deploy) |
 
 ## Architecture
 
 ```text
 Internet
-  ├─ www.gogirlabs.uk / gogirlabs.uk  → Cloudflare Pages
+  ├─ www.gogirlabs.uk / gogirlabs.uk  → Cloudflare Workers (OpenNext)
   └─ api.gogirlabs.uk
-        → ikon (IKON_PUBLIC_IP) nginx TLS
-              → WireGuard → Pi (PI_WG_IP) → LAN
-                    → gogir-server GOGIR_SERVER_LAN_IP:8001
+        → ikon nginx TLS
+              → WireGuard → Pi → LAN
+                    → N4020 host :8001
                          Compose: postgres + redis + gunicorn
 ```
 
 | Role | Host | Notes |
 |------|------|--------|
-| Frontend | Cloudflare Pages | `NEXT_PUBLIC_API_URL=https://api.gogirlabs.uk/api/v1` |
-| Public edge | `ikon` | [`nginx/homelab-api.gogirlabs.uk.conf`](../nginx/homelab-api.gogirlabs.uk.conf) |
-| App + DB | N4020 `GOGIR_SERVER_LAN_IP` | `/mnt/data/compose/gogirlabs` |
-| Control plane | Pi `PI_LAN_IP` | unchanged |
+| Frontend | Cloudflare Workers | Build env: `NEXT_PUBLIC_API_URL=https://api.gogirlabs.uk/api/v1` |
+| Public edge | `ikon` | [`nginx/homelab-api.gogirlabs.uk.conf`](../nginx/homelab-api.gogirlabs.uk.conf) — replace `API_LAN_HOST` before install |
+| App + DB | N4020 | Remote dir `/mnt/data/compose/gogirlabs` |
+| Control plane | Pi | Unchanged; not the API host |
 
 Repo files:
 
@@ -55,9 +53,10 @@ Repo files:
 
 ## Capacity gate (before first deploy)
 
-On N4020 (`ssh gogir-server`):
+On the N4020:
 
 ```bash
+ssh gogir-server
 free -h
 df -h /mnt/data
 docker stats --no-stream
@@ -67,24 +66,23 @@ Go if roughly ≥1.5–2 GB free RAM with Jellyfin idle and ≥20 GB free on `/m
 
 ## Network reachability
 
-From `ikon`, confirm LAN path via Pi:
+From ikon, confirm the LAN path via the Pi (use your private inventory for addresses):
 
 ```bash
 ssh gogir-vps
-ping -c 2 PI_WG_IP
-ping -c 2 GOGIR_SERVER_LAN_IP
+# ping Pi WG address, then N4020 LAN address
 ```
 
-If `.21` is unreachable from the VPS, fix WireGuard AllowedIPs / Pi LAN advertisement before enabling the nginx upstream.
+If the API host is unreachable from the VPS, fix WireGuard AllowedIPs / Pi LAN advertisement before enabling the nginx upstream.
 
 ## N4020 prep
 
 ```bash
 ssh gogir-server
 sudo mkdir -p /mnt/data/compose/gogirlabs /mnt/data/backups/gogirlabs /mnt/data/apps/gogirlabs/media
-sudo chown -R homelab-user:homelab-user /mnt/data/compose/gogirlabs /mnt/data/backups/gogirlabs /mnt/data/apps/gogirlabs
+sudo chown -R "$(whoami):$(whoami)" /mnt/data/compose/gogirlabs /mnt/data/backups/gogirlabs /mnt/data/apps/gogirlabs
 
-# API port from LAN only (ikon arrives as routed LAN traffic to .21)
+# API port from LAN only (ikon arrives as routed LAN traffic)
 sudo ufw allow from LAN_SUBNET/24 to any port 8001 proto tcp
 sudo ufw status verbose
 ```
@@ -94,31 +92,40 @@ Never publish Postgres `5432` or Redis `6379` on the host.
 ## Deploy from Mac
 
 ```bash
-cd /Users/gogir/Desktop/IOT/gogir_labs
+cd /path/to/gogir_labs
 cp .env.homelab.example .env.homelab
 # edit secrets — chmod 600 .env.homelab
+# set HOMELAB_BIND_IP to the API host LAN address (not committed)
+# keep that same IP (plus localhost) in ALLOWED_HOSTS for healthchecks / LAN curls
 
 # On home LAN:
+HOMELAB_HOST='user@api-host' \
+HOMELAB_SSH_KEY="$HOME/.ssh/your-homelab-key" \
 ./deploy-homelab.sh
 
 # Away (ProxyJump via ikon):
-HOMELAB_USE_JUMP=1 ./deploy-homelab.sh
+HOMELAB_HOST='user@api-host' \
+HOMELAB_SSH_KEY="$HOME/.ssh/your-homelab-key" \
+SSH_JUMP='user@ikon-public-host' \
+SSH_JUMP_KEY="$HOME/.ssh/your-ikon-key" \
+HOMELAB_USE_JUMP=1 \
+./deploy-homelab.sh
 ```
 
-Defaults:
+| Variable | Required | Meaning |
+|----------|----------|---------|
+| `HOMELAB_HOST` | yes | `user@host` for the N4020 |
+| `HOMELAB_SSH_KEY` | yes | Path to the private key for that host |
+| `REMOTE_DIR` | no | Default `/mnt/data/compose/gogirlabs` |
+| `HOMELAB_USE_JUMP` | no | Set `1` when off-LAN |
+| `SSH_JUMP` | if jump | `user@ikon` |
+| `SSH_JUMP_KEY` | if jump | Path to ikon’s private key |
+| `HOMELAB_BIND_IP` | in `.env.homelab` | LAN IP used for post-deploy smoke curl |
 
-| Variable | Default |
-|----------|---------|
-| `HOMELAB_HOST` | `homelab-user@GOGIR_SERVER_LAN_IP` |
-| `HOMELAB_SSH_KEY` | `~/Desktop/azagba/gogir-agent` |
-| `REMOTE_DIR` | `/mnt/data/compose/gogirlabs` |
-| `SSH_JUMP` | `ubuntu@IKON_PUBLIC_IP` |
-| `SSH_JUMP_KEY` | `~/Desktop/azagba/ssh-key-2026-08-12.key` |
-
-Smoke on host after deploy:
+Smoke on host after deploy (uses `HOMELAB_BIND_IP` from `.env.homelab`):
 
 ```bash
-curl -sS -o /dev/null -w '%{http_code}\n' http://GOGIR_SERVER_LAN_IP:8001/api/v1/
+# deploy script prints HTTP status from the host
 ```
 
 Create superuser once:
@@ -131,15 +138,16 @@ docker compose -f docker-compose.homelab.yml --env-file .env exec backend python
 
 ## ikon nginx + TLS
 
-Copy the snippet from this repo, enable the site, obtain/renew certs:
+1. Copy [`nginx/homelab-api.gogirlabs.uk.conf`](../nginx/homelab-api.gogirlabs.uk.conf) to ikon.
+2. Replace `API_LAN_HOST` with the N4020 LAN address (edit only on the server; do not commit).
+3. Enable the site and obtain/renew certs:
 
 ```bash
-# from Mac, after editing paths if needed
-scp -i ~/Desktop/azagba/ssh-key-2026-08-12.key \
-  nginx/homelab-api.gogirlabs.uk.conf \
-  ubuntu@IKON_PUBLIC_IP:~/api.gogirlabs.uk.conf
+# from your machine (use your own key path / host — do not commit them)
+scp nginx/homelab-api.gogirlabs.uk.conf user@ikon:~/api.gogirlabs.uk.conf
 
 ssh gogir-vps
+# edit API_LAN_HOST in the copied file, then:
 sudo cp ~/api.gogirlabs.uk.conf /etc/nginx/sites-available/api.gogirlabs.uk
 sudo ln -sf /etc/nginx/sites-available/api.gogirlabs.uk /etc/nginx/sites-enabled/
 sudo certbot --nginx -d api.gogirlabs.uk   # if needed
@@ -152,22 +160,22 @@ Public smoke:
 curl -sSI https://api.gogirlabs.uk/api/v1/
 ```
 
-## DNS and Cloudflare Pages
+## DNS and frontend
 
 | Name | Target |
 |------|--------|
-| `api.gogirlabs.uk` | A → `IKON_PUBLIC_IP` (ikon) |
-| `www` / apex | Cloudflare Pages (unchanged) |
+| `api.gogirlabs.uk` | A → ikon’s public IP (private inventory) |
+| `www` / apex | Cloudflare Worker `gogir-labs-fe` |
 
-Pages env: `NEXT_PUBLIC_API_URL=https://api.gogirlabs.uk/api/v1`
+Frontend build env: `NEXT_PUBLIC_API_URL=https://api.gogirlabs.uk/api/v1`  
+Deploy path: [CLOUDFLARE_PAGES.md](CLOUDFLARE_PAGES.md) (GitHub Actions or `npm run deploy`).
 
-**Pi-hole:** do not override public `api.gogirlabs.uk` to `GOGIR_SERVER_LAN_IP`.
+**Pi-hole:** do not override public `api.gogirlabs.uk` to the N4020 LAN address.
 
 ## Observability
 
 - Uptime Kuma (Pi): monitor `https://api.gogirlabs.uk/api/v1/` (Public group).
-- Optional Compute monitor: `http://GOGIR_SERVER_LAN_IP:8001/api/v1/`.
-- Labs Manager Directory: add public DNS + internal URL in `inventory.json`.
+- Optional LAN monitor: `http://<HOMELAB_BIND_IP>:8001/api/v1/`.
 - Dozzle on N4020: containers `gogirlabs-*`.
 
 ## Backups
@@ -180,31 +188,28 @@ set -euo pipefail
 DIR=/mnt/data/backups/gogirlabs
 STAMP=$(date +%F)
 cd /mnt/data/compose/gogirlabs
+# shellcheck source=/dev/null
+set -a && source .env && set +a
 docker compose -f docker-compose.homelab.yml --env-file .env exec -T db \
   pg_dump -U "$DB_USER" "$DB_NAME" | gzip > "$DIR/db-$STAMP.sql.gz"
 find "$DIR" -name 'db-*.sql.gz' -mtime +14 -delete
 ```
 
-Rsync to ikon (reuse your VPS key pattern):
-
-```bash
-rsync -az -e "ssh -i ~/.ssh/id_ed25519_vps -o IdentitiesOnly=yes" \
-  /mnt/data/backups/gogirlabs/ ubuntu@IKON_WG_IP:~/gogirlabs-backups/
-```
+Rsync compressed dumps to ikon with your private SSH config (do not put hostnames or key paths in this repo).
 
 Run a restore drill once before calling the API production.
 
 ## CI note
 
-GitHub-hosted runners cannot reach `GOGIR_SERVER_LAN_IP`. Homelab deploys are **manual** via `./deploy-homelab.sh` from the Mac (LAN or `HOMELAB_USE_JUMP=1`). Existing Docker Hub CD remains unrelated.
+GitHub-hosted runners cannot reach the LAN API host. Homelab deploys are **manual** via `./deploy-homelab.sh` from a machine that can reach the host (LAN or jump). Docker Hub CD for classic Compose remains separate.
 
 ## Smoke matrix
 
 | Check | Pass |
 |-------|------|
-| `http://GOGIR_SERVER_LAN_IP:8001/api/v1/` on LAN | 200 |
+| `http://<HOMELAB_BIND_IP>:8001/api/v1/` on LAN | 200 |
 | `https://api.gogirlabs.uk/api/v1/` | 200 + valid cert |
-| Pages site loads data | no CORS errors |
+| www site loads data | no CORS errors; Network tab → `api.gogirlabs.uk` |
 | Contact / newsletter / admin | OK |
 | Jellyfin + Dozzle Kuma | still up |
 | `docker stats` Gogir stack | within mem limits |
@@ -217,6 +222,6 @@ GitHub-hosted runners cannot reach `GOGIR_SERVER_LAN_IP`. Homelab deploys are **
 
 ## Related
 
-- Homelab source of truth: `~/Desktop/azagba/HOMELAB.md`
 - Env reference: [`ENV_EXAMPLE.md`](../ENV_EXAMPLE.md) § Homelab
-- Cloudflare Pages: [`docs/CLOUDFLARE_PAGES.md`](CLOUDFLARE_PAGES.md)
+- Frontend Workers: [`docs/CLOUDFLARE_PAGES.md`](CLOUDFLARE_PAGES.md)
+- Classic same-host Compose: [`DEPLOYMENT.md`](../DEPLOYMENT.md)

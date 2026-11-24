@@ -55,6 +55,8 @@ export function NewsletterForm({
         email: data.email,
         name: data.name || '',
         source: data.source || source,
+        // Honeypot: bots fill this; backend rejects with 400 when non-empty.
+        website: data.website || '',
       })
 
       // Track form submission
@@ -200,11 +202,7 @@ export function NewsletterForm({
         <div className="border border-brutal-ink/20 p-4 text-red-700">{errorMessage}</div>
       )}
 
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="w-full border border-brutal-ink bg-transparent px-5 py-2.5 font-semibold text-brutal-ink transition-opacity hover:opacity-70 disabled:cursor-not-allowed disabled:opacity-50"
-      >
+      <button type="submit" disabled={isSubmitting} className="btn-brutal btn-brutal-md w-full">
         {isSubmitting ? 'Subscribing...' : 'Subscribe to Newsletter'}
       </button>
     </form>

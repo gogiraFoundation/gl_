@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Deploy Gogir Labs API to gogir-server (N4020).
-# Usage (on home LAN):
-#   ./deploy-homelab.sh
-# Away (ProxyJump via ikon):
-#   HOMELAB_USE_JUMP=1 ./deploy-homelab.sh
+# Deploy Gogir Labs API to the homelab host.
+# Required: HOMELAB_HOST, HOMELAB_SSH_KEY, and HOMELAB_BIND_IP inside .env.homelab.
+# On the LAN:
+#   HOMELAB_HOST=user@host HOMELAB_SSH_KEY=~/.ssh/id_ed25519 ./deploy-homelab.sh
+# Off the LAN, also set SSH_JUMP, SSH_JUMP_KEY, and HOMELAB_USE_JUMP=1.
 #
 # Compatible with macOS Bash 3.2+.
 
@@ -18,12 +18,16 @@ REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
 COMPOSE_FILE="docker-compose.homelab.yml"
 REMOTE_DIR="${REMOTE_DIR:-/mnt/data/compose/gogirlabs}"
 
-HOMELAB_HOST="${HOMELAB_HOST:-homelab-user@GOGIR_SERVER_LAN_IP}"
-HOMELAB_SSH_KEY="${HOMELAB_SSH_KEY:-$HOME/Desktop/azagba/gogir-agent}"
-
-SSH_JUMP="${SSH_JUMP:-ubuntu@IKON_PUBLIC_IP}"
-SSH_JUMP_KEY="${SSH_JUMP_KEY:-$HOME/Desktop/azagba/ssh-key-2026-08-12.key}"
+# Hosts and key paths stay in the shell, not in git.
+if [[ -z "${HOMELAB_HOST:-}" || -z "${HOMELAB_SSH_KEY:-}" ]]; then
+  echo -e "${RED}Set HOMELAB_HOST (user@host) and HOMELAB_SSH_KEY (private key path).${NC}"
+  exit 1
+fi
 HOMELAB_USE_JUMP="${HOMELAB_USE_JUMP:-0}"
+if [[ "$HOMELAB_USE_JUMP" == "1" && ( -z "${SSH_JUMP:-}" || -z "${SSH_JUMP_KEY:-}" ) ]]; then
+  echo -e "${RED}Jump deploy needs SSH_JUMP and SSH_JUMP_KEY.${NC}"
+  exit 1
+fi
 
 LOCAL_ENV="${LOCAL_ENV:-$REPO_ROOT/.env.homelab}"
 RSYNC_DELETE="${RSYNC_DELETE:-0}"
@@ -115,8 +119,13 @@ echo -e "${YELLOW}Service status:${NC}"
 run_ssh "cd '$REMOTE_DIR' && docker compose -f '$COMPOSE_FILE' --env-file .env ps"
 
 echo -e "${YELLOW}LAN API smoke (on host):${NC}"
-run_ssh "curl -sS -o /dev/null -w '%{http_code}\n' http://GOGIR_SERVER_LAN_IP:8001/api/v1/ || true"
+bind_ip="$(grep -E '^HOMELAB_BIND_IP=' "$LOCAL_ENV" | tail -n 1 | cut -d= -f2- | tr -d '"' | tr -d "'")"
+if [[ "$bind_ip" =~ ^[0-9.]+$ ]]; then
+  run_ssh "curl -sS -o /dev/null -w '%{http_code}\n' \"http://${bind_ip}:8001/api/v1/\" || true"
+else
+  echo "Set HOMELAB_BIND_IP in .env.homelab to smoke the LAN listener."
+fi
 
 echo -e "${GREEN}Deploy finished.${NC}"
-echo "Next: ensure UFW allows 8001 from LAN, install nginx/homelab-api.gogirlabs.uk.conf on ikon,"
-echo "and confirm DNS/Pages per docs/HOMELAB_API.md"
+echo "Next: ensure UFW allows 8001 from LAN, install nginx/homelab-api.gogirlabs.uk.conf on ikon"
+echo "(replace API_LAN_HOST on the server only), and confirm DNS + Workers per docs/HOMELAB_API.md"

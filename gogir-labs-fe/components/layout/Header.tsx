@@ -171,7 +171,7 @@ export function Header() {
             <>
               <button
                 type="button"
-                className="bg-[#0b0d11]/82 fixed inset-0 z-[9998] backdrop-blur-md"
+                className="fixed inset-0 z-[9998] bg-brutal-ink/40 transition-opacity duration-200"
                 aria-label="Close menu"
                 onClick={closeMenu}
               />
@@ -181,12 +181,12 @@ export function Header() {
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="mobile-menu-title"
-                className="fixed inset-y-0 right-0 z-[9999] flex w-[min(100%,20rem)] flex-col border-l border-white/[0.08] bg-[#1a1e26] shadow-[-16px_0_48px_rgba(0,0,0,0.55),-6px_0_24px_rgba(0,0,0,0.38),inset_1px_0_0_rgba(255,255,255,0.04)] transition-transform duration-300 ease-out"
+                className="fixed inset-y-0 right-0 z-[9999] flex w-[min(100%,20rem)] flex-col border-l border-brutal-ink bg-brutal-bg text-brutal-ink transition-opacity duration-200"
               >
-                <div className="flex items-center justify-between border-b border-white/[0.08] px-6 py-4">
+                <div className="flex items-center justify-between border-b border-brutal-ink/15 px-6 py-4">
                   <span
                     id="mobile-menu-title"
-                    className="font-serif text-sm font-semibold text-white"
+                    className="font-serif text-sm font-semibold text-brutal-ink"
                   >
                     Menu
                   </span>
@@ -194,13 +194,13 @@ export function Header() {
                     ref={closeBtnRef}
                     type="button"
                     onClick={closeMenu}
-                    className="text-white/90 transition-opacity hover:opacity-70"
+                    className="text-brutal-ink transition-opacity hover:opacity-70"
                     aria-label="Close menu"
                   >
                     <X className="h-6 w-6" />
                   </button>
                 </div>
-                <div className="border-b border-white/[0.08] px-6 py-4 [&_button]:border [&_button]:border-white/10 [&_button]:bg-white/[0.07] [&_button]:text-white/80 [&_button]:shadow-none [&_button]:hover:bg-white/[0.12] [&_button]:hover:text-white">
+                <div className="border-b border-brutal-ink/15 px-6 py-4">
                   <SearchBar />
                 </div>
                 <div className="flex flex-col gap-1 px-6 py-6">
@@ -222,8 +222,8 @@ export function Header() {
                           })
                         }}
                         className={cn(
-                          'py-3 font-sans text-sm font-semibold uppercase tracking-wider text-white/90 transition-opacity hover:opacity-70',
-                          isActive && 'border-b-2 border-white'
+                          'py-3 font-sans text-sm font-semibold uppercase tracking-wider text-brutal-ink transition-opacity hover:opacity-70',
+                          isActive && 'border-b-2 border-brutal-ink'
                         )}
                         aria-current={isActive ? 'page' : undefined}
                       >
@@ -232,12 +232,12 @@ export function Header() {
                     )
                   })}
                 </div>
-                <div className="mt-auto flex gap-6 border-t border-white/[0.08] px-6 py-6">
+                <div className="mt-auto flex gap-6 border-t border-brutal-ink/15 px-6 py-6">
                   <a
                     href="https://github.com/gogiraFoundation"
                     target="_blank"
                     rel="me noopener noreferrer"
-                    className="text-white/55 transition-opacity hover:opacity-90"
+                    className="text-brutal-muted transition-opacity hover:opacity-90"
                     aria-label="GitHub"
                   >
                     <Github className="h-7 w-7" />
@@ -246,7 +246,7 @@ export function Header() {
                     href="https://www.linkedin.com/in/emmanuel-ugbaje-b19227161/"
                     target="_blank"
                     rel="me noopener noreferrer"
-                    className="text-white/55 transition-opacity hover:opacity-90"
+                    className="text-brutal-muted transition-opacity hover:opacity-90"
                     aria-label="LinkedIn"
                   >
                     <Linkedin className="h-7 w-7" />
@@ -255,7 +255,7 @@ export function Header() {
                     href="https://medium.com/@aigbemanuel"
                     target="_blank"
                     rel="me noopener noreferrer"
-                    className="text-white/55 transition-opacity hover:opacity-90"
+                    className="text-brutal-muted transition-opacity hover:opacity-90"
                     aria-label="Medium"
                   >
                     <BookOpen className="h-7 w-7" />

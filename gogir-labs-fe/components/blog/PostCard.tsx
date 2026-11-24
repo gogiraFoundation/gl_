@@ -47,7 +47,7 @@ export function PostCard({ post, featured = false }: PostCardProps) {
     >
       <GlowCard
         className={cn(
-          'group relative flex h-full flex-col overflow-hidden rounded-lg p-6',
+          'group relative flex h-full flex-col overflow-hidden border border-brutal-ink/10 p-6',
           'transition-[transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]',
           'hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0',
           !featured && 'hover:shadow-[0_12px_32px_rgba(0,0,0,0.11)]',
@@ -65,7 +65,7 @@ export function PostCard({ post, featured = false }: PostCardProps) {
           <div className="flex min-w-0 flex-shrink-0 flex-col items-start gap-1.5 text-left">
             <div
               className={cn(
-                'flex items-center justify-center rounded-3xl bg-brutal-ink/[0.07] shadow-[0_4px_14px_rgba(0,0,0,0.06)] transition-[transform,box-shadow] duration-300 ease-out group-hover:scale-[1.04] group-hover:shadow-[0_6px_18px_rgba(0,0,0,0.09)] motion-reduce:group-hover:scale-100',
+                'flex items-center justify-center border border-brutal-ink/15 bg-brutal-ink/[0.04] transition-[transform,box-shadow] duration-300 ease-out group-hover:scale-[1.02] motion-reduce:group-hover:scale-100',
                 featured ? 'h-14 w-14' : 'h-12 w-12'
               )}
             >
@@ -103,8 +103,8 @@ export function PostCard({ post, featured = false }: PostCardProps) {
           )}
         </div>
 
-        <div className="flex-grow text-center">
-          <h3 className="mb-3 mt-2 font-sans text-xl font-semibold text-brutal-ink transition-[transform,opacity] duration-300 ease-out group-hover:-translate-y-px group-hover:opacity-100 motion-reduce:group-hover:translate-y-0 md:text-2xl">
+        <div className="flex-grow text-left">
+          <h3 className="mb-3 mt-2 font-serif text-xl font-semibold tracking-tight text-brutal-ink transition-[transform,opacity] duration-300 ease-out group-hover:-translate-y-px group-hover:opacity-100 motion-reduce:group-hover:translate-y-0 md:text-2xl">
             {post.title}
           </h3>
           <p
@@ -117,7 +117,7 @@ export function PostCard({ post, featured = false }: PostCardProps) {
           </p>
 
           {post.tags.length > 0 && (
-            <div className="mb-4 flex flex-wrap justify-center gap-2">
+            <div className="mb-4 flex flex-wrap justify-start gap-2">
               {post.tags.slice(0, 3).map((tag) => (
                 <span
                   key={tag.id}
@@ -129,12 +129,12 @@ export function PostCard({ post, featured = false }: PostCardProps) {
             </div>
           )}
 
-          <div className="mt-auto border-t border-brutal-ink/15 pt-4 text-center">
+          <div className="mt-auto border-t border-brutal-ink/15 pt-4 text-left">
             <p className="text-xs text-brutal-muted">
               Posted on {formatDate(post.published_at || post.created_at)}
             </p>
-            <span className="mt-3 inline-flex justify-center text-sm font-semibold text-brutal-ink underline underline-offset-4 transition-[transform,opacity] duration-300 ease-out group-hover:translate-x-0.5 group-hover:opacity-80 motion-reduce:group-hover:translate-x-0">
-              Read Full Post
+            <span className="mt-3 inline-flex text-sm font-semibold text-brutal-ink underline underline-offset-4 transition-[transform,opacity] duration-300 ease-out group-hover:translate-x-0.5 group-hover:opacity-80 motion-reduce:group-hover:translate-x-0">
+              Read full post
             </span>
           </div>
         </div>

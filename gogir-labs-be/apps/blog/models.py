@@ -108,6 +108,11 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     published_at = models.DateTimeField(null=True, blank=True)
+    publish_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="When set and published is false, publish_scheduled_posts will publish.",
+    )
 
     class Meta:
         ordering = ["-published_at", "-created_at"]
@@ -116,6 +121,8 @@ class Post(models.Model):
         return self.title
 
     def save(self, *args, **kwargs):
+        from django.db import transaction
+
         was_published = False
         if self.pk:
             try:
@@ -151,6 +158,18 @@ class Post(models.Model):
                 },
                 related_object=self,
             )
+
+            post_id = self.pk
+
+            def enqueue_announcement():
+                from apps.newsletter.models import PostAnnouncement
+
+                PostAnnouncement.objects.get_or_create(
+                    post_id=post_id,
+                    defaults={"status": PostAnnouncement.STATUS_PENDING},
+                )
+
+            transaction.on_commit(enqueue_announcement)
 
 
 class Comment(models.Model):

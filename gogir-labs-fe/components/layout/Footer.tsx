@@ -40,7 +40,7 @@ export function Footer() {
                 <Linkedin className="h-8 w-8" />
               </a>
               <a
-                href="mailto:dev@gogirlabs.uk"
+                href="mailto:hi@gogirlabs.uk"
                 onClick={() => trackClick('social_email', { platform: 'email' })}
                 className="text-white/70 transition-opacity hover:opacity-70"
                 aria-label="Email"
@@ -77,7 +77,7 @@ export function Footer() {
                 >
                   <Link
                     href={href}
-                    className="inline-flex items-center px-1 py-1.5 text-sm text-white/85 transition-all duration-300 ease-out hover:-translate-y-0.5 hover:text-white hover:underline hover:underline-offset-4"
+                    className="inline-flex items-center px-1 py-1.5 text-sm text-white/85 transition-opacity duration-200 ease-out hover:underline hover:underline-offset-4 hover:opacity-70"
                     onClick={() => trackClick('footer_link', { link: label?.toLowerCase() })}
                   >
                     {label}
@@ -90,14 +90,13 @@ export function Footer() {
           <div>
             <h3 className="mb-4 font-serif text-lg font-semibold text-white">Stay updated</h3>
             <p className="mb-4 text-sm text-white/75">
-              Sign up for my newsletter to receive updates, insights, and the latest trends in
-              backend development and security.
+              Occasional notes on backends, security, and shipping production systems.
             </p>
             <NewsletterForm source="footer" compact={true} />
           </div>
         </div>
 
-        <div className="mt-10 border-t border-white/15 pt-8 text-center">
+        <div className="mt-10 border-t border-white/15 pt-8 text-left">
           <p className="text-sm text-white/65">
             © {new Date().getFullYear()} Emmanuel Ugbaje. All rights reserved.
           </p>

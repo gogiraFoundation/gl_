@@ -126,7 +126,30 @@ Instead of uploading large video files, you can use external video URLs:
 
 - Go to **Contact > Contact Messages**
 - View messages submitted through the contact form
-- Mark messages as "Read" or "Replied" after handling them
+- Use reply fields when available, then mark messages as handled
+- Frontend admin: `/admin/contact` (staff JWT)
+
+## Newsletter and announcements
+
+- Subscribers: **Newsletter** in Django admin (verify / unsubscribe tokens are credentials — do not paste them into tickets or commits)
+- Post announcements: management command `send_post_announcements` (keep `NEWSLETTER_BROADCASTS_ENABLED=False` unless you intend campaign fan-out)
+- Frontend admin: `/admin/newsletter`
+
+## Blog scheduling
+
+- Set **Publish at** on a post when you want deferred publish
+- Cron / host job should run `publish_scheduled_posts` periodically
+
+## Testimonials
+
+- Create invite tokens from admin / API; share the submit link privately
+- Public site only shows approved testimonials
+- Frontend invite flow: `/testimonials/submit/[token]`
+
+## Analytics and preferences
+
+- Frontend: `/admin/analytics`, `/admin/preferences`, `/admin/notifications`
+- Privacy: `purge_analytics` respects `ANALYTICS_IP_RETENTION_DAYS` / `ANALYTICS_ROW_RETENTION_DAYS`
 
 ## Troubleshooting (portfolio URLs)
 

@@ -1,6 +1,13 @@
 from django.contrib import admin
 
-from .models import Testimonial
+from .models import Testimonial, TestimonialInvite
+
+
+@admin.register(TestimonialInvite)
+class TestimonialInviteAdmin(admin.ModelAdmin):
+    list_display = ["email", "expires_at", "used_at", "created_at"]
+    search_fields = ["email", "token"]
+    readonly_fields = ["token", "created_at", "used_at"]
 
 
 @admin.register(Testimonial)
@@ -25,8 +32,13 @@ class TestimonialAdmin(admin.ModelAdmin):
     ]
 
     def publish_testimonials(self, request, queryset):
-        """Bulk publish selected testimonials."""
-        count = queryset.update(published=True)
+        """Bulk publish selected testimonials via save() for consistent side effects."""
+        count = 0
+        for testimonial in queryset:
+            if not testimonial.published:
+                testimonial.published = True
+                testimonial.save()
+                count += 1
         self.message_user(request, f"{count} testimonial(s) published successfully.")
 
     publish_testimonials.short_description = "Publish selected testimonials"

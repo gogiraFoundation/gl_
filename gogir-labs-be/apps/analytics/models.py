@@ -32,6 +32,7 @@ class Event(models.Model):
         ("download", "Download"),
         ("form_submit", "Form Submit"),
         ("video_play", "Video Play"),
+        ("search", "Search"),
         ("custom", "Custom"),
     ]
 

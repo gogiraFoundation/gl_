@@ -33,6 +33,8 @@ class NewsletterSubscriber(models.Model):
         return f"{self.email} ({'Active' if self.is_active else 'Inactive'})"
 
     def save(self, *args, **kwargs):
+        if self.email:
+            self.email = self.email.lower().strip()
         if not self.verification_token:
             self.verification_token = secrets.token_urlsafe(32)
         if not self.unsubscribe_token:
@@ -45,13 +47,71 @@ class NewsletterSubscriber(models.Model):
         self.save(update_fields=["is_verified"])
 
     def unsubscribe(self):
-        """Unsubscribe the user."""
+        """Unsubscribe the user.
+
+        Clears verification and rotates the verification token so a previously
+        emailed verify link cannot re-confirm consent after opt-out.
+        """
         self.is_active = False
         self.unsubscribed_at = timezone.now()
-        self.save(update_fields=["is_active", "unsubscribed_at"])
+        self.is_verified = False
+        self.verification_token = secrets.token_urlsafe(32)
+        self.save(
+            update_fields=[
+                "is_active",
+                "unsubscribed_at",
+                "is_verified",
+                "verification_token",
+            ]
+        )
 
     def resubscribe(self):
-        """Resubscribe a previously unsubscribed user."""
+        """Resubscribe a previously unsubscribed user.
+
+        Requires a fresh verification click; rotates the verification token so
+        an old link cannot confirm the new consent.
+        """
         self.is_active = True
         self.unsubscribed_at = None
-        self.save(update_fields=["is_active", "unsubscribed_at"])
+        self.is_verified = False
+        self.verification_token = secrets.token_urlsafe(32)
+        self.save(
+            update_fields=[
+                "is_active",
+                "unsubscribed_at",
+                "is_verified",
+                "verification_token",
+            ]
+        )
+
+
+class PostAnnouncement(models.Model):
+    """Outbox row for one-to-one new-post notices to subscribers."""
+
+    STATUS_PENDING = "pending"
+    STATUS_SENT = "sent"
+    STATUS_SKIPPED = "skipped"
+    STATUS_CHOICES = [
+        (STATUS_PENDING, "Pending"),
+        (STATUS_SENT, "Sent"),
+        (STATUS_SKIPPED, "Skipped"),
+    ]
+
+    post = models.OneToOneField(
+        "blog.Post",
+        on_delete=models.CASCADE,
+        related_name="announcement",
+    )
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default=STATUS_PENDING
+    )
+    sent_count = models.PositiveIntegerField(default=0)
+    delivered_to = models.JSONField(default=list, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    sent_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"Announcement for {self.post_id} ({self.status})"
