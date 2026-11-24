@@ -1,9 +1,11 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from apps.blog.models import Post
+from apps.blog.models import Category, Post
+from apps.portfolio.models import Project
 
 User = get_user_model()
 
@@ -105,3 +107,29 @@ class SearchAPITest(TestCase):
         self.assertEqual(typed.data["blog_posts"], [])
         self.assertEqual(typed.data["projects"], [])
         self.assertGreater(len(typed.data["testimonials"]), 0)
+
+    def test_search_excludes_held_essay_and_portfolio(self):
+        essays = Category.objects.create(name="Project Essays", slug="project-essays")
+        Post.objects.create(
+            title="Bria forecasting python",
+            slug="bria",
+            excerpt="bria",
+            content="held essay about python",
+            author=self.author,
+            category=essays,
+            published=True,
+            published_at=timezone.now(),
+        )
+        Project.objects.create(
+            title="Bria python platform",
+            slug="bria",
+            description="held project about python",
+            published=True,
+        )
+
+        response = self.client.get("/api/v1/search/", {"q": "python"})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        blog_slugs = [p["slug"] for p in response.data["blog_posts"]]
+        project_slugs = [p["slug"] for p in response.data["projects"]]
+        self.assertNotIn("bria", blog_slugs)
+        self.assertNotIn("bria", project_slugs)

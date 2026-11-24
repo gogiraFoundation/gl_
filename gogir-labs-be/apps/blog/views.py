@@ -12,6 +12,7 @@ from apps.notifications.models import NotificationType
 from apps.notifications.services import NotificationService
 from config.permissions import IsStaffOrReadOnly
 
+from .blog_seed import public_post_visibility_q
 from .models import Category, Comment, Post, Tag
 
 User = get_user_model()
@@ -78,7 +79,10 @@ class PostViewSet(viewsets.ModelViewSet):
         if self.request.user.is_authenticated and self.request.user.is_staff:
             base = Post.objects.all()
         else:
-            base = Post.objects.filter(published=True)
+            # Hold-back: project essays outside ESSAY_ALLOW_LIST stay invisible.
+            base = Post.objects.filter(published=True).filter(
+                public_post_visibility_q()
+            )
 
         queryset = base.select_related("author", "category").prefetch_related("tags")
         if self.action in ("retrieve", "by_slug"):
@@ -175,6 +179,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
         base = (
             Post.objects.filter(published=True)
+            .filter(public_post_visibility_q())
             .exclude(pk=post.pk)
             .select_related("author", "category")
             .prefetch_related("tags")

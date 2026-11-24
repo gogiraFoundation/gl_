@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from config.permissions import IsStaffOrReadOnly
 
 from .models import Category, Project, Technology
+from .portfolio_seed import PORTFOLIO_PUBLIC_HOLD_SLUGS
 from .serializers import (
     CategorySerializer,
     ProjectListSerializer,
@@ -56,6 +57,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 .select_related("category")
                 .prefetch_related("technologies", "images")
             )
+        else:
+            # Bria (and any hold slug) stay off the public catalogue.
+            queryset = queryset.exclude(slug__in=PORTFOLIO_PUBLIC_HOLD_SLUGS)
         return queryset
 
     @action(
@@ -104,6 +108,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         base = (
             Project.objects.filter(published=True)
+            .exclude(slug__in=PORTFOLIO_PUBLIC_HOLD_SLUGS)
             .exclude(pk=project.pk)
             .select_related("category")
             .prefetch_related("technologies")
