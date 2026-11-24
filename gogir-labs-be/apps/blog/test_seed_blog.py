@@ -1,5 +1,7 @@
 """Tests for idempotent blog essay seeding."""
 
+import shutil
+import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
@@ -26,6 +28,13 @@ FIXTURE_DIR = Path(__file__).resolve().parent / "fixtures" / "seed_essays_sample
 @override_settings(PUBLIC_API_ORIGIN="https://api.example.test")
 class SeedBlogTest(TestCase):
     def setUp(self):
+        # Seeding copies essay images into MEDIA_ROOT; keep that in a temp dir so
+        # tests never write to the real media folder (or fail where /app is absent).
+        self._media_dir = tempfile.mkdtemp(prefix="seed-blog-media-")
+        self.addCleanup(shutil.rmtree, self._media_dir, ignore_errors=True)
+        media_override = override_settings(MEDIA_ROOT=self._media_dir)
+        media_override.enable()
+        self.addCleanup(media_override.disable)
         self.author = User.objects.create_user(
             username="staffuser", password="testpass", is_staff=True
         )
@@ -77,16 +86,17 @@ class SeedBlogTest(TestCase):
 
     @patch("apps.notifications.services.NotificationService.notify_admins")
     def test_seed_skips_unlisted_markdown(self, mock_notify):
-        unlisted = FIXTURE_DIR / "bria.md"
-        unlisted.write_text("# Bria Hold\n\nShould not seed.\n", encoding="utf-8")
-        try:
-            seed_blog(source_dir=FIXTURE_DIR, author=self.author)
-            slugs = set(Post.objects.values_list("slug", flat=True))
-            self.assertEqual(slugs, {"tr-bot", "urbana"})
-            self.assertFalse(Post.objects.filter(slug="bria").exists())
-            mock_notify.assert_not_called()
-        finally:
-            unlisted.unlink(missing_ok=True)
+        # Work on a temp copy so the test never writes into the repo fixtures.
+        source_dir = Path(self._media_dir) / "essays-copy"
+        shutil.copytree(FIXTURE_DIR, source_dir)
+        (source_dir / "bria.md").write_text(
+            "# Bria Hold\n\nShould not seed.\n", encoding="utf-8"
+        )
+        seed_blog(source_dir=source_dir, author=self.author)
+        slugs = set(Post.objects.values_list("slug", flat=True))
+        self.assertEqual(slugs, {"tr-bot", "urbana"})
+        self.assertFalse(Post.objects.filter(slug="bria").exists())
+        mock_notify.assert_not_called()
 
     @patch("apps.notifications.services.NotificationService.notify_admins")
     def test_seed_second_run_does_not_overwrite(self, mock_notify):
