@@ -14,9 +14,7 @@ export function ThemeToggle() {
     // Get initial theme from document or context
     if (typeof window !== 'undefined') {
       const currentTheme = document.documentElement.getAttribute('data-theme') as
-        | 'dark'
-        | 'light'
-        | null
+        'dark' | 'light' | null
       if (currentTheme) {
         setTheme(currentTheme)
       } else if (context?.theme) {

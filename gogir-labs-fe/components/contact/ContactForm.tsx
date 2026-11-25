@@ -13,7 +13,7 @@ const SUBJECT_OPTIONS = ['Project enquiry', 'Security review', 'Role / hiring', 
 const contactSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.string().email('Invalid email address'),
-  subject: z.enum(SUBJECT_OPTIONS, { required_error: 'Select a subject' }),
+  subject: z.enum(SUBJECT_OPTIONS, { error: 'Select a subject' }),
   message: z.string().min(10, 'Message must be at least 10 characters'),
   website: z.string().optional(),
 })
