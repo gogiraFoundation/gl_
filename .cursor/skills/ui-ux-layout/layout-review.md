@@ -4,20 +4,20 @@ Run this before finishing a page or a layout change. Fix failures in the page. D
 
 ## Structure
 
-- A public page renders `Header` and `Footer`. It does not reimplement the nav.
+- Essay-scoped public pages (`/`, `/blog`, Project Essays, `/about`, `/portfolio`, `/contact`, `/resume`) render `EssayDesignScope` + `EssayNav` + `EssayFooter`. They do not mount brutalist `Header`/`Footer`.
+- Remaining brutalist public pages (search, privacy, newsletter, testimonials) render `Header` and `Footer`. They do not reimplement the nav.
 - An admin page does not render `Header` or `Footer`.
 - There is one `h1`.
 - One primary action. Other actions are quieter.
 - Regions follow identity, then primary, then supporting. On small screens they stack in that order.
-- Content width is `layout-grid`, `max-w-shell`, `max-w-content`, or the admin `max-w-7xl`. Gutters are not doubled.
+- Content width is `layout-grid`, `max-w-shell`, `max-w-content`, `max-w-prose`, or the admin `max-w-7xl`. Gutters are not doubled.
 
 ## Rhythm
 
 - Distances are from the scale in [rhythm.md](rhythm.md). No `p-[13px]` or `gap-[18px]`.
-- Public bands use the section padding or `border-b border-brutal-ink`.
-- Public cards in one grid share border, padding, and type.
-- Public titles are serif. Body is sans. Nav stays uppercase.
-- `orangered` is the contact accent. It is not a second brand color on cards and links.
+- Essay pages use warm paper tokens and colour-only hover at `duration-essay-fast`. Portfolio and essays indexes use a responsive grid with centered titles and justified body copy.
+- Brutalist bands use section padding or `border-b border-brutal-ink` where that shell still applies.
+- Essay titles use `font-essay-display`. Brutalist titles use `font-serif`. Do not mix systems on one page.
 
 ## Behavior
 

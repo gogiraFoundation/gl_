@@ -3,7 +3,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Calendar, ExternalLink, Github, Code, Tag } from 'lucide-react'
-import { GlowCard } from '@/components/ui/GlowCard'
 import { formatDate } from '@/lib/utils'
 import { useAnalyticsEvent } from '@/hooks/useAnalyticsEvent'
 import { RelatedProjects } from './RelatedProjects'
@@ -36,12 +35,17 @@ interface ProjectContentProps {
   project: Project
 }
 
+const linkBtnClass =
+  'inline-flex min-h-[44px] items-center gap-2 border border-essay-ink/25 px-4 font-essay-sans text-sm font-medium text-essay-ink transition-colors duration-essay-fast ease-essay hover:border-essay-accent hover:text-essay-accent'
+
+const primaryBtnClass =
+  'essay-btn-primary inline-flex min-h-[44px] items-center gap-2 bg-essay-accent px-4 font-essay-sans text-sm font-medium text-white transition-opacity duration-essay-fast ease-essay hover:opacity-90'
+
 export function ProjectContent({ project }: ProjectContentProps) {
   const { trackClick } = useAnalyticsEvent()
 
   return (
-    <article className="py-8">
-      {/* Breadcrumbs */}
+    <article>
       <Breadcrumbs
         items={[
           { label: 'Portfolio', href: '/portfolio' },
@@ -49,31 +53,31 @@ export function ProjectContent({ project }: ProjectContentProps) {
         ]}
       />
 
-      {/* Header Section */}
-      <div className="mb-8">
+      <header className="mb-8">
         {project.category && (
-          <span className="text-meta mb-4 inline-block font-sans font-semibold uppercase tracking-wider">
+          <p className="mb-3 font-essay-mono text-xs uppercase tracking-wider text-essay-muted">
             {project.category.name}
-          </span>
+          </p>
         )}
-        <h1 className="mb-4 font-serif text-4xl font-semibold text-brutal-ink md:text-5xl">
+        <h1 className="mb-4 font-essay-display text-4xl font-semibold tracking-tight text-essay-ink md:text-5xl">
           {project.title}
         </h1>
-        <p className="mb-6 text-xl leading-relaxed text-brutal-ink">{project.description}</p>
+        <p className="mb-6 text-justify font-essay-sans text-lg leading-relaxed text-essay-muted md:text-xl">
+          {project.description}
+        </p>
 
-        {/* Meta Information */}
-        <div className="mb-6 flex flex-wrap items-center gap-4 text-sm text-brutal-muted">
+        <div className="mb-6 flex flex-wrap items-center gap-4 font-essay-sans text-sm text-essay-muted">
           <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4" />
+            <Calendar className="h-4 w-4" aria-hidden />
             <span>{project.year ?? formatDate(project.created_at)}</span>
           </div>
           {project.role && <span>{project.role}</span>}
           {project.client && <span>Client: {project.client}</span>}
           {project.technologies.length > 0 && (
             <div className="flex items-center gap-2">
-              <Tag className="h-4 w-4" />
+              <Tag className="h-4 w-4" aria-hidden />
               <span>
-                {project.technologies.length} Technology
+                {project.technologies.length} technolog
                 {project.technologies.length !== 1 ? 'ies' : 'y'}
               </span>
             </div>
@@ -82,8 +86,10 @@ export function ProjectContent({ project }: ProjectContentProps) {
 
         {Array.isArray(project.outcomes) && project.outcomes.length > 0 && (
           <div className="mb-8">
-            <h2 className="mb-3 font-serif text-xl font-semibold text-brutal-ink">Outcomes</h2>
-            <ul className="list-inside list-disc space-y-2 text-brutal-muted">
+            <h2 className="mb-3 font-essay-display text-xl font-semibold text-essay-ink">
+              Outcomes
+            </h2>
+            <ul className="list-inside list-disc space-y-2 font-essay-sans text-essay-muted">
               {project.outcomes.map((outcome, index) => (
                 <li key={`${project.id}-outcome-${index}`}>{outcome}</li>
               ))}
@@ -91,8 +97,7 @@ export function ProjectContent({ project }: ProjectContentProps) {
           </div>
         )}
 
-        {/* Action Buttons */}
-        <div className="mb-8 flex flex-wrap gap-4">
+        <div className="mb-8 flex flex-wrap gap-3">
           {project.github_url && (
             <a
               href={project.github_url}
@@ -101,9 +106,9 @@ export function ProjectContent({ project }: ProjectContentProps) {
               onClick={() =>
                 trackClick('project_github', { projectId: project.id, projectTitle: project.title })
               }
-              className="btn-brutal btn-brutal-md gap-2"
+              className={primaryBtnClass}
             >
-              <Github className="h-5 w-5" />
+              <Github className="h-5 w-5" aria-hidden />
               View on GitHub
             </a>
           )}
@@ -115,18 +120,17 @@ export function ProjectContent({ project }: ProjectContentProps) {
               onClick={() =>
                 trackClick('project_live', { projectId: project.id, projectTitle: project.title })
               }
-              className="btn-brutal btn-brutal-md gap-2"
+              className={linkBtnClass}
             >
-              <ExternalLink className="h-5 w-5" />
-              Live Demo
+              <ExternalLink className="h-5 w-5" aria-hidden />
+              Live demo
             </a>
           )}
         </div>
-      </div>
+      </header>
 
-      {/* Featured Image */}
       {project.featured_image && (
-        <div className="relative mb-8 h-64 w-full overflow-hidden rounded-lg md:h-96">
+        <div className="relative mb-8 h-64 w-full overflow-hidden md:h-96">
           <Image
             src={project.featured_image}
             alt={project.title}
@@ -138,10 +142,9 @@ export function ProjectContent({ project }: ProjectContentProps) {
         </div>
       )}
 
-      {/* Video */}
       {project.video_url && (
         <div className="mb-8">
-          <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-gray-900">
+          <div className="relative aspect-video w-full overflow-hidden bg-essay-ink/10">
             <iframe
               src={project.video_url}
               className="h-full w-full"
@@ -153,54 +156,50 @@ export function ProjectContent({ project }: ProjectContentProps) {
         </div>
       )}
 
-      {/* Long Description */}
       {project.long_description && (
-        <div className="mb-8">
-          <GlowCard className="p-6 md:p-8">
-            <h2 className="mb-4 font-serif text-2xl font-semibold text-brutal-ink">
-              About this project
-            </h2>
-            <div
-              className="project-description max-w-none leading-relaxed text-brutal-ink"
-              style={{ whiteSpace: 'pre-wrap' }}
-            >
-              {project.long_description}
-            </div>
-          </GlowCard>
-        </div>
+        <section className="mb-8">
+          <h2 className="mb-4 font-essay-display text-2xl font-semibold text-essay-ink">
+            About this project
+          </h2>
+          <div
+            className="max-w-none text-justify font-essay-sans leading-relaxed text-essay-ink"
+            style={{ whiteSpace: 'pre-wrap' }}
+          >
+            {project.long_description}
+          </div>
+        </section>
       )}
 
-      {/* Technologies */}
       {project.technologies.length > 0 && (
-        <div className="mb-8">
-          <h2 className="mb-4 flex items-center gap-2 font-serif text-2xl font-semibold text-brutal-ink">
-            <Code className="h-6 w-6 text-brutal-ink" />
+        <section className="mb-8">
+          <h2 className="mb-4 flex items-center gap-2 font-essay-display text-2xl font-semibold text-essay-ink">
+            <Code className="h-6 w-6" aria-hidden />
             Technologies used
           </h2>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2">
             {project.technologies.map((tech) => (
               <span
                 key={tech.id}
-                className="border border-brutal-ink/20 px-4 py-2 font-medium text-brutal-ink"
+                className="border border-essay-ink/20 px-3 py-1.5 font-essay-mono text-xs text-essay-ink"
               >
                 {tech.name}
               </span>
             ))}
           </div>
-        </div>
+        </section>
       )}
 
-      {/* Project Images Gallery */}
       {project.images && project.images.length > 0 && (
-        <div className="mb-8">
-          <h2 className="mb-4 font-serif text-2xl font-semibold text-brutal-ink">
+        <section className="mb-8">
+          <h2 className="mb-4 font-essay-display text-2xl font-semibold text-essay-ink">
             Project gallery
           </h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {project.images
+              .slice()
               .sort((a, b) => a.order - b.order)
               .map((image) => (
-                <div key={image.id} className="relative h-64 w-full overflow-hidden rounded-lg">
+                <div key={image.id} className="relative h-64 w-full overflow-hidden">
                   <Image
                     src={image.image}
                     alt={image.caption || project.title}
@@ -210,27 +209,25 @@ export function ProjectContent({ project }: ProjectContentProps) {
                     sizes="(max-width: 768px) 100vw, 50vw"
                   />
                   {image.caption && (
-                    <div className="absolute bottom-0 left-0 right-0 bg-black/70 p-2 text-sm text-white">
+                    <div className="absolute bottom-0 left-0 right-0 bg-essay-ink/80 p-2 font-essay-sans text-sm text-essay-bg">
                       {image.caption}
                     </div>
                   )}
                 </div>
               ))}
           </div>
-        </div>
+        </section>
       )}
 
-      {/* Related Projects */}
       <RelatedProjects projectId={project.id} />
 
-      {/* Back to Portfolio */}
-      <div className="mt-12 border-t border-brutal-ink/15 pt-8">
+      <div className="mt-12 border-t border-essay-ink/10 pt-8">
         <Link
           href="/portfolio"
           onClick={() => trackClick('portfolio_back', { fromProject: project.title })}
-          className="inline-flex items-center gap-2 text-brutal-ink transition-opacity hover:opacity-70"
+          className="inline-flex min-h-[44px] items-center font-essay-sans text-essay-ink transition-colors duration-essay-fast ease-essay hover:text-essay-accent"
         >
-          ← Back to Portfolio
+          ← Back to portfolio
         </Link>
       </div>
     </article>

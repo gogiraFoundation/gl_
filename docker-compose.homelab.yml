@@ -67,6 +67,8 @@ services:
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-https://www.gogirlabs.uk,https://gogirlabs.uk}
       CSRF_TRUSTED_ORIGINS: ${CSRF_TRUSTED_ORIGINS:-https://www.gogirlabs.uk,https://gogirlabs.uk}
       FRONTEND_URL: ${FRONTEND_URL:-https://www.gogirlabs.uk}
+      PUBLIC_API_ORIGIN: ${PUBLIC_API_ORIGIN:-https://api.gogirlabs.uk}
+      SERVE_MEDIA: ${SERVE_MEDIA:-True}
       DATABASE_URL: postgresql://${DB_USER:-gogirlabs}:${DB_PASSWORD}@db:5432/${DB_NAME:-gogirlabs}
       REDIS_URL: redis://redis:6379/0
       EMAIL_BACKEND: ${EMAIL_BACKEND:-django.core.mail.backends.smtp.EmailBackend}
@@ -85,7 +87,11 @@ services:
       SECURE_SSL_REDIRECT: ${SECURE_SSL_REDIRECT:-False}
     volumes:
       - gogirlabs_static:/app/staticfiles
-      - gogirlabs_media:/app/media
+      # Host path owned by uid 1000 (appuser / gogirdev); named volumes are root-owned
+      # and block essay image copies and admin uploads.
+      - /mnt/data/apps/gogirlabs/media:/app/media
+      # Project essay markdown for `manage.py seed_blog --source-dir /essays`
+      - /mnt/data/blogs/project_essays:/essays:ro
     depends_on:
       db:
         condition: service_healthy

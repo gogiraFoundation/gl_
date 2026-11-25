@@ -37,6 +37,19 @@ describe('ContactForm', () => {
     )
   }
 
+  const fillValidFields = async (
+    user: ReturnType<typeof userEvent.setup>,
+    overrides?: { name?: string; email?: string; message?: string }
+  ) => {
+    await user.type(screen.getByLabelText(/name \*/i), overrides?.name ?? 'John Doe')
+    await user.type(screen.getByLabelText(/email \*/i), overrides?.email ?? 'john@example.com')
+    await user.selectOptions(screen.getByLabelText(/subject \*/i), 'Project enquiry')
+    await user.type(
+      screen.getByLabelText(/message \*/i),
+      overrides?.message ?? 'Test message content'
+    )
+  }
+
   it('renders form fields', () => {
     renderWithProviders(<ContactForm />)
     expect(screen.getByLabelText(/name/i)).toBeInTheDocument()
@@ -49,7 +62,7 @@ describe('ContactForm', () => {
     const user = userEvent.setup()
     renderWithProviders(<ContactForm />)
 
-    const submitButton = screen.getByRole('button', { name: /discuss your project/i })
+    const submitButton = screen.getByRole('button', { name: /send message/i })
     await user.click(submitButton)
 
     await waitFor(() => {
@@ -57,27 +70,25 @@ describe('ContactForm', () => {
     })
   })
 
+  it('does not use orangered field styling', () => {
+    renderWithProviders(<ContactForm />)
+    const nameInput = screen.getByLabelText(/name/i)
+    expect(nameInput.className).not.toMatch(/orangered/)
+    expect(nameInput.className).toMatch(/border-essay-ink/)
+  })
+
   it('validates email format', async () => {
     const user = userEvent.setup()
     renderWithProviders(<ContactForm />)
 
-    await user.type(screen.getByLabelText(/name/i), 'John Doe')
-    const emailInput = screen.getByLabelText(/email/i)
-    await user.type(emailInput, 'invalid-email')
-    await user.type(screen.getByLabelText(/subject/i), 'Test Subject')
-    await user.type(screen.getByLabelText(/message/i), 'Test message content')
+    await fillValidFields(user, { email: 'invalid-email' })
 
-    const submitButton = screen.getByRole('button', { name: /discuss your project/i })
+    const submitButton = screen.getByRole('button', { name: /send message/i })
     await user.click(submitButton)
 
-    await waitFor(
-      () => {
-        // Check for validation error - could be in error message or form validation
-        const errorText = screen.queryByText(/invalid email/i) || screen.queryByText(/email/i)
-        expect(errorText).toBeInTheDocument()
-      },
-      { timeout: 3000 }
-    )
+    // type="email" blocks submit before Zod, so the inline Zod message is not shown.
+    expect(mockApi.post).not.toHaveBeenCalled()
+    expect(screen.getByLabelText(/email \*/i)).toBeInvalid()
   })
 
   it('submits form with valid data', async () => {
@@ -87,13 +98,10 @@ describe('ContactForm', () => {
     renderWithProviders(<ContactForm />)
 
     await act(async () => {
-      await user.type(screen.getByLabelText(/name/i), 'John Doe')
-      await user.type(screen.getByLabelText(/email/i), 'john@example.com')
-      await user.type(screen.getByLabelText(/subject/i), 'Test Subject')
-      await user.type(screen.getByLabelText(/message/i), 'Test message content')
+      await fillValidFields(user)
     })
 
-    const submitButton = screen.getByRole('button', { name: /discuss your project/i })
+    const submitButton = screen.getByRole('button', { name: /send message/i })
     await act(async () => {
       await user.click(submitButton)
     })
@@ -102,7 +110,7 @@ describe('ContactForm', () => {
       expect(mockApi.post).toHaveBeenCalledWith('/contact/', {
         name: 'John Doe',
         email: 'john@example.com',
-        subject: 'Test Subject',
+        subject: 'Project enquiry',
         message: 'Test message content',
       })
     })
@@ -114,12 +122,9 @@ describe('ContactForm', () => {
 
     renderWithProviders(<ContactForm />)
 
-    await user.type(screen.getByLabelText(/name/i), 'John Doe')
-    await user.type(screen.getByLabelText(/email/i), 'john@example.com')
-    await user.type(screen.getByLabelText(/subject/i), 'Test Subject')
-    await user.type(screen.getByLabelText(/message/i), 'Test message content')
+    await fillValidFields(user)
 
-    const submitButton = screen.getByRole('button', { name: /discuss your project/i })
+    const submitButton = screen.getByRole('button', { name: /send message/i })
     await user.click(submitButton)
 
     await waitFor(() => {
@@ -133,13 +138,9 @@ describe('ContactForm', () => {
 
     renderWithProviders(<ContactForm />)
 
-    const longName = 'A'.repeat(100)
-    await user.type(screen.getByLabelText(/name/i), longName)
-    await user.type(screen.getByLabelText(/email/i), 'john@example.com')
-    await user.type(screen.getByLabelText(/subject/i), 'Test Subject')
-    await user.type(screen.getByLabelText(/message/i), 'Test message')
+    await fillValidFields(user, { name: 'A'.repeat(100), message: 'Test message' })
 
-    const submitButton = screen.getByRole('button', { name: /discuss your project/i })
+    const submitButton = screen.getByRole('button', { name: /send message/i })
     await user.click(submitButton)
 
     await waitFor(() => {
@@ -153,12 +154,9 @@ describe('ContactForm', () => {
 
     renderWithProviders(<ContactForm />)
 
-    await user.type(screen.getByLabelText(/name/i), '<script>alert("XSS")</script>')
-    await user.type(screen.getByLabelText(/email/i), 'john@example.com')
-    await user.type(screen.getByLabelText(/subject/i), 'Test Subject')
-    await user.type(screen.getByLabelText(/message/i), 'Test message')
+    await fillValidFields(user, { name: '<script>alert("XSS")</script>', message: 'Test message' })
 
-    const submitButton = screen.getByRole('button', { name: /discuss your project/i })
+    const submitButton = screen.getByRole('button', { name: /send message/i })
     await user.click(submitButton)
 
     await waitFor(() => {
@@ -174,13 +172,10 @@ describe('ContactForm', () => {
     renderWithProviders(<ContactForm />)
 
     await act(async () => {
-      await user.type(screen.getByLabelText(/name/i), 'John Doe')
-      await user.type(screen.getByLabelText(/email/i), 'john@example.com')
-      await user.type(screen.getByLabelText(/subject/i), 'Test Subject')
-      await user.type(screen.getByLabelText(/message/i), 'Test message content')
+      await fillValidFields(user)
     })
 
-    const submitButton = screen.getByRole('button', { name: /discuss your project/i })
+    const submitButton = screen.getByRole('button', { name: /send message/i })
     await act(async () => {
       await user.click(submitButton)
     })

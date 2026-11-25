@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { CheckCircle, XCircle, Loader2, Mail } from 'lucide-react'
@@ -10,10 +10,12 @@ import api from '@/lib/api'
 const primaryBtn = 'btn-brutal btn-brutal-md'
 const secondaryBtn = 'btn-brutal btn-brutal-md w-full'
 
-export default function NewsletterVerifyClient() {
-  const params = useParams()
+interface NewsletterVerifyClientProps {
+  token: string
+}
+
+export default function NewsletterVerifyClient({ token }: NewsletterVerifyClientProps) {
   const router = useRouter()
-  const token = params.token as string
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [message, setMessage] = useState('')
 

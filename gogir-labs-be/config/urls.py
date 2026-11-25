@@ -7,7 +7,8 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 from django.http import JsonResponse
-from django.urls import include, path
+from django.urls import include, path, re_path
+from django.views.static import serve
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularRedocView,
@@ -72,7 +73,16 @@ urlpatterns = [
     ),
 ]
 
-# Serve media files in development
+# Media: django.conf.urls.static.static() is a no-op when DEBUG is False, so homelab
+# uses serve() directly when SERVE_MEDIA is set (WhiteNoise does not serve uploads).
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+elif getattr(settings, "SERVE_MEDIA", False):
+    urlpatterns += [
+        re_path(
+            r"^media/(?P<path>.*)$",
+            serve,
+            {"document_root": settings.MEDIA_ROOT},
+        ),
+    ]

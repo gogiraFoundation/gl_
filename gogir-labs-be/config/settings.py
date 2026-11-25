@@ -336,6 +336,11 @@ if EMAIL_USE_TLS and EMAIL_USE_SSL:
 
 # Frontend URL
 FRONTEND_URL = config("FRONTEND_URL", default="http://localhost:3000")
+# Public origin for absolute /media/ URLs in seeded HTML (e.g. https://api.gogirlabs.uk).
+# When empty, seed_blog infers from ALLOWED_HOSTS (prefers api.*).
+PUBLIC_API_ORIGIN = config("PUBLIC_API_ORIGIN", default="")
+# Homelab serves uploads through Django (no separate media nginx). Off in multi-node prod.
+SERVE_MEDIA = config("SERVE_MEDIA", default=False, cast=bool)
 
 # Upload limits
 FILE_UPLOAD_MAX_MEMORY_SIZE = config(

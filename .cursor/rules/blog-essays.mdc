@@ -1,0 +1,31 @@
+---
+description: Lint Gogir Labs / Azagba essay markdown after edits
+globs: "**/apps/blog/fixtures/seed_essays_sample/**/*.md"
+alwaysApply: false
+---
+
+# Project essay markdown
+
+Essay sources feed `manage.py seed_blog` (allow-listed `*.md` → Django HTML). Do not invent a `content/blog` tree.
+
+After creating or editing essay markdown:
+
+```bash
+cd ~/.cursor/blog-lint && python3 -m blog_lint --check --roots gl-project-essays
+```
+
+Apply fixes only when asked:
+
+```bash
+python3 -m blog_lint --write --roots gl-project-essays
+```
+
+To refresh API posts (homelab / compose with `/essays` mount), use:
+
+```bash
+./scripts/refresh-essays.sh --lint-only
+./scripts/refresh-essays.sh --seed-dry-run
+./scripts/refresh-essays.sh --seed
+```
+
+Never pass `--publish` unless the user explicitly wants published posts. Follow `technical-writing-standards` and skill `technical-seo-and-content-optimisation` for meta on the Next routes, not auto front matter injection.

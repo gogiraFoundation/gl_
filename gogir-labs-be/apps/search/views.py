@@ -6,9 +6,11 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
+from apps.blog.blog_seed import public_post_visibility_q
 from apps.blog.models import Post
 from apps.blog.serializers import PostListSerializer
 from apps.portfolio.models import Project
+from apps.portfolio.portfolio_seed import PORTFOLIO_PUBLIC_HOLD_SLUGS
 from apps.portfolio.serializers import ProjectListSerializer
 from apps.resume.models import Experience, Skill
 from apps.resume.serializers import ExperienceSerializer, SkillSerializer
@@ -106,6 +108,7 @@ class SearchViewSet(viewsets.ViewSet):
         if content_type in ["all", "blog"]:
             blog_query = (
                 Post.objects.filter(published=True)
+                .filter(public_post_visibility_q())
                 .select_related("author", "category")
                 .prefetch_related("tags")
             )
@@ -125,6 +128,7 @@ class SearchViewSet(viewsets.ViewSet):
         if content_type in ["all", "portfolio"]:
             project_query = (
                 Project.objects.filter(published=True)
+                .exclude(slug__in=PORTFOLIO_PUBLIC_HOLD_SLUGS)
                 .select_related("category")
                 .prefetch_related("technologies")
             )

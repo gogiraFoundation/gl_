@@ -34,3 +34,25 @@ export function unwrapList<T>(data: unknown): T[] {
   }
   return []
 }
+
+/**
+ * Server-only fetch for generateMetadata. Returns null on failure instead of throwing.
+ */
+export async function fetchPublicJson<T>(path: string, init?: RequestInit): Promise<T | null> {
+  const base = getApiBaseUrl()
+  const url = path.startsWith('http') ? path : `${base.replace(/\/$/, '')}${path}`
+  try {
+    const res = await fetch(url, {
+      ...init,
+      next: { revalidate: 60, ...(init && 'next' in init ? (init.next as object) : {}) },
+      headers: {
+        Accept: 'application/json',
+        ...(init?.headers ?? {}),
+      },
+    })
+    if (!res.ok) return null
+    return (await res.json()) as T
+  } catch {
+    return null
+  }
+}

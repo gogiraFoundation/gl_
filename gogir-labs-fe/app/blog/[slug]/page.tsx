@@ -1,32 +1,63 @@
 import type { Metadata } from 'next'
-import { cache } from 'react'
 import { notFound } from 'next/navigation'
+import { cache } from 'react'
 import BlogPostClient, { type Post } from './BlogPostClient'
-import { ApiError, fetchApi } from '@/lib/serverApi'
+import { ApiError, fetchApi, fetchPublicJson } from '@/lib/serverApi'
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 interface BlogPostPageProps {
   params: Promise<{ slug?: string }>
 }
 
-const getBlogPost = cache(async (slug: string) => {
-  return fetchApi<Post>(`/blog/posts/by-slug/?slug=${encodeURIComponent(slug)}`)
-})
+type PostMeta = {
+  title: string
+  slug: string
+  excerpt?: string
+  featured_image: string | null
+  meta_title?: string
+  meta_description?: string
+}
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params
-  if (!slug) return { title: 'Blog' }
-  try {
-    const post = await getBlogPost(slug)
-    return {
-      title: post.meta_title || post.title,
-      description: post.meta_description || post.excerpt,
-    }
-  } catch {
-    return { title: 'Blog' }
+  if (!slug) return { title: 'Post' }
+
+  const post = await fetchPublicJson<PostMeta>(
+    `/blog/posts/by-slug/?slug=${encodeURIComponent(slug)}`
+  )
+  if (!post) {
+    return { title: 'Post not found' }
+  }
+
+  const title = post.meta_title || post.title
+  const description = post.meta_description || post.excerpt || `Blog post: ${post.title}`
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: 'article',
+      url: `/blog/${post.slug}`,
+      ...(post.featured_image ? { images: [{ url: post.featured_image }] } : {}),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      ...(post.featured_image ? { images: [post.featured_image] } : {}),
+    },
+    alternates: {
+      canonical: `/blog/${post.slug}`,
+    },
   }
 }
+
+const getBlogPost = cache(async (slug: string) => {
+  return fetchApi<Post>(`/blog/posts/by-slug/?slug=${encodeURIComponent(slug)}`)
+})
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params

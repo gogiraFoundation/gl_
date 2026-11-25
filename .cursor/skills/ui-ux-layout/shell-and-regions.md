@@ -2,7 +2,21 @@
 
 ## Public frame
 
-`Header` and `Footer` are the public frame. Pages compose them. There is no `AppShell`.
+There is no `AppShell`. Most public pages use the essay frame. A smaller set still uses the brutalist frame.
+
+### Essay frame (default for home, essays, about, portfolio, contact, resume)
+
+```
+EssayDesignScope (data-design=essays)
+└── min-h-screen flex flex-col bg-essay-bg
+    ├── EssayNav (wordmark + Essays/Portfolio/About/Contact)
+    ├── main.flex-grow (px-6 lg:px-8)
+    └── EssayFooter (mt-auto; Resume/Privacy + external links)
+```
+
+Do not also mount brutalist `Header`/`Footer` on these routes.
+
+### Brutalist frame (search, privacy, newsletter, testimonials until migrated)
 
 ```
 min-h-screen flex flex-col bg-brutal-bg
@@ -14,7 +28,7 @@ min-h-screen flex flex-col bg-brutal-bg
 
 `Header` shows the wordmark, the nav, search, and social links from `lg` up. Below `lg` the nav is the off-canvas menu. Pages do not render a second nav, a sidebar, or a second footer.
 
-`ScrollProgress` is mounted in `app/providers.tsx`. Do not add another progress bar.
+`ScrollProgress` is mounted in `app/providers.tsx`. Do not add another progress bar on essay reading pages that already use `ReadingProgress`.
 
 ## Admin frame
 

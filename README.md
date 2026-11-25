@@ -139,12 +139,14 @@ Never put live passwords, `SECRET_KEY`, or API tokens in the repo or markdown ex
 
 ```
 gogir_labs/
-├── gogir-labs-be/             # Django API
+├── gogir-labs-be/             # Django API (the backend to run)
 │   ├── apps/                  # blog, portfolio, contact, newsletter, …
 │   ├── config/                # settings, urls, pagination
 │   └── requirements.txt
-├── gogir-labs-fe/             # Next.js frontend + wrangler / OpenNext
+├── gogir-labs-fe/             # Next.js frontend + wrangler / OpenNext (the frontend to run)
+├── gogir_labs-fe/             # Partial components/portfolio tree only. Not the app
 ├── nginx/                     # Edge snippets (homelab API, etc.)
+├── scripts/                   # Repo scripts
 ├── docs/                      # Homelab + Cloudflare runbooks
 ├── .github/workflows/         # CI/CD
 ├── docker-compose.yml         # Local
@@ -153,6 +155,8 @@ gogir_labs/
 ├── deploy.sh                  # Classic Compose deploy
 └── deploy-homelab.sh          # Homelab API deploy
 ```
+
+`untitled folder/` is empty. Do not put application code there.
 
 ## Development
 

@@ -2,19 +2,18 @@ import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 import Script from 'next/script'
 
-const title =
-  'Resume | Emmanuel Ugbaje | Lead Software Engineer, Django, IAM, Data Engineering & Cloud'
+const title = 'Resume | Emmanuel Ugbaje | Backend engineer building AI systems'
 
 const description =
-  'Professional CV: Lead Software Engineer at Traq Authenticator (IAM), Django, Python, Redis, Docker, Kubernetes, CI/CD, GitHub Actions, AWS. Data engineering, MSc Renewable Energy & Sustainable Technology, blockchain analytics, ISO 50001 energy analysis, and technical operations.'
+  'Backend engineer building AI systems. Lead backend at Traq Authenticator. MSc Renewable Energy and Sustainable Technology. Experience, education and skills.'
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Person',
   name: 'Emmanuel Ugbaje',
-  jobTitle: 'Lead Software Engineer',
+  jobTitle: 'Backend engineer building AI systems',
   description,
-  url: 'https://gogirlabs.uk/resume',
+  url: 'https://www.gogirlabs.uk/resume',
   sameAs: [
     'https://www.linkedin.com/in/emmanuel-ugbaje-b19227161/',
     'https://github.com/gogiraFoundation',
@@ -47,14 +46,14 @@ const jsonLd = {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://gogirlabs.uk'),
-  title,
+  metadataBase: new URL('https://www.gogirlabs.uk'),
+  title: { absolute: title },
   description,
   keywords: [
     'Emmanuel Ugbaje',
     'resume',
     'CV',
-    'Lead Software Engineer',
+    'Backend engineer building AI systems',
     'Traq Authenticator',
     'IAM',
     'Django',
