@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { ProjectCard } from './ProjectCard'
 import api from '@/lib/api'
-import { Code } from 'lucide-react'
+import { PORTFOLIO_PUBLIC_HOLD_SLUGS } from '@/lib/essays'
 
 interface RelatedProjectsProps {
   projectId: number
@@ -20,21 +20,43 @@ export function RelatedProjects({ projectId }: RelatedProjectsProps) {
     staleTime: 10 * 60 * 1000,
   })
 
-  if (isLoading || relatedProjects.length === 0) {
+  const visible = Array.isArray(relatedProjects)
+    ? relatedProjects.filter(
+        (project: { slug?: string }) =>
+          project.slug && !PORTFOLIO_PUBLIC_HOLD_SLUGS.has(project.slug)
+      )
+    : []
+
+  if (isLoading || visible.length === 0) {
     return null
   }
 
   return (
-    <section className="mt-12 border-t border-brutal-ink/15 pt-8">
-      <div className="mb-6 flex items-center gap-2">
-        <Code className="h-6 w-6 text-brutal-ink" aria-hidden />
-        <h2 className="font-serif text-2xl font-semibold text-brutal-ink">Related projects</h2>
-      </div>
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {relatedProjects.map((project: any) => (
-          <ProjectCard key={project.id} project={project} />
-        ))}
-      </div>
+    <section className="mt-12 border-t border-essay-ink/10 pt-8">
+      <h2 className="mb-6 text-center font-essay-display text-2xl font-semibold text-essay-ink">
+        Related projects
+      </h2>
+      <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {visible.map(
+          (project: {
+            id: number
+            title: string
+            slug: string
+            description: string
+            featured_image: string | null
+            github_url: string
+            live_url: string
+            category: { id: number; name: string; slug: string } | null
+            technologies: Array<{ id: number; name: string; slug: string; icon: string }>
+            featured: boolean
+            created_at: string
+          }) => (
+            <li key={project.id} className="min-w-0">
+              <ProjectCard project={project} />
+            </li>
+          )
+        )}
+      </ul>
     </section>
   )
 }

@@ -61,6 +61,40 @@ The frontend supports light and dark themes. The theme toggle is in the header (
 
 4. Click **"Save"**
 
+**Project essays seed**: On the homelab API host, `python manage.py seed_blog --source-dir /essays` imports markdown from `/mnt/data/blogs/project_essays` as unpublished posts under the **Project Essays** category (idempotent). Essay images under `images/` are copied to media and linked as `https://api.gogirlabs.uk/media/blog/essays/...`. Use `--refresh` to re-import content and images for existing slugs. Review excerpts and content in admin, then publish when ready. Prefer admin publish for the first live batch so notifications fire intentionally; keep `NEWSLETTER_BROADCASTS_ENABLED=False` unless you intend campaign fan-out.
+
+**Case-study publish runbook** (editorial centre of the public site):
+
+1. Seed essays (dry-run first):
+   ```bash
+   python manage.py seed_blog --source-dir /essays --dry-run
+   python manage.py seed_blog --source-dir /essays
+   ```
+2. In Django admin, publish **`tr-bot`** (slug `tr-bot`, from `tr_bot.md`) first, then 1–2 more essays (`traqhq`, `uk-energy-eff`, or blockchain-related files on the host).
+3. Seed portfolio if needed: `python manage.py seed_portfolio` — creates all catalogue rows **unpublished** (`auto_publish` is always false).
+4. Publish **only** these case-study cards when copy and images are ready:
+   - **Traq Authenticator** (`traq-authenticator`) — IAM; link writing to `/blog/tr-bot` and Traq essays
+   - **Energy Management Dashboard** — ISO 50001
+   - One data / blockchain card only if an essay backs it
+5. Keep Afri Cleans, e-commerce analytics, Urbana, Pipe Pop, Bria, Invenire, and API Gateway **unpublished** unless an essay backs them. After a seed that previously auto-published them, unpublish with:
+   ```bash
+   docker compose -f docker-compose.homelab.yml --env-file .env exec -T backend \
+     python manage.py shell -c "
+   from apps.portfolio.models import Project
+   KEEP = {'traq-authenticator', 'energy-management-dashboard'}
+   n = Project.objects.exclude(slug__in=KEEP).update(published=False)
+   print('unpublished', n)
+   "
+   ```
+6. Confirm `FRONTEND_URL=https://www.gogirlabs.uk` so feed/sitemap item URLs point at the Worker, not the API host.
+
+### Search Console (indexing)
+
+1. Verify property **`https://www.gogirlabs.uk`** in [Google Search Console](https://search.google.com/search-console) (and Bing Webmaster Tools).
+2. Submit sitemap: **`https://api.gogirlabs.uk/sitemap.xml`** (FE `/sitemap.xml` is not served; feeds are on the API origin).
+3. Request indexing for `/`, `/portfolio/traq-authenticator`, `/blog/tr-bot`, `/resume`, `/about`.
+4. Confirm `https://www.gogirlabs.uk/robots.txt` lists that Sitemap URL after a Workers deploy.
+
 ### Testimonials
 
 1. Go to **Testimonials > Testimonials**

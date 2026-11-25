@@ -37,26 +37,22 @@ describe('ProjectCard', () => {
     })
   })
 
-  it('renders a typographic placeholder when there is no featured image', () => {
+  it('renders a list row linking to the project', () => {
     const { container } = renderWithProviders(<ProjectCard project={mockProject} />)
 
-    expect(screen.getByTestId('project-card-placeholder')).toBeInTheDocument()
-    expect(screen.queryByAltText(/preview/i)).not.toBeInTheDocument()
-    expect(document.body.innerHTML).not.toContain('picsum.photos')
-    expect(screen.getAllByText('Afri Cleans Website').length).toBeGreaterThanOrEqual(1)
-    expect(container.querySelector('article')).toHaveClass('opacity-100')
-    expect(container.querySelector('article')).not.toHaveClass('opacity-0')
-  })
-
-  it('renders the featured image with preview alt text when present', () => {
-    const withImage = {
-      ...mockProject,
-      featured_image: '/media/projects/afri.jpg',
-    }
-    renderWithProviders(<ProjectCard project={withImage} />)
-
-    expect(screen.getByAltText('Afri Cleans Website preview')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Afri Cleans Website' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Afri Cleans Website/ })).toHaveAttribute(
+      'href',
+      '/portfolio/afri-cleans-website'
+    )
+    expect(screen.getByRole('link', { name: 'Read the essay' })).toHaveAttribute(
+      'href',
+      '/blog/afri'
+    )
+    expect(screen.getByText('API description fallback')).toBeInTheDocument()
     expect(screen.queryByTestId('project-card-placeholder')).not.toBeInTheDocument()
+    expect(screen.queryByAltText(/preview/i)).not.toBeInTheDocument()
+    expect(container.querySelector('article')).not.toHaveClass('hover:-translate-y-0.5')
   })
 
   it('prefers the API category name over editorial labels', () => {

@@ -1,5 +1,8 @@
 /**
  * Editorial copy for portfolio cards (British English). Merged by project slug when present.
+ * Public card descriptions now come from the API. This map is only a fallback for
+ * category labels when the API has no category; do not put marketing blurbs here,
+ * and do not add held or excluded slugs (bria, energy-management-dashboard, and the others).
  */
 export type PortfolioCardCopy = {
   description: string
@@ -7,53 +10,9 @@ export type PortfolioCardCopy = {
   categoryLabel: string
 }
 
-export const PORTFOLIO_CARD_COPY: Record<string, PortfolioCardCopy> = {
-  'afri-cleans-website': {
-    categoryLabel: 'Website',
-    description:
-      'Full-stack site for Afri Ltd: booking, service management, and customer-facing pages for a cleaning business.',
-  },
-  'energy-management-dashboard': {
-    categoryLabel: '',
-    description:
-      'Commercial building energy dashboard with live analytics and ISO 50001-oriented reporting.',
-  },
-  'api-gateway-service': {
-    categoryLabel: '',
-    description:
-      'A Django API gateway for routing and securing microservice traffic—rate limits, auth checks, and stable upstream routing without a separate gateway stack.',
-  },
-  'e-commerce-analytics-platform': {
-    categoryLabel: 'SaaS',
-    description:
-      'E-commerce analytics with live dashboards, sales reporting, and predictive views so operators can act on what sold—and what will.',
-  },
-  urbana: {
-    categoryLabel: 'SaaS',
-    description:
-      'Operations platform for growing teams: projects, collaboration, and reporting in one place.',
-  },
-  'pipe-pop': {
-    categoryLabel: '',
-    description:
-      'Monitoring and health tools for Point of Presence (PoP) nodes in pipe networks—live status, not spreadsheets.',
-  },
-  bria: {
-    categoryLabel: 'Renewable Technology',
-    description:
-      'Renewable power forecasting for solar and wind: weather data, physical models, and ML generation forecasts.',
-  },
-  invenire: {
-    categoryLabel: 'FinTech',
-    description:
-      'ML-assisted web scraping and data mining—NLP over public sources to surface trends teams can act on.',
-  },
-}
+export const PORTFOLIO_CARD_COPY: Record<string, PortfolioCardCopy> = {}
 
-const SLUG_ALIASES: Record<string, string> = {
-  'ecommerce-analytics-platform': 'e-commerce-analytics-platform',
-  pipe_pop: 'pipe-pop',
-}
+const SLUG_ALIASES: Record<string, string> = {}
 
 export function getPortfolioCardCopy(slug: string): PortfolioCardCopy | undefined {
   const normalised = slug?.toLowerCase?.() ?? ''

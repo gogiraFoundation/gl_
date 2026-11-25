@@ -18,23 +18,50 @@ interface Project {
 
 interface ProjectGridProps {
   projects: Project[]
+  hasActiveFilters?: boolean
+  onClearFilters?: () => void
 }
 
-export function ProjectGrid({ projects }: ProjectGridProps) {
+export function ProjectGrid({
+  projects,
+  hasActiveFilters = false,
+  onClearFilters,
+}: ProjectGridProps) {
   if (!projects || projects.length === 0) {
     return (
-      <div className="py-12 text-left font-sans text-brutal-muted">
-        <p className="mb-2 text-brutal-ink">No projects found.</p>
-        <p className="text-sm">Try adjusting your filters or check back later.</p>
+      <div className="mt-12 text-center font-essay-sans text-essay-muted">
+        {hasActiveFilters ? (
+          <>
+            <p className="mb-2 text-essay-ink">Nothing matches these filters.</p>
+            {onClearFilters ? (
+              <button
+                type="button"
+                onClick={onClearFilters}
+                className="inline-flex min-h-[44px] items-center justify-center font-essay-sans text-sm font-medium text-essay-accent underline underline-offset-4 transition-opacity duration-essay-fast ease-essay hover:opacity-90"
+              >
+                Clear filters
+              </button>
+            ) : (
+              <p className="text-sm">Try adjusting your filters or search.</p>
+            )}
+          </>
+        ) : (
+          <>
+            <p className="mb-2 text-essay-ink">No projects found.</p>
+            <p className="text-sm">Check back later.</p>
+          </>
+        )}
       </div>
     )
   }
 
   return (
-    <div className="mx-auto mt-8 grid w-full max-w-7xl grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-8 2xl:grid-cols-5 2xl:gap-6">
+    <ul className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {projects.map((project) => (
-        <ProjectCard key={project.id} project={project} />
+        <li key={project.id} className="min-w-0">
+          <ProjectCard project={project} />
+        </li>
       ))}
-    </div>
+    </ul>
   )
 }

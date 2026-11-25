@@ -43,8 +43,17 @@ class Command(BaseCommand):
             "--refresh",
             action="store_true",
             help=(
-                "Re-import content and images for existing slugs "
-                "(does not change published flag)"
+                "Re-import content and images for existing unpublished slugs "
+                "(does not change published flag; published posts need "
+                "--update-published)"
+            ),
+        )
+        parser.add_argument(
+            "--update-published",
+            action="store_true",
+            help=(
+                "Allow --refresh to update posts that are already published. "
+                "Without this flag, published posts are never changed."
             ),
         )
         parser.add_argument(
@@ -59,29 +68,53 @@ class Command(BaseCommand):
             raise CommandError(f"Source directory not found: {source_dir}")
 
         author = self._resolve_author(options.get("author"))
+        update_published = bool(options["update_published"])
+        refresh = bool(options["refresh"])
 
         if options["dry_run"]:
             planned = plan_essays(source_dir)
             to_create = [p for p in planned if not p["exists"]]
-            to_skip = [p for p in planned if p["exists"]]
-            mode = "refresh" if options["refresh"] else "skip"
+            existing = [p for p in planned if p["exists"]]
+            published = [p for p in existing if p["published"]]
+            unpublished = [p for p in existing if not p["published"]]
+
             self.stdout.write(
                 f"Dry run: {len(to_create)} would create, "
-                f"{len(to_skip)} existing would {mode}, "
-                f"{sum(p['image_refs'] for p in planned)} image refs "
-                f"(author={author.get_username()})."
+                f"{len(unpublished)} unpublished existing, "
+                f"{len(published)} published existing, "
+                f"{sum(p['image_refs'] for p in planned)} media refs "
+                f"(author={author.get_username()}, "
+                f"refresh={refresh}, update_published={update_published})."
             )
+
+            if published:
+                self.stdout.write(
+                    "Published posts (unchanged unless --update-published):"
+                )
+                for item in published:
+                    if refresh and update_published:
+                        action = "would refresh (--update-published)"
+                    elif refresh:
+                        action = "would SKIP (published; pass --update-published)"
+                    else:
+                        action = "exists (published)"
+                    self.stdout.write(
+                        f"  ! {item['slug']} ({item['filename']}, {action}, "
+                        f"{item['image_refs']} media)"
+                    )
+
             for item in to_create:
                 self.stdout.write(
                     f"  + {item['slug']} ({item['filename']}, "
-                    f"{item['image_refs']} images)"
+                    f"{item['image_refs']} media)"
                 )
-            for item in to_skip:
-                mark = "~" if options["refresh"] else "="
+            for item in unpublished:
+                if refresh:
+                    mark, label = "~", "would refresh"
+                else:
+                    mark, label = "=", "exists"
                 self.stdout.write(
-                    f"  {mark} {item['slug']} "
-                    f"({'refresh' if options['refresh'] else 'exists'}, "
-                    f"{item['image_refs']} images)"
+                    f"  {mark} {item['slug']} ({label}, " f"{item['image_refs']} media)"
                 )
             return
 
@@ -89,7 +122,8 @@ class Command(BaseCommand):
             source_dir=source_dir,
             author=author,
             publish=options["publish"],
-            refresh=options["refresh"],
+            refresh=refresh,
+            update_published=update_published,
         )
         self.stdout.write(
             self.style.SUCCESS(
@@ -100,6 +134,7 @@ class Command(BaseCommand):
                 f"{'' if result['created'] == 1 else 's'} created, "
                 f"{result['refreshed']} refreshed, "
                 f"{result['skipped']} skipped, "
+                f"{result.get('skipped_published', 0)} published-skipped, "
                 f"{result['images_copied']} image"
                 f"{'' if result['images_copied'] == 1 else 's'} copied."
             )

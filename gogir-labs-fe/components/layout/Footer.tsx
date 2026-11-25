@@ -15,8 +15,7 @@ export function Footer() {
           <div>
             <h3 className="mb-4 font-serif text-lg font-semibold text-white">Emmanuel Ugbaje</h3>
             <p className="mb-4 text-sm leading-relaxed text-white/85">
-              Software | Data Engineer. Building secure, scalable backends and APIs—specialising in
-              authentication, data pipelines, and cloud-ready solutions.
+              Backend engineer building AI systems. Lead backend at Traq Authenticator.
             </p>
             <div className="flex flex-wrap gap-4">
               <a

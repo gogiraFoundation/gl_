@@ -23,6 +23,7 @@ const config: Config = {
       maxWidth: {
         content: '1200px',
         shell: '1400px',
+        prose: '70ch',
       },
       spacing: {
         section: '4rem', // 64px for section spacing
@@ -33,6 +34,12 @@ const config: Config = {
           bg: '#FFFFFF',
           ink: '#111111',
           muted: '#4A4A4A',
+        },
+        essay: {
+          bg: '#f0ece4',
+          ink: '#44443f',
+          muted: '#6c6c6c',
+          accent: '#0d5c56',
         },
         primary: {
           50: '#faf5ff',
@@ -72,6 +79,17 @@ const config: Config = {
           'Courier New',
           'monospace',
         ],
+        'essay-display': ['var(--font-essay-display)', 'system-ui', 'sans-serif'],
+        'essay-sans': ['var(--font-essay-sans)', 'system-ui', 'sans-serif'],
+        'essay-mono': ['var(--font-essay-mono)', 'ui-monospace', 'monospace'],
+      },
+      transitionDuration: {
+        'essay-fast': '160ms',
+        'essay-med': '240ms',
+        'essay-slow': '320ms',
+      },
+      transitionTimingFunction: {
+        essay: 'cubic-bezier(0.4, 0, 0.2, 1)',
       },
       backgroundImage: {
         'gradient-primary': 'none',

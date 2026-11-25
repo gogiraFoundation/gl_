@@ -34,8 +34,9 @@ Read the matching reference before writing UI code:
 
 ## Hard rules
 
-- Public chrome uses `brutal-bg`, `brutal-ink`, `brutal-muted`, `font-serif` for titles, and `border-brutal-ink`. Do not introduce a new palette (`bg-indigo-600`, `text-rose-600`) on a public component.
-- Admin screens use the gray dashboard classes already on those pages. Do not restyle an admin tool into the public brutalist page inside an unrelated change.
+- **Essay-scoped routes** (home `/`, `/blog`, `/blog/[slug]` for Project Essays, `/about`, `/portfolio`, `/portfolio/[slug]`, `/contact`, `/resume`) use `data-design="essays"` via `EssayDesignScope`: tokens `essay-bg` (`#f0ece4`), `essay-ink`, `essay-muted`, `essay-accent` (dark teal `#0d5c56` for outlines, focus, and offset shadows), fonts `font-essay-display` / `font-essay-sans` / `font-essay-mono`, and chrome from `components/essays/*` (`EssayNav`, `EssayFooter`). Essay body images use the standardized `.essay-img` treatment (capped size, teal border + shadow). Do not put orangered, bright blue, or `font-serif` on those pages. Motion is colour/opacity only at `duration-essay-fast` (160ms) / `ease-essay`, except the home hero `RadarPanel` (canvas 2D instrument).
+- **Other public chrome** (search, privacy, newsletter, testimonials, non-essay blog posts) uses `brutal-bg`, `brutal-ink`, `brutal-muted`, `font-serif` for titles, and `border-brutal-ink` until migrated. Do not introduce a random third palette (`bg-indigo-600`, `text-rose-600`).
+- Admin screens use the gray dashboard classes already on those pages. Do not restyle an admin tool into the public brutalist or essay page inside an unrelated change.
 - Merge incoming `className` with `cn` from `@/lib/utils`.
 - Icons come from `lucide-react`. A decorative icon is `aria-hidden`. An icon-only control has an `aria-label`.
 - Forms use Zod plus React Hook Form, as `ContactForm` and the admin login do.

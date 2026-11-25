@@ -96,6 +96,18 @@ Requires `npx wrangler login` (or API token env vars). Then attach `www.gogirlab
 | `CSRF_TRUSTED_ORIGINS` | `https://www.gogirlabs.uk,https://gogirlabs.uk` |
 | `FRONTEND_URL` | `https://www.gogirlabs.uk` |
 
+## Feeds and sitemap (optional same-origin proxy)
+
+RSS/Atom and the XML sitemap are served by Django on the API host:
+
+- `https://api.gogirlabs.uk/feed/`
+- `https://api.gogirlabs.uk/feed/atom/`
+- `https://api.gogirlabs.uk/sitemap.xml`
+
+The Next app advertises those absolute API URLs and points `robots.txt` at the API sitemap. Item URLs inside the feed and sitemap use `FRONTEND_URL` (set to `https://www.gogirlabs.uk` in production) so crawlers land on the Worker, not the API.
+
+**Follow-up (not required):** add Cloudflare routes on `www.gogirlabs.uk` for `/feed*`, `/sitemap.xml` → `api.gogirlabs.uk` if you want same-origin discovery URLs. Do not add Next.js rewrites for these paths.
+
 ## Verify
 
 After a green Worker deploy:
@@ -103,3 +115,4 @@ After a green Worker deploy:
 1. Hard-refresh `https://www.gogirlabs.uk`
 2. DevTools → Network → API host is `api.gogirlabs.uk` (not Heroku)
 3. No more Pages logs with `next-on-pages`
+4. `curl -sI https://api.gogirlabs.uk/feed/` and `/sitemap.xml` return 200; item `<loc>` hosts match `FRONTEND_URL`

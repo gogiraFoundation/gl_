@@ -8,10 +8,10 @@ import { Mail } from 'lucide-react'
 
 export default function NewsletterSubscribePage() {
   useEffect(() => {
-    document.title = 'Newsletter | Emmanuel Ugbaje — Software Engineering & Platform Insights'
+    document.title = 'Newsletter | Emmanuel Ugbaje | Backend engineering and AI systems'
     const metaDescription = document.querySelector('meta[name="description"]')
     const descriptionContent =
-      'Subscribe for updates from Emmanuel Ugbaje on Python, Django, backends, CI/CD, cloud, and data—practical notes for engineers and builders.'
+      'Subscribe for updates from Emmanuel Ugbaje on Python, Django, backends, CI/CD, cloud, and data: practical notes for engineers and builders.'
     if (metaDescription) {
       metaDescription.setAttribute('content', descriptionContent)
     } else {
@@ -34,7 +34,7 @@ export default function NewsletterSubscribePage() {
             <h1 className="mb-4 font-serif text-4xl font-semibold tracking-tight sm:text-5xl">
               Newsletter
             </h1>
-            <p className="max-w-xl text-left text-base leading-relaxed text-brutal-muted md:text-lg">
+            <p className="max-w-xl text-justify text-base leading-relaxed text-brutal-muted md:text-lg">
               Practical notes on backends, security, CI/CD, and data systems. Occasional updates
               when there is something worth reading.
             </p>
@@ -50,31 +50,31 @@ export default function NewsletterSubscribePage() {
               <ul className="space-y-2 text-left text-sm leading-relaxed text-brutal-muted">
                 <li className="flex items-start gap-2">
                   <span className="text-brutal-ink" aria-hidden>
-                    —
+                    -
                   </span>
                   <span>Deep dives into backend systems and architecture</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-brutal-ink" aria-hidden>
-                    —
+                    -
                   </span>
                   <span>CI/CD and automation practices that hold up in production</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-brutal-ink" aria-hidden>
-                    —
+                    -
                   </span>
                   <span>Cloud patterns for AWS, Azure, and GCP</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-brutal-ink" aria-hidden>
-                    —
+                    -
                   </span>
                   <span>Security and scalability notes for modern platforms</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-brutal-ink" aria-hidden>
-                    —
+                    -
                   </span>
                   <span>New projects and writing when they ship</span>
                 </li>

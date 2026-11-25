@@ -3,15 +3,11 @@
 import Link from 'next/link'
 import { Download } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
-import { GlowCard } from '@/components/ui/GlowCard'
 import { useAnalyticsEvent } from '@/hooks/useAnalyticsEvent'
 import api from '@/lib/api'
 
-const RESUME_SECTION_CARD_CLASS =
-  'p-6 md:p-8 transition-[box-shadow,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(0,0,0,0.18),0_2px_12px_rgba(0,0,0,0.1),0_1px_0_rgba(255,255,255,0.05)_inset] motion-reduce:hover:translate-y-0'
-
-const WHY_I_EXCEL =
-  'I am a solutions-driven Lead Software Engineer and Data Engineer with a proven track record of building scalable backends, secure platforms, and automated workflows. From cloud-native systems to blockchain analysis and energy optimisation, my diverse experience makes me highly adaptable to the challenges of modern software development. Whether leading engineering teams, collaborating with stakeholders, or architecting production-grade services, my focus is always on efficiency, security, and performance.'
+const HOW_I_WORK =
+  'I am a backend engineer building AI systems, and I lead backend development at Traq Authenticator. I care about auth flows that do not leak, rate limits that hold under load, and pipelines that reconcile. I would rather show a dated test, a tagged build, or a write-up of a failure than a list of tools. I came to this work through energy analytics and an MSc that trained me to ask where a number came from before trusting it.'
 
 const SKILL_CATEGORY_LABELS: Record<string, string> = {
   programming: 'Programming Languages',
@@ -71,8 +67,8 @@ function formatDateRange(start: string, end: string | null, isCurrent: boolean):
     return d.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })
   }
   const startLabel = fmt(start)
-  if (isCurrent || !end) return `${startLabel} – Present`
-  return `${startLabel} – ${fmt(end)}`
+  if (isCurrent || !end) return `${startLabel} to Present`
+  return `${startLabel} to ${fmt(end)}`
 }
 
 function bulletLines(highlights: string[] | undefined, description: string): string[] {
@@ -152,29 +148,31 @@ export function ResumeContent() {
   return (
     <article className="space-y-14 md:space-y-16">
       <header>
-        <div className="mb-4 flex min-h-[3rem] flex-wrap items-center justify-between gap-3 sm:min-h-0 sm:flex-nowrap sm:gap-4">
-          <h1 className="w-full min-w-0 font-serif text-3xl font-semibold tracking-tight text-brutal-ink sm:w-auto sm:text-4xl md:text-5xl">
+        <p className="font-essay-mono text-xs text-essay-muted" aria-hidden="true">
+          // resume
+        </p>
+        <div className="mb-4 mt-3 flex min-h-[3rem] flex-wrap items-center justify-between gap-3 sm:min-h-0 sm:flex-nowrap sm:gap-4">
+          <h1 className="w-full min-w-0 font-essay-display text-3xl font-semibold tracking-tight text-essay-ink sm:w-auto sm:text-4xl md:text-5xl">
             Resume
           </h1>
           <button
             type="button"
             onClick={handleDownload}
-            className="btn-brutal btn-brutal-sm w-full gap-2 text-xs sm:w-auto sm:shrink-0 sm:text-sm"
+            className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 border border-essay-ink/25 px-4 font-essay-sans text-sm text-essay-ink transition-colors duration-essay-fast ease-essay hover:border-essay-accent hover:text-essay-accent sm:w-auto sm:shrink-0"
             aria-label="Download resume as PDF"
           >
-            <Download className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" aria-hidden />
+            <Download className="h-4 w-4 shrink-0" aria-hidden />
             Download PDF
           </button>
         </div>
-        <p className="mb-8 max-w-2xl text-left text-sm leading-relaxed text-brutal-muted md:text-justify md:text-base">
-          {site?.headline ||
-            'Lead Software Engineer — Django, IAM, and data engineering. Experience, education, and skills at a glance.'}
+        <p className="mb-8 max-w-prose text-justify font-essay-sans text-sm leading-relaxed text-essay-muted md:text-base">
+          {site?.headline || 'Backend engineer building AI systems.'}
         </p>
       </header>
 
-      {isLoading && <p className="text-center text-brutal-muted">Loading resume…</p>}
+      {isLoading && <p className="font-essay-sans text-essay-muted">Loading resume…</p>}
       {isError && (
-        <p className="text-center text-red-600">Could not load resume data. Try again later.</p>
+        <p className="font-essay-sans text-red-700">Could not load resume data. Try again later.</p>
       )}
 
       {!isLoading && !isError && (
@@ -182,31 +180,34 @@ export function ResumeContent() {
           <section aria-labelledby="experience-heading">
             <h2
               id="experience-heading"
-              className="mb-6 font-serif text-2xl font-semibold text-brutal-ink md:mb-8 md:text-3xl"
+              className="mb-6 font-essay-display text-2xl font-semibold text-essay-ink md:mb-8 md:text-3xl"
             >
               Experience
             </h2>
-            <div className="space-y-6">
+            <div className="space-y-8">
               {experience.map((exp) => {
                 const lines = bulletLines(exp.highlights, exp.description)
                 return (
-                  <GlowCard key={exp.id} className={RESUME_SECTION_CARD_CLASS}>
-                    <div className="mb-4 flex flex-col gap-1 border-b border-brutal-ink/10 pb-4 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+                  <div
+                    key={exp.id}
+                    className="border-b border-essay-ink/10 pb-8 last:border-b-0 last:pb-0"
+                  >
+                    <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
                       <div>
-                        <h3 className="text-lg font-semibold text-brutal-ink md:text-xl">
+                        <h3 className="font-essay-sans text-lg font-semibold text-essay-ink md:text-xl">
                           {exp.title}
                         </h3>
-                        <p className="text-sm text-brutal-muted md:text-base">
-                          <span className="font-medium text-brutal-ink">{exp.company}</span>
+                        <p className="font-essay-sans text-sm text-essay-muted md:text-base">
+                          <span className="font-medium text-essay-ink">{exp.company}</span>
                           {exp.location ? ` · ${exp.location}` : ''}
                         </p>
                       </div>
-                      <p className="shrink-0 text-sm font-medium text-brutal-muted">
+                      <p className="shrink-0 font-essay-mono text-xs text-essay-muted md:text-sm">
                         {formatDateRange(exp.start_date, exp.end_date, exp.is_current)}
                       </p>
                     </div>
                     {lines.length > 0 && (
-                      <ul className="list-inside list-disc space-y-2 pl-1 text-sm leading-relaxed text-brutal-muted marker:text-brutal-ink md:text-[15px]">
+                      <ul className="list-inside list-disc space-y-2 pl-1 font-essay-sans text-sm leading-relaxed text-essay-muted marker:text-essay-ink md:text-[15px]">
                         {lines.map((line, i) => (
                           <li key={`${exp.id}-h-${i}`} className="pl-1">
                             {line}
@@ -216,17 +217,19 @@ export function ResumeContent() {
                     )}
                     {exp.technologies && (
                       <div className="mt-4">
-                        <h4 className="mb-1 text-sm font-semibold text-brutal-ink">Technologies</h4>
-                        <p className="text-sm leading-relaxed text-brutal-muted md:text-[15px]">
+                        <h4 className="mb-1 font-essay-sans text-sm font-semibold text-essay-ink">
+                          Technologies
+                        </h4>
+                        <p className="font-essay-sans text-sm leading-relaxed text-essay-muted md:text-[15px]">
                           {exp.technologies}
                         </p>
                       </div>
                     )}
-                  </GlowCard>
+                  </div>
                 )
               })}
               {experience.length === 0 && (
-                <p className="text-brutal-muted">No experience entries yet.</p>
+                <p className="font-essay-sans text-essay-muted">No experience entries yet.</p>
               )}
             </div>
           </section>
@@ -234,30 +237,33 @@ export function ResumeContent() {
           <section aria-labelledby="education-heading">
             <h2
               id="education-heading"
-              className="mb-6 font-serif text-2xl font-semibold text-brutal-ink md:mb-8 md:text-3xl"
+              className="mb-6 font-essay-display text-2xl font-semibold text-essay-ink md:mb-8 md:text-3xl"
             >
               Education
             </h2>
-            <div className="space-y-6">
+            <div className="space-y-8">
               {education.map((edu) => {
                 const lines = bulletLines(edu.highlights, edu.description)
                 return (
-                  <GlowCard key={edu.id} className={RESUME_SECTION_CARD_CLASS}>
-                    <div className="mb-4 flex flex-col gap-1 border-b border-brutal-ink/10 pb-4 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+                  <div
+                    key={edu.id}
+                    className="border-b border-essay-ink/10 pb-8 last:border-b-0 last:pb-0"
+                  >
+                    <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
                       <div>
-                        <h3 className="text-lg font-semibold text-brutal-ink md:text-xl">
+                        <h3 className="font-essay-sans text-lg font-semibold text-essay-ink md:text-xl">
                           {edu.degree}
                         </h3>
-                        <p className="text-sm font-medium text-brutal-ink md:text-base">
+                        <p className="font-essay-sans text-sm font-medium text-essay-ink md:text-base">
                           {edu.institution}
                         </p>
                       </div>
-                      <p className="shrink-0 text-sm font-medium text-brutal-muted">
+                      <p className="shrink-0 font-essay-mono text-xs text-essay-muted md:text-sm">
                         {formatDateRange(edu.start_date, edu.end_date, edu.is_current)}
                       </p>
                     </div>
                     {lines.length > 0 && (
-                      <ul className="list-inside list-disc space-y-2 pl-1 text-sm leading-relaxed text-brutal-muted marker:text-brutal-ink md:text-[15px]">
+                      <ul className="list-inside list-disc space-y-2 pl-1 font-essay-sans text-sm leading-relaxed text-essay-muted marker:text-essay-ink md:text-[15px]">
                         {lines.map((line, i) => (
                           <li key={`${edu.id}-h-${i}`} className="pl-1">
                             {line}
@@ -265,7 +271,7 @@ export function ResumeContent() {
                         ))}
                       </ul>
                     )}
-                  </GlowCard>
+                  </div>
                 )
               })}
             </div>
@@ -274,26 +280,30 @@ export function ResumeContent() {
           <section aria-labelledby="skills-heading">
             <h2
               id="skills-heading"
-              className="mb-6 font-serif text-2xl font-semibold text-brutal-ink md:mb-8 md:text-3xl"
+              className="mb-6 font-essay-display text-2xl font-semibold text-essay-ink md:mb-8 md:text-3xl"
             >
               Skills
             </h2>
             <div className="space-y-8">
               {skillGroups.map((group) => (
                 <div key={group.category}>
-                  <h3 className="mb-3 text-lg font-semibold text-brutal-ink md:text-xl">
+                  <h3 className="mb-3 font-essay-sans text-lg font-semibold text-essay-ink md:text-xl">
                     {group.category}
                   </h3>
-                  <div className="flex flex-wrap gap-2 md:gap-3">
-                    {group.items.map((skill) => (
-                      <span
+                  <ul className="flex list-none flex-wrap gap-2 p-0 md:gap-3">
+                    {group.items.map((skill, index) => (
+                      <li
                         key={`${group.category}-${skill}`}
-                        className="rounded-sm border border-brutal-ink/15 bg-brutal-bg px-3 py-1.5 text-xs font-medium text-brutal-ink shadow-[0_1px_0_rgba(255,255,255,0.04)_inset] md:text-sm"
+                        className="border border-essay-ink/15 px-3 py-1.5 font-essay-mono text-xs text-essay-ink md:text-sm"
                       >
                         {skill}
-                      </span>
+                        {index < group.items.length - 1 ? (
+                          <span className="sr-only">, </span>
+                        ) : null}
+                      </li>
                     ))}
-                  </div>
+                  </ul>
+                  <p className="sr-only">{group.items.join(', ')}</p>
                 </div>
               ))}
             </div>
@@ -301,26 +311,24 @@ export function ResumeContent() {
         </>
       )}
 
-      <section aria-labelledby="why-heading">
+      <section aria-labelledby="how-heading">
         <h2
-          id="why-heading"
-          className="mb-4 font-serif text-2xl font-semibold text-brutal-ink md:text-3xl"
+          id="how-heading"
+          className="mb-4 font-essay-display text-2xl font-semibold text-essay-ink md:text-3xl"
         >
-          Why I excel
+          How I work
         </h2>
-        <GlowCard className="p-6 md:p-8">
-          <p className="text-justify text-sm leading-relaxed text-brutal-muted md:text-[15px]">
-            {WHY_I_EXCEL}
-          </p>
-          <p className="mt-6 text-left text-sm md:text-[15px]">
-            <Link
-              href="/contact"
-              className="inline-flex min-h-11 items-center font-medium text-brutal-ink underline underline-offset-4 transition-opacity duration-200 hover:opacity-75 focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brutal-ink"
-            >
-              Contact me
-            </Link>
-          </p>
-        </GlowCard>
+        <p className="text-justify font-essay-sans text-sm leading-relaxed text-essay-muted md:text-[15px]">
+          {HOW_I_WORK}
+        </p>
+        <p className="mt-6 text-left text-sm md:text-[15px]">
+          <Link
+            href="/contact"
+            className="inline-flex min-h-11 items-center font-essay-sans font-medium text-essay-accent underline underline-offset-4 transition-opacity duration-essay-fast ease-essay hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-essay-accent"
+          >
+            Contact me
+          </Link>
+        </p>
       </section>
     </article>
   )

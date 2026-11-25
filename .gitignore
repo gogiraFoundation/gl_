@@ -93,3 +93,6 @@ backup_*.sql
 *.ses
 :memory:.ses
 
+# Local leftover folders that must never be committed
+/untitled folder/
+/gogir_labs-fe/
