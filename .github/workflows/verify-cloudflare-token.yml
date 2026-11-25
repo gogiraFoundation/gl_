@@ -1,0 +1,322 @@
+name: Verify Cloudflare API token
+
+# Manual check for the CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID
+# repository secrets. This workflow does not deploy anything.
+# It never prints secret values: only booleans, lengths, HTTP status
+# codes, and Cloudflare error codes/messages.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify token
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check token shape and Cloudflare API access
+        shell: bash
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          # Do not enable xtrace: it would print the token and account ID.
+          set +x
+          set +o xtrace
+          set -u
+
+          umask 077
+          workdir="${RUNNER_TEMP}/cf-token-check"
+          mkdir -p "$workdir"
+          trap 'rm -rf "$workdir"' EXIT
+
+          token="${CLOUDFLARE_API_TOKEN-}"
+          account_id="${CLOUDFLARE_ACCOUNT_ID-}"
+
+          is_edge_space() {
+            case "$1" in
+              ' '|$'\t'|$'\n'|$'\r'|$'\f'|$'\v') return 0 ;;
+              *) return 1 ;;
+            esac
+          }
+
+          token_empty=yes
+          token_len=0
+          token_ws_or_nl=no
+          if [ -n "$token" ]; then
+            token_empty=no
+            token_len="${#token}"
+            if is_edge_space "${token:0:1}" || is_edge_space "${token: -1}"; then
+              token_ws_or_nl=yes
+            fi
+            case "$token" in
+              *$'\n'*|*$'\r'*) token_ws_or_nl=yes ;;
+            esac
+          fi
+
+          account_set=no
+          account_len=0
+          account_ws_or_nl=no
+          if [ -n "$account_id" ]; then
+            account_set=yes
+            account_len="${#account_id}"
+            if is_edge_space "${account_id:0:1}" || is_edge_space "${account_id: -1}"; then
+              account_ws_or_nl=yes
+            fi
+            case "$account_id" in
+              *$'\n'*|*$'\r'*) account_ws_or_nl=yes ;;
+            esac
+          fi
+
+          echo "Token empty: ${token_empty}"
+          echo "Token length: ${token_len}"
+          echo "Token has leading or trailing whitespace or a newline: ${token_ws_or_nl}"
+          echo "Account ID set: ${account_set}"
+          echo "Account ID length: ${account_len}"
+          echo "Account ID has leading or trailing whitespace or a newline: ${account_ws_or_nl}"
+
+          # Call Cloudflare. Stderr is discarded so a failed curl cannot
+          # print a URL that contains the account ID. Body goes to a file.
+          # HTTP status goes to stdout as digits only.
+          cf_get() {
+            local out="$1"
+            local url="$2"
+            local err="$workdir/curl.err"
+            local code
+            : > "$out"
+            : > "$err"
+            set +x
+            set +o xtrace
+            code="$(curl -sS -o "$out" -w "%{http_code}" \
+              --connect-timeout 30 --max-time 60 \
+              -H "Authorization: Bearer ${token}" \
+              -H "Content-Type: application/json" \
+              "$url" 2>"$err")" || true
+            if [ -z "$code" ]; then
+              code=000
+            fi
+            printf '%s\n' "$code"
+          }
+
+          # Print only success, result.status, and errors[].code/message.
+          # Never dump the rest of the body (ids, policies, worker config).
+          print_cf_fields() {
+            local file="$1"
+            if [ ! -s "$file" ]; then
+              echo "success: (empty body)"
+              echo "status: "
+              echo "errors: []"
+              return
+            fi
+            if ! jq -e . "$file" >/dev/null 2>&1; then
+              echo "success: (not JSON)"
+              echo "status: "
+              echo "errors: []"
+              return
+            fi
+            jq -r '"success: " + ((.success // "null") | tostring)' "$file"
+            jq -r '"status: " + (if (.result | type) == "object" then (.result.status // "" | tostring) else "" end)' "$file"
+            jq -c '"errors: " + (([.errors[]? | {code, message}] // []) | tostring)' "$file"
+          }
+
+          first_error_code() {
+            local file="$1"
+            if ! jq -e . "$file" >/dev/null 2>&1; then
+              echo ""
+              return
+            fi
+            jq -r '(.errors[0].code // empty) | tostring' "$file"
+          }
+
+          first_error_message() {
+            local file="$1"
+            if ! jq -e . "$file" >/dev/null 2>&1; then
+              echo ""
+              return
+            fi
+            jq -r '.errors[0].message // empty' "$file"
+          }
+
+          user_http=skipped
+          user_success=""
+          user_status=""
+          user_err_code=""
+          user_err_msg=""
+          account_http=skipped
+          account_success=""
+          account_status=""
+          account_err_code=""
+          account_err_msg=""
+          services_http=skipped
+          services_success=""
+          services_err_code=""
+          services_err_msg=""
+          scripts_http=skipped
+          scripts_success=""
+          scripts_err_code=""
+          scripts_err_msg=""
+
+          if [ "$token_empty" = no ]; then
+            echo ""
+            echo "GET /user/tokens/verify"
+            user_body="$workdir/user-verify.json"
+            user_http="$(cf_get "$user_body" "https://api.cloudflare.com/client/v4/user/tokens/verify")"
+            echo "HTTP status: ${user_http}"
+            print_cf_fields "$user_body"
+            user_success="$(jq -r '(.success // empty) | tostring' "$user_body" 2>/dev/null || true)"
+            user_status="$(jq -r '.result.status // empty' "$user_body" 2>/dev/null || true)"
+            user_err_code="$(first_error_code "$user_body")"
+            user_err_msg="$(first_error_message "$user_body")"
+          else
+            echo ""
+            echo "GET /user/tokens/verify: skipped (token empty)"
+          fi
+
+          if [ "$token_empty" = no ] && [ "$account_set" = yes ]; then
+            echo ""
+            echo "GET /accounts/<id>/tokens/verify"
+            account_body="$workdir/account-verify.json"
+            account_http="$(cf_get "$account_body" "https://api.cloudflare.com/client/v4/accounts/${account_id}/tokens/verify")"
+            echo "HTTP status: ${account_http}"
+            print_cf_fields "$account_body"
+            account_success="$(jq -r '(.success // empty) | tostring' "$account_body" 2>/dev/null || true)"
+            account_status="$(jq -r '.result.status // empty' "$account_body" 2>/dev/null || true)"
+            account_err_code="$(first_error_code "$account_body")"
+            account_err_msg="$(first_error_message "$account_body")"
+
+            echo ""
+            echo "GET /accounts/<id>/workers/services/gogir-labs-fe"
+            services_body="$workdir/worker-services.json"
+            services_http="$(cf_get "$services_body" "https://api.cloudflare.com/client/v4/accounts/${account_id}/workers/services/gogir-labs-fe")"
+            echo "HTTP status: ${services_http}"
+            print_cf_fields "$services_body"
+            services_success="$(jq -r '(.success // empty) | tostring' "$services_body" 2>/dev/null || true)"
+            services_err_code="$(first_error_code "$services_body")"
+            services_err_msg="$(first_error_message "$services_body")"
+
+            echo ""
+            echo "GET /accounts/<id>/workers/scripts/gogir-labs-fe"
+            scripts_body="$workdir/worker-scripts.json"
+            scripts_http="$(cf_get "$scripts_body" "https://api.cloudflare.com/client/v4/accounts/${account_id}/workers/scripts/gogir-labs-fe")"
+            echo "HTTP status: ${scripts_http}"
+            print_cf_fields "$scripts_body"
+            scripts_success="$(jq -r '(.success // empty) | tostring' "$scripts_body" 2>/dev/null || true)"
+            scripts_err_code="$(first_error_code "$scripts_body")"
+            scripts_err_msg="$(first_error_message "$scripts_body")"
+          else
+            echo ""
+            echo "Account-scoped checks: skipped (token empty or account ID not set)"
+          fi
+
+          token_active=no
+          if [ "$user_success" = true ] && [ "$user_status" = active ]; then
+            token_active=yes
+          fi
+          if [ "$account_success" = true ] && [ "$account_status" = active ]; then
+            token_active=yes
+          fi
+
+          worker_readable=no
+          if [ "$services_http" = 200 ] || [ "$scripts_http" = 200 ]; then
+            worker_readable=yes
+          fi
+
+          # Prefer the most specific diagnosis in plain words.
+          result=""
+          if [ "$token_empty" = yes ]; then
+            result="Token secret is empty: set CLOUDFLARE_API_TOKEN as a repository Actions secret (not an Environment secret), then re-run."
+          elif [ "$token_ws_or_nl" = yes ] && { [ "$user_err_code" = 9109 ] || [ "$account_err_code" = 9109 ] || [ "$token_active" = no ]; }; then
+            result="Token rejected (9109): the secret has leading or trailing whitespace or a newline; re-paste the secret without extra spaces or a trailing return."
+          elif [ "$user_err_code" = 9109 ] || [ "$account_err_code" = 9109 ]; then
+            result="Token rejected (9109): re-paste the secret."
+          elif [ "$user_status" = disabled ] || [ "$account_status" = disabled ]; then
+            result="Token is disabled: enable it in the Cloudflare dashboard, or create a new token and update the GitHub secret."
+          elif [ "$user_status" = expired ] || [ "$account_status" = expired ]; then
+            result="Token is expired: create a new token and update the GitHub secret."
+          elif [ "$token_active" = yes ] && [ "$worker_readable" = yes ]; then
+            if [ "$token_ws_or_nl" = yes ]; then
+              result="Token valid and can read the gogir-labs-fe Worker. Warning: the secret has leading or trailing whitespace or a newline; re-paste it to avoid brittle failures."
+            else
+              result="Token valid and can read the gogir-labs-fe Worker."
+            fi
+          elif [ "$token_active" = yes ] && [ "$account_set" = no ]; then
+            result="Token is valid (active) but CLOUDFLARE_ACCOUNT_ID is not set, so Worker access was not checked."
+          elif [ "$token_active" = yes ] && [ "$account_ws_or_nl" = yes ]; then
+            result="Token is valid but cannot read the gogir-labs-fe Worker: CLOUDFLARE_ACCOUNT_ID has leading or trailing whitespace or a newline. Re-paste that secret."
+          elif [ "$token_active" = yes ]; then
+            detail_http="$services_http"
+            detail_code="$services_err_code"
+            detail_msg="$services_err_msg"
+            if [ "$services_http" = skipped ] || [ "$services_http" = 404 ]; then
+              if [ -n "$scripts_http" ] && [ "$scripts_http" != skipped ]; then
+                detail_http="$scripts_http"
+                detail_code="$scripts_err_code"
+                detail_msg="$scripts_err_msg"
+              fi
+            fi
+            if [ -n "$detail_code" ]; then
+              result="Token is valid but cannot read the gogir-labs-fe Worker (HTTP ${detail_http}, error ${detail_code}: ${detail_msg}). Check Workers Scripts Read or Edit permission, and that CLOUDFLARE_ACCOUNT_ID is the account that owns the Worker."
+            else
+              result="Token is valid but cannot read the gogir-labs-fe Worker (HTTP ${detail_http}). Check Workers Scripts Read or Edit permission, and that CLOUDFLARE_ACCOUNT_ID is the account that owns the Worker."
+            fi
+          else
+            codes=""
+            if [ -n "$user_err_code" ]; then
+              codes="user verify HTTP ${user_http}, error ${user_err_code}: ${user_err_msg}"
+            else
+              codes="user verify HTTP ${user_http}"
+            fi
+            result="Token check failed (${codes}). Confirm the repository secret is a Cloudflare API token for the right account."
+          fi
+
+          echo ""
+          echo "Result: ${result}"
+
+          {
+            echo "## Cloudflare token check"
+            echo ""
+            echo "Token empty: ${token_empty}"
+            echo "Token length: ${token_len}"
+            echo "Token has leading or trailing whitespace or a newline: ${token_ws_or_nl}"
+            echo "Account ID set: ${account_set}"
+            echo "Account ID length: ${account_len}"
+            echo "Account ID has leading or trailing whitespace or a newline: ${account_ws_or_nl}"
+            echo ""
+            echo "GET /user/tokens/verify: HTTP ${user_http}"
+            if [ -n "$user_success" ]; then
+              echo "User verify success: ${user_success}"
+            fi
+            if [ -n "$user_status" ]; then
+              echo "User token status: ${user_status}"
+            fi
+            if [ -n "$user_err_code" ]; then
+              echo "User verify error: ${user_err_code}: ${user_err_msg}"
+            fi
+            echo "GET /accounts/<id>/tokens/verify: HTTP ${account_http}"
+            if [ -n "$account_success" ]; then
+              echo "Account verify success: ${account_success}"
+            fi
+            if [ -n "$account_status" ]; then
+              echo "Account token status: ${account_status}"
+            fi
+            if [ -n "$account_err_code" ]; then
+              echo "Account verify error: ${account_err_code}: ${account_err_msg}"
+            fi
+            echo "GET /accounts/<id>/workers/services/gogir-labs-fe: HTTP ${services_http}"
+            if [ -n "$services_err_code" ]; then
+              echo "Services error: ${services_err_code}: ${services_err_msg}"
+            fi
+            echo "GET /accounts/<id>/workers/scripts/gogir-labs-fe: HTTP ${scripts_http}"
+            if [ -n "$scripts_err_code" ]; then
+              echo "Scripts error: ${scripts_err_code}: ${scripts_err_msg}"
+            fi
+            echo ""
+            echo "Result: ${result}"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "$token_active" = yes ] && [ "$worker_readable" = yes ]; then
+            exit 0
+          fi
+          exit 1
