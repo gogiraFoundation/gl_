@@ -1,13 +1,13 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import { Header } from '@/components/layout/Header'
-import { Footer } from '@/components/layout/Footer'
+import { EssayDesignScope } from '@/components/essays/EssayDesignScope'
+import { EssayNav } from '@/components/essays/EssayNav'
+import { EssayFooter } from '@/components/essays/EssayFooter'
 import { ProjectContent } from '@/components/portfolio/ProjectContent'
 import api from '@/lib/api'
-import { useEffect } from 'react'
+import { PORTFOLIO_PUBLIC_HOLD_SLUGS } from '@/lib/essays'
 
 interface Project {
   id: number
@@ -32,9 +32,32 @@ interface Project {
   updated_at: string
 }
 
-export default function PortfolioProjectClient() {
-  const params = useParams()
-  const slug = params.slug as string
+interface PortfolioProjectClientProps {
+  slug: string
+}
+
+function Shell({ children }: { children: React.ReactNode }) {
+  return (
+    <EssayDesignScope>
+      <div className="flex min-h-screen flex-col bg-essay-bg text-essay-ink">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:bg-essay-bg focus:px-3 focus:py-2 focus:text-essay-accent"
+        >
+          Skip to content
+        </a>
+        <EssayNav active="portfolio" />
+        <main id="main-content" className="flex-grow px-6 py-16 lg:px-8 lg:py-20">
+          {children}
+        </main>
+        <EssayFooter />
+      </div>
+    </EssayDesignScope>
+  )
+}
+
+export default function PortfolioProjectClient({ slug }: PortfolioProjectClientProps) {
+  const onHold = PORTFOLIO_PUBLIC_HOLD_SLUGS.has(slug)
 
   const {
     data: project,
@@ -43,78 +66,74 @@ export default function PortfolioProjectClient() {
   } = useQuery<Project>({
     queryKey: ['project', slug],
     queryFn: async () => {
-      try {
-        const response = await api.get('/portfolio/projects/by-slug/', {
-          params: { slug },
-        })
-        return response.data
-      } catch (err: unknown) {
-        throw err
-      }
+      const response = await api.get('/portfolio/projects/by-slug/', {
+        params: { slug },
+      })
+      return response.data
     },
-    enabled: !!slug,
+    enabled: !!slug && !onHold,
     retry: 1,
   })
 
-  useEffect(() => {
-    if (project) {
-      document.title = `${project.title} | Portfolio - Emmanuel Ugbaje`
-      const metaDescription = document.querySelector('meta[name="description"]')
-      if (metaDescription) {
-        metaDescription.setAttribute('content', project.description)
-      }
-    }
-  }, [project])
+  if (onHold) {
+    return (
+      <Shell>
+        <div className="mx-auto max-w-prose text-left">
+          <h1 className="mb-4 font-essay-display text-2xl font-semibold text-essay-ink">
+            Project not found
+          </h1>
+          <p className="font-essay-sans text-essay-muted">
+            Browse the{' '}
+            <Link
+              href="/portfolio"
+              className="font-medium text-essay-accent underline underline-offset-4"
+            >
+              portfolio
+            </Link>
+            .
+          </p>
+        </div>
+      </Shell>
+    )
+  }
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen flex-col bg-brutal-bg">
-        <Header />
-        <main className="flex-grow px-4 py-12">
-          <div className="mx-auto max-w-4xl text-left font-sans text-brutal-muted">
-            Loading project…
-          </div>
-        </main>
-        <Footer />
-      </div>
+      <Shell>
+        <div className="mx-auto max-w-prose text-left font-essay-sans text-essay-muted">
+          Loading project…
+        </div>
+      </Shell>
     )
   }
 
   if (error || !project) {
     return (
-      <div className="flex min-h-screen flex-col bg-brutal-bg">
-        <Header />
-        <main className="flex-grow px-4 py-12">
-          <div className="mx-auto max-w-4xl text-left">
-            <h1 className="mb-4 font-serif text-2xl font-semibold text-brutal-ink">
-              Project not found
-            </h1>
-            <p className="text-brutal-muted">
-              That project doesn&apos;t exist or was removed. Browse the{' '}
-              <Link
-                href="/portfolio"
-                className="font-medium text-brutal-ink underline underline-offset-4 hover:opacity-75"
-              >
-                portfolio
-              </Link>{' '}
-              for other work.
-            </p>
-          </div>
-        </main>
-        <Footer />
-      </div>
+      <Shell>
+        <div className="mx-auto max-w-prose text-left">
+          <h1 className="mb-4 font-essay-display text-2xl font-semibold text-essay-ink">
+            Project not found
+          </h1>
+          <p className="font-essay-sans text-essay-muted">
+            That project does not exist or was removed. Browse the{' '}
+            <Link
+              href="/portfolio"
+              className="font-medium text-essay-accent underline underline-offset-4 transition-colors duration-essay-fast ease-essay hover:opacity-90"
+            >
+              portfolio
+            </Link>{' '}
+            for other work.
+          </p>
+        </div>
+      </Shell>
     )
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-brutal-bg">
-      <Header />
-      <main className="relative flex-grow px-4 py-12">
-        <div className="relative z-10 mx-auto max-w-4xl">
-          <ProjectContent project={project} />
-        </div>
-      </main>
-      <Footer />
-    </div>
+    <Shell>
+      <div className="mx-auto max-w-prose">
+        <ProjectContent project={project} />
+      </div>
+    </Shell>
   )
 }

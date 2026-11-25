@@ -1,20 +1,35 @@
+import type { Metadata } from 'next'
 import BlogClient from './BlogClient'
 
-export const metadata = {
-  title: 'Blog | Emmanuel Ugbaje — Software Engineering & Platform Insights',
+export const metadata: Metadata = {
+  title: 'Essays',
   description:
-    'Articles on software engineering, backends, DevOps, cloud, and data from Emmanuel Ugbaje—Python, Django, CI/CD, and scalable systems.',
+    'Project essays and Bench Notes on backend engineering and AI systems. Failures and limits are stated plainly, and evidence is labelled.',
   keywords: [
-    'Infrastructure Engineering',
-    'DevOps',
-    'Cloud Platforms',
-    'Terraform',
-    'Kubernetes',
+    'Project Essays',
+    'Backend Engineering',
+    'IAM',
+    'Django',
+    'Python',
+    'Data Pipelines',
     'CI/CD',
-    'AWS',
-    'Azure',
-    'Scalable Architecture',
   ],
+  openGraph: {
+    title: 'Essays',
+    description:
+      'Project essays with labelled evidence: how systems were built and where they failed.',
+    type: 'website',
+    url: '/blog',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Essays',
+    description:
+      'Project essays with labelled evidence: how systems were built and where they failed.',
+  },
+  alternates: {
+    canonical: '/blog',
+  },
 }
 
 export default function BlogPage() {

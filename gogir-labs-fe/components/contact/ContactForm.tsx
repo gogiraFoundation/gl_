@@ -8,10 +8,12 @@ import api from '@/lib/api'
 import { useAnalyticsEvent } from '@/hooks/useAnalyticsEvent'
 import { cn } from '@/lib/utils'
 
+const SUBJECT_OPTIONS = ['Project enquiry', 'Security review', 'Role / hiring', 'Other'] as const
+
 const contactSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.string().email('Invalid email address'),
-  subject: z.string().min(5, 'Subject must be at least 5 characters'),
+  subject: z.enum(SUBJECT_OPTIONS, { required_error: 'Select a subject' }),
   message: z.string().min(10, 'Message must be at least 10 characters'),
   website: z.string().optional(),
 })
@@ -19,12 +21,12 @@ const contactSchema = z.object({
 type ContactFormData = z.infer<typeof contactSchema>
 
 const fieldClass = cn(
-  'contact-input w-full min-h-[48px] border border-[orangered] bg-brutal-bg px-4 py-3 text-brutal-ink transition-[opacity,box-shadow] duration-200 hover:shadow-[0_8px_20px_rgba(107,114,128,0.25),0_4px_10px_rgba(0,0,0,0.25)]',
-  'placeholder:text-brutal-muted',
-  'focus:border-[orangered] focus:outline-none'
+  'contact-input w-full min-h-[48px] border border-essay-ink/20 bg-essay-bg px-4 py-3 font-essay-sans text-essay-ink transition-colors duration-essay-fast ease-essay',
+  'placeholder:text-essay-muted',
+  'focus-visible:border-essay-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-essay-accent'
 )
 
-const labelClass = 'mb-1.5 block text-sm font-semibold text-brutal-ink'
+const labelClass = 'mb-1.5 block font-essay-sans text-sm font-semibold text-essay-ink'
 
 export function ContactForm() {
   const { trackFormSubmit } = useAnalyticsEvent()
@@ -116,14 +118,16 @@ export function ContactForm() {
         <label htmlFor="subject" className={labelClass}>
           Subject *
         </label>
-        <input
-          type="text"
-          id="subject"
-          {...register('subject')}
-          className={fieldClass}
-          placeholder="What’s this regarding?"
-          autoComplete="off"
-        />
+        <select id="subject" {...register('subject')} className={fieldClass} defaultValue="">
+          <option value="" disabled>
+            Select a subject
+          </option>
+          {SUBJECT_OPTIONS.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
         {errors.subject && <p className="text-sm text-red-700">{errors.subject.message}</p>}
       </div>
 
@@ -136,31 +140,36 @@ export function ContactForm() {
           rows={6}
           {...register('message')}
           className={cn(fieldClass, 'min-h-[140px] resize-none')}
-          placeholder="Tell me about your project, requirements, or opportunity…"
+          placeholder="Problem, stack, and timeline…"
           autoComplete="off"
         />
         {errors.message && <p className="text-sm text-red-700">{errors.message.message}</p>}
       </div>
 
       {submitStatus === 'success' && (
-        <div className="border border-brutal-ink/20 p-4 text-brutal-ink">
-          Thank you for your message! We will get back to you soon.
+        <div className="border border-essay-ink/20 p-4 font-essay-sans text-essay-ink">
+          Thank you for your message. I will get back to you soon.
         </div>
       )}
 
       {submitStatus === 'error' && (
-        <div className="border border-brutal-ink/20 p-4 text-red-700">
+        <div className="border border-essay-ink/20 p-4 font-essay-sans text-red-700">
           There was an error submitting your message. Please try again.
         </div>
       )}
 
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="mx-auto mt-[10px] flex min-h-[38px] w-[72%] items-center justify-center border border-brutal-ink bg-transparent px-3 py-2 text-[11px] font-bold text-brutal-ink shadow-[0_10px_24px_rgba(255,69,0,0.24),0_4px_12px_rgba(112,128,144,0.34),0_1px_0_rgba(255,255,255,0.35)_inset] transition-[color,box-shadow,border-color] hover:cursor-default hover:text-[orangered] hover:shadow-[0_12px_28px_rgba(255,69,0,0.3),0_6px_16px_rgba(112,128,144,0.4),0_1px_0_rgba(255,255,255,0.4)_inset] active:border-[lightgreen] disabled:cursor-not-allowed disabled:opacity-50 sm:w-[34%]"
-      >
-        {isSubmitting ? 'Sending...' : 'Discuss Your Project'}
-      </button>
+      <div className="flex flex-col items-center gap-3">
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="essay-btn-primary inline-flex min-h-[48px] w-full max-w-xs items-center justify-center bg-essay-accent px-6 font-essay-sans text-sm font-medium text-white transition-opacity duration-essay-fast ease-essay hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {isSubmitting ? 'Sending…' : 'Send message'}
+        </button>
+        <p className="text-center font-essay-sans text-xs text-essay-muted">
+          I will only use your email to reply. No lists, no follow-up.
+        </p>
+      </div>
     </form>
   )
 }

@@ -1,8 +1,15 @@
+import { notFound } from 'next/navigation'
 import NewsletterVerifyClient from './NewsletterVerifyClient'
 
-export const runtime = 'edge'
 export const dynamic = 'force-dynamic'
 
-export default function NewsletterVerifyPage() {
-  return <NewsletterVerifyClient />
+interface NewsletterVerifyPageProps {
+  params: Promise<{ token?: string }>
+}
+
+export default async function NewsletterVerifyPage({ params }: NewsletterVerifyPageProps) {
+  const { token } = await params
+  if (!token) notFound()
+
+  return <NewsletterVerifyClient token={token} />
 }

@@ -2,11 +2,16 @@
 
 import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
+import { useEffect } from 'react'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { PostContent } from '@/components/blog/PostContent'
+import { EssayDesignScope } from '@/components/essays/EssayDesignScope'
+import { EssayNav } from '@/components/essays/EssayNav'
+import { EssayFooter } from '@/components/essays/EssayFooter'
+import { EssayPost } from '@/components/essays/EssayPost'
 import api from '@/lib/api'
-import { useEffect } from 'react'
+import { isAllowedEssaySlug } from '@/lib/essays'
 
 interface Post {
   id: number
@@ -24,6 +29,7 @@ interface Post {
   published_at: string | null
   meta_title: string
   meta_description: string
+  word_document?: string | null
 }
 
 interface BlogPostClientProps {
@@ -38,102 +44,42 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
   } = useQuery<Post>({
     queryKey: ['post', slug],
     queryFn: async () => {
-      try {
-        const response = await api.get(`/blog/posts/by-slug/`, {
-          params: { slug },
-        })
-        const postData = response.data
-
-        if (!postData) {
-          throw new Error('Post not found')
-        }
-
-        return postData
-      } catch (err: unknown) {
-        throw err
+      const response = await api.get(`/blog/posts/by-slug/`, {
+        params: { slug },
+      })
+      const postData = response.data
+      if (!postData) {
+        throw new Error('Post not found')
       }
+      return postData
     },
     enabled: true,
     retry: 1,
   })
 
-  // All hooks must be called before any early returns
   useEffect(() => {
     if (post?.id) {
-      // Increment view count
       api.post(`/blog/posts/${post.id}/increment_views/`).catch(console.error)
     }
   }, [post?.id])
 
-  useEffect(() => {
-    if (post) {
-      // Update meta tags for SEO and social sharing
-      document.title = `${post.title} | Blog - Emmanuel Ugbaje`
-
-      const description: string = post.meta_description ?? post.excerpt ?? ''
-
-      // Update description
-      const metaDescription = document.querySelector('meta[name="description"]')
-      if (metaDescription) {
-        metaDescription.setAttribute('content', description)
-      }
-
-      // Open Graph tags
-      const ogTitle =
-        document.querySelector('meta[property="og:title"]') || document.createElement('meta')
-      ogTitle.setAttribute('property', 'og:title')
-      ogTitle.setAttribute('content', post.title)
-      if (!document.querySelector('meta[property="og:title"]')) {
-        document.head.appendChild(ogTitle)
-      }
-
-      const ogDescription =
-        document.querySelector('meta[property="og:description"]') || document.createElement('meta')
-      ogDescription.setAttribute('property', 'og:description')
-      ogDescription.setAttribute('content', description)
-      if (!document.querySelector('meta[property="og:description"]')) {
-        document.head.appendChild(ogDescription)
-      }
-
-      const ogImage =
-        document.querySelector('meta[property="og:image"]') || document.createElement('meta')
-      ogImage.setAttribute('property', 'og:image')
-      ogImage.setAttribute(
-        'content',
-        post.featured_image || `${window.location.origin}/og-image.jpg`
-      )
-      if (!document.querySelector('meta[property="og:image"]')) {
-        document.head.appendChild(ogImage)
-      }
-
-      const ogUrl =
-        document.querySelector('meta[property="og:url"]') || document.createElement('meta')
-      ogUrl.setAttribute('property', 'og:url')
-      ogUrl.setAttribute('content', `${window.location.origin}/blog/${post.slug}`)
-      if (!document.querySelector('meta[property="og:url"]')) {
-        document.head.appendChild(ogUrl)
-      }
-
-      const ogType =
-        document.querySelector('meta[property="og:type"]') || document.createElement('meta')
-      ogType.setAttribute('property', 'og:type')
-      ogType.setAttribute('content', 'article')
-      if (!document.querySelector('meta[property="og:type"]')) {
-        document.head.appendChild(ogType)
-      }
-
-      // Twitter Card tags
-      const twitterCard =
-        document.querySelector('meta[name="twitter:card"]') || document.createElement('meta')
-      twitterCard.setAttribute('name', 'twitter:card')
-      twitterCard.setAttribute('content', 'summary_large_image')
-      if (!document.querySelector('meta[name="twitter:card"]')) {
-        document.head.appendChild(twitterCard)
-      }
-    }
-  }, [post])
+  // Allow-listed essay slugs use essay chrome; other posts stay brutalist.
+  const useEssayLayout = Boolean(post) && isAllowedEssaySlug(post!.slug)
 
   if (isLoading) {
+    if (isAllowedEssaySlug(slug)) {
+      return (
+        <EssayDesignScope>
+          <div className="flex min-h-screen flex-col bg-essay-bg text-essay-ink">
+            <EssayNav active="essays" />
+            <main className="flex-grow px-6 py-12 lg:px-8">
+              <p className="text-essay-muted">Loading essay…</p>
+            </main>
+            <EssayFooter />
+          </div>
+        </EssayDesignScope>
+      )
+    }
     return (
       <div className="flex min-h-screen flex-col bg-brutal-bg text-brutal-ink">
         <Header />
@@ -146,12 +92,35 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
   }
 
   if (error || !post) {
+    const essayChrome = isAllowedEssaySlug(slug)
+    if (essayChrome) {
+      return (
+        <EssayDesignScope>
+          <div className="flex min-h-screen flex-col bg-essay-bg text-essay-ink">
+            <EssayNav active="essays" />
+            <main className="flex-grow px-6 py-12 lg:px-8">
+              <h1 className="font-essay-display text-2xl font-semibold">Essay not found</h1>
+              <p className="mt-4 text-essay-muted">
+                Browse the{' '}
+                <Link href="/blog" className="text-essay-accent underline underline-offset-4">
+                  essays
+                </Link>
+                .
+              </p>
+            </main>
+            <EssayFooter />
+          </div>
+        </EssayDesignScope>
+      )
+    }
     return (
       <div className="flex min-h-screen flex-col bg-brutal-bg text-brutal-ink">
         <Header />
         <main className="flex-grow px-6 py-12 lg:px-8">
           <div className="mx-auto max-w-content text-left">
-            <h1 className="mb-4 font-serif text-2xl font-semibold tracking-tight">Post not found</h1>
+            <h1 className="mb-4 font-serif text-2xl font-semibold tracking-tight">
+              Post not found
+            </h1>
             <p className="text-brutal-muted">
               That post doesn&apos;t exist or was removed. Browse the{' '}
               <Link
@@ -169,11 +138,33 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
     )
   }
 
+  if (useEssayLayout) {
+    return (
+      <EssayDesignScope>
+        <div className="flex min-h-screen flex-col bg-essay-bg text-essay-ink">
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:bg-essay-bg focus:px-3 focus:py-2 focus:text-essay-accent"
+          >
+            Skip to content
+          </a>
+          <EssayNav active="essays" />
+          <main id="main-content" className="flex-grow">
+            <EssayPost post={post} />
+          </main>
+          <EssayFooter />
+        </div>
+      </EssayDesignScope>
+    )
+  }
+
   return (
     <div className="flex min-h-screen flex-col bg-brutal-bg text-brutal-ink">
       <Header />
-      <main className="flex-grow px-6 py-12 lg:px-8 md:py-16">
-        <div className="mx-auto max-w-content">{post && <PostContent post={post} />}</div>
+      <main className="flex-grow px-6 py-12 md:py-16 lg:px-8">
+        <div className="mx-auto max-w-content">
+          <PostContent post={post} />
+        </div>
       </main>
       <Footer />
     </div>
