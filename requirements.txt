@@ -1,1 +1,5 @@
+# Root manifest for platforms that install from the repo root (for example the
+# Heroku-style Procfile next to this file). The backend's pinned, patched
+# dependencies, including gunicorn, live in gogir-labs-be/requirements.txt;
+# keep pins there so Docker, CI and this file stay in step.
 -r gogir-labs-be/requirements.txt
