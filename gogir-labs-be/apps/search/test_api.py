@@ -1,9 +1,11 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from apps.blog.models import Post
+from apps.blog.models import Category, Post
+from apps.portfolio.models import Project
 
 User = get_user_model()
 
@@ -22,7 +24,9 @@ class SearchAPITest(TestCase):
             )
 
     def test_invalid_type_returns_400(self):
-        response = self.client.get("/api/v1/search/", {"q": "python", "type": "widgets"})
+        response = self.client.get(
+            "/api/v1/search/", {"q": "python", "type": "widgets"}
+        )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_invalid_limit_returns_400(self):
@@ -50,15 +54,18 @@ class SearchAPITest(TestCase):
         response = self.client.get("/api/v1/search/", {"q": "python"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(
-            Event.objects.filter(event_type="search", event_name="search_query").exists()
+            Event.objects.filter(
+                event_type="search", event_name="search_query"
+            ).exists()
         )
         event = Event.objects.filter(event_type="search").first()
         self.assertIsNone(event.ip_address)
 
     def test_search_includes_testimonials_and_resume(self):
+        from datetime import date
+
         from apps.resume.models import Experience, Skill
         from apps.testimonials.models import Testimonial
-        from datetime import date
 
         Testimonial.objects.create(
             client_name="Searchable Client",
@@ -87,7 +94,12 @@ class SearchAPITest(TestCase):
         names = [t["client_name"] for t in response.data["testimonials"]]
         self.assertIn("Searchable Client", names)
         self.assertNotIn("Hidden", names)
-        self.assertTrue(any(e["title"] == "Python Engineer" for e in response.data["resume"]["experience"]))
+        self.assertTrue(
+            any(
+                e["title"] == "Python Engineer"
+                for e in response.data["resume"]["experience"]
+            )
+        )
 
         typed = self.client.get(
             "/api/v1/search/", {"q": "python", "type": "testimonials"}
@@ -95,3 +107,29 @@ class SearchAPITest(TestCase):
         self.assertEqual(typed.data["blog_posts"], [])
         self.assertEqual(typed.data["projects"], [])
         self.assertGreater(len(typed.data["testimonials"]), 0)
+
+    def test_search_excludes_held_essay_and_portfolio(self):
+        essays = Category.objects.create(name="Project Essays", slug="project-essays")
+        Post.objects.create(
+            title="Bria forecasting python",
+            slug="bria",
+            excerpt="bria",
+            content="held essay about python",
+            author=self.author,
+            category=essays,
+            published=True,
+            published_at=timezone.now(),
+        )
+        Project.objects.create(
+            title="Bria python platform",
+            slug="bria",
+            description="held project about python",
+            published=True,
+        )
+
+        response = self.client.get("/api/v1/search/", {"q": "python"})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        blog_slugs = [p["slug"] for p in response.data["blog_posts"]]
+        project_slugs = [p["slug"] for p in response.data["projects"]]
+        self.assertNotIn("bria", blog_slugs)
+        self.assertNotIn("bria", project_slugs)

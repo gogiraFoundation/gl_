@@ -275,6 +275,7 @@ class SeedPortfolioTest(TestCase):
     """Test idempotent portfolio seed command behaviour."""
 
     EXPECTED_SLUGS = [
+        "traq-authenticator",
         "afri-cleans-website",
         "energy-management-dashboard",
         "api-gateway-service",
@@ -286,6 +287,7 @@ class SeedPortfolioTest(TestCase):
     ]
 
     CATEGORISED = {
+        "traq-authenticator": "IAM",
         "afri-cleans-website": "Website",
         "e-commerce-analytics-platform": "SaaS",
         "urbana": "SaaS",
@@ -300,19 +302,23 @@ class SeedPortfolioTest(TestCase):
     }
 
     @patch("apps.notifications.services.NotificationService.notify_admins")
-    def test_seed_creates_published_catalogue(self, mock_notify):
+    def test_seed_creates_unpublished_catalogue(self, mock_notify):
         from apps.portfolio.portfolio_seed import PORTFOLIO_PROJECTS, seed_portfolio
 
         result = seed_portfolio()
 
-        self.assertEqual(result["created_projects"], 8)
+        self.assertEqual(result["created_projects"], 9)
         self.assertEqual(result["skipped_projects"], 0)
-        self.assertEqual(Project.objects.count(), 8)
+        self.assertEqual(Project.objects.count(), 9)
         self.assertEqual(
             set(Project.objects.values_list("slug", flat=True)),
             set(self.EXPECTED_SLUGS),
         )
-        self.assertTrue(all(p.published for p in Project.objects.all()))
+        traq = Project.objects.get(slug="traq-authenticator")
+        self.assertFalse(traq.published)
+        self.assertEqual(traq.role, "Lead backend developer")
+        self.assertEqual(len(traq.outcomes), 4)
+        self.assertTrue(all(not p.published for p in Project.objects.all()))
         self.assertFalse(any(p.featured for p in Project.objects.all()))
         self.assertEqual(
             sum(p.technologies.count() for p in Project.objects.all()),
@@ -323,11 +329,10 @@ class SeedPortfolioTest(TestCase):
         by_slug = {e["slug"]: e for e in PORTFOLIO_PROJECTS}
         for project in Project.objects.select_related("category"):
             self.assertEqual(project.description, by_slug[project.slug]["description"])
+            self.assertFalse(by_slug[project.slug].get("auto_publish", False))
             if project.slug in self.CATEGORISED:
                 self.assertIsNotNone(project.category)
-                self.assertEqual(
-                    project.category.name, self.CATEGORISED[project.slug]
-                )
+                self.assertEqual(project.category.name, self.CATEGORISED[project.slug])
             else:
                 self.assertIn(project.slug, self.UNCATEGORISED)
                 self.assertIsNone(project.category)
@@ -346,8 +351,8 @@ class SeedPortfolioTest(TestCase):
         result = seed_portfolio()
 
         self.assertEqual(result["created_projects"], 0)
-        self.assertEqual(result["skipped_projects"], 8)
-        self.assertEqual(Project.objects.count(), 8)
+        self.assertEqual(result["skipped_projects"], 9)
+        self.assertEqual(Project.objects.count(), 9)
         project = Project.objects.get(slug="bria")
         self.assertEqual(project.description, "Edited by admin")
         mock_notify.assert_not_called()

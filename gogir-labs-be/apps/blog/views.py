@@ -11,6 +11,7 @@ from rest_framework.throttling import ScopedRateThrottle
 from apps.notifications.models import NotificationType
 from apps.notifications.services import NotificationService
 
+from .blog_seed import public_post_visibility_q
 from .models import Category, Comment, Post, Tag
 
 User = get_user_model()
@@ -76,7 +77,10 @@ class PostViewSet(viewsets.ModelViewSet):
         if self.request.user.is_authenticated and self.request.user.is_staff:
             base = Post.objects.all()
         else:
-            base = Post.objects.filter(published=True)
+            # Hold-back: project essays outside ESSAY_ALLOW_LIST stay invisible.
+            base = Post.objects.filter(published=True).filter(
+                public_post_visibility_q()
+            )
 
         queryset = base.select_related("author", "category").prefetch_related("tags")
         if self.action in ("retrieve", "by_slug"):
@@ -173,6 +177,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
         base = (
             Post.objects.filter(published=True)
+            .filter(public_post_visibility_q())
             .exclude(pk=post.pk)
             .select_related("author", "category")
             .prefetch_related("tags")
@@ -199,7 +204,9 @@ class PostViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
 
         if post.category and take(
-            base.filter(category=post.category).exclude(pk__in=seen)[: limit - len(results)]
+            base.filter(category=post.category).exclude(pk__in=seen)[
+                : limit - len(results)
+            ]
         ):
             serializer = PostListSerializer(
                 results, many=True, context={"request": request}
@@ -260,9 +267,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
         # If comment was just approved, notify the commenter
         if comment.approved and not was_approved:
-            post_url = (
-                f"{settings.FRONTEND_URL.rstrip('/')}/blog/{comment.post.slug}/"
-            )
+            post_url = f"{settings.FRONTEND_URL.rstrip('/')}/blog/{comment.post.slug}/"
             context = {
                 "post_title": comment.post.title,
                 "post_slug": comment.post.slug,
