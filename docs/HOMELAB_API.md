@@ -136,6 +136,35 @@ cd /mnt/data/compose/gogirlabs
 docker compose -f docker-compose.homelab.yml --env-file .env exec backend python manage.py createsuperuser
 ```
 
+### Media serving and permissions
+
+Homelab sets `SERVE_MEDIA=True` so Django serves `/media/` (WhiteNoise only covers static). Compose bind-mounts `/mnt/data/apps/gogirlabs/media` → `/app/media` (uid/gid 1000, matching `appuser`). If uploads or `seed_blog --refresh` fail with `Permission denied` under `/app/media`, fix ownership:
+
+```bash
+sudo chown -R 1000:1000 /mnt/data/apps/gogirlabs/media
+# or, if still on the old named volume:
+docker compose -f docker-compose.homelab.yml --env-file .env exec -u root backend \
+  chown -R 1000:1000 /app/media
+```
+
+### Seed blog essays
+
+The backend mounts `/mnt/data/blogs/project_essays` read-only at `/essays` (Markdown plus `images/<project>/`). After a staff user exists, seed unpublished Project Essays posts (idempotent; skips existing slugs). Local `images/...` refs are copied into `/app/media/blog/essays/` and rewritten to absolute URLs under `PUBLIC_API_ORIGIN` (default `https://api.gogirlabs.uk`):
+
+```bash
+ssh gogir-server
+cd /mnt/data/compose/gogirlabs
+docker compose -f docker-compose.homelab.yml --env-file .env exec backend \
+  python manage.py seed_blog --source-dir /essays --dry-run
+docker compose -f docker-compose.homelab.yml --env-file .env exec backend \
+  python manage.py seed_blog --source-dir /essays
+# Re-copy images and rewrite HTML for posts already seeded:
+docker compose -f docker-compose.homelab.yml --env-file .env exec backend \
+  python manage.py seed_blog --source-dir /essays --refresh
+```
+
+Review drafts in Django admin (**Blog > Posts**), then publish when ready. Keep `NEWSLETTER_BROADCASTS_ENABLED=False` unless you intend campaign fan-out. Optional `--publish` publishes new rows via `QuerySet.update` (no admin notify / announcement enqueue).
+
 ## ikon nginx + TLS
 
 1. Copy [`nginx/homelab-api.gogirlabs.uk.conf`](../nginx/homelab-api.gogirlabs.uk.conf) to ikon.

@@ -9,7 +9,7 @@ description: >-
 
 # UI/UX Layout
 
-Lay out pages with the shell that already exists. A new public screen is a column between `Header` and `Footer`, not a new frame.
+Lay out pages with the shell that already exists. Essay-scoped screens (home, `/blog`, project essays, about, portfolio, contact, resume) use `EssayDesignScope` + `EssayNav` + `EssayFooter`. Remaining brutalist public screens (search, privacy, newsletter, testimonials) sit between `Header` and `Footer` until migrated.
 
 The personal `design-systems` skill still owns semantic HTML, ARIA, and generic component rules. This skill owns spatial structure, hierarchy, density, and the page recipes for this site.
 
@@ -30,14 +30,30 @@ Read the matching reference before writing layout code:
 
 ## Workflow
 
-1. Name the page class: home, list, detail, form, article, or admin.
-2. Keep public navigation in `Header`. The page owns the content column only.
-3. Open a public page with `Header`, then `<main className="flex-grow">`, then `Footer`.
-4. Use `layout-grid` when the page is a 12-column composition. Use `max-w-content` when it is a single reading column.
+1. Name the page class: home, list, detail, form, article, essay, or admin.
+2. Brutalist routes keep navigation in `Header`. Essay-scoped routes use `EssayNav`. The page owns the content column only.
+3. Open a brutalist page with `Header` → `<main>` → `Footer`. Open an essay page with `EssayDesignScope` → `EssayNav` → `<main>` → `EssayFooter`.
+4. Use `layout-grid` when the page is a 12-column composition. Use `max-w-content` / `max-w-prose` when it is a single reading column.
 5. Specify loading, empty, error, and populated layout together.
 6. Check the `lg` nav breakpoint and the page's own breakpoint. Run [layout-review.md](layout-review.md) before finishing.
 
 ## Page stack
+
+Essay-scoped pages (home, essays index, project essay detail, about, portfolio list/detail, contact, resume):
+
+```tsx
+<EssayDesignScope>
+  <div className="flex min-h-screen flex-col bg-essay-bg text-essay-ink">
+    <EssayNav />
+    <main className="flex-grow">{/* one h1 */}</main>
+    <EssayFooter />
+  </div>
+</EssayDesignScope>
+```
+
+Portfolio and essays indexes use a responsive grid (`1 / 2 / 3` cols) with centered titles and justified body copy. Contact is a centered column with justified lead copy and the form on the canvas (no heavy ink boxes).
+
+Brutalist public pages (search, privacy, newsletter, testimonials, non-essay posts):
 
 ```tsx
 <div className="flex min-h-screen flex-col bg-brutal-bg text-brutal-ink">
@@ -68,14 +84,14 @@ Public pages are editorial. Sections breathe. Admin pages are compact.
 
 - Public sections separate with `py-16`, `md:py-24`, or `space-y-section` (4rem). Do not tighten a marketing section to an operations dashboard.
 - Do not wrap every block in a card. A bordered panel is for a distinct object (project, post, form). Prose sits on the canvas.
-- One accent. Public pages are ink on white. `orangered` is for contact inputs and the existing glow, not for a second brand color. Status color is for status only.
+- One accent per system. Essay pages use dark teal `essay-accent` (`#0d5c56`) for outlines, focus, and offset shadows on warm `essay-bg`. Brutalist pages are ink on white. Status color is for status only.
 
 ## Hard rules
 
-- Public content width is `layout-grid` (`max-width: 1400px`) or `max-w-shell` / `max-w-content`. Do not add another max-width wrapper around a page that already uses one of these.
+- Public content width is `layout-grid` (`max-width: 1400px`) or `max-w-shell` / `max-w-content` / essay `max-w-prose`. Do not add another max-width wrapper around a page that already uses one of these.
 - Page gutters come from `layout-grid` or `px-6 lg:px-8` on the shell. Do not add a second horizontal page padding.
-- The document scrolls. Do not put `overflow-auto` on the whole page. Scroll a region only when that region is a long admin table with a bounded height.
-- Public headings use `font-serif` and `text-brutal-ink`. Do not invent `text-[Npx]` for chrome when a sibling size already exists. The home hero is the one place a large custom size is allowed; match it, do not add a second hero scale.
+- The document scrolls. Do not put `overflow-auto` on the whole page. Scroll a region only when that region is a long admin table with a bounded height, or a wide essay figure frame.
+- Brutalist headings use `font-serif` and `text-brutal-ink`. Essay headings use `font-essay-display` and `text-essay-ink`. Do not invent `text-[Npx]` for chrome when a sibling size already exists.
 - Space comes from the scale in [rhythm.md](rhythm.md). Arbitrary values such as `p-[13px]` or `gap-[18px]` are layout bugs.
 - Interactive targets on the public site stay at least 44×44px. The header menu button matches that.
 - Admin content uses `max-w-7xl` inside its own shell, matching the dashboard. Do not also mount `Header`.
