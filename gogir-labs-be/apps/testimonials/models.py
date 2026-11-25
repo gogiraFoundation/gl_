@@ -85,4 +85,3 @@ class TestimonialInvite(models.Model):
     @property
     def is_valid(self) -> bool:
         return self.used_at is None and self.expires_at >= timezone.now()
-

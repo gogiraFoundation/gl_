@@ -77,7 +77,9 @@ class SendPostAnnouncementsEnabledTest(TestCase):
             email="pending@example.com", is_active=True, is_verified=False
         )
 
-    @patch("apps.newsletter.management.commands.send_post_announcements.EmailService.send_email")
+    @patch(
+        "apps.newsletter.management.commands.send_post_announcements.EmailService.send_email"
+    )
     @patch(
         "apps.newsletter.management.commands.send_post_announcements.NewsletterService.lifecycle_from_email",
         return_value="Newsletter <news@example.com>",
@@ -96,7 +98,9 @@ class SendPostAnnouncementsEnabledTest(TestCase):
         call_command("send_post_announcements")
         mock_send.assert_not_called()
 
-    @patch("apps.newsletter.management.commands.send_post_announcements.EmailService.send_email")
+    @patch(
+        "apps.newsletter.management.commands.send_post_announcements.EmailService.send_email"
+    )
     def test_total_failure_stays_pending_for_retry(self, mock_send):
         mock_send.return_value = False
         call_command("send_post_announcements")
@@ -111,7 +115,9 @@ class SendPostAnnouncementsEnabledTest(TestCase):
         self.assertEqual(announcement.status, PostAnnouncement.STATUS_SENT)
         self.assertEqual(announcement.delivered_to, ["reader@example.com"])
 
-    @patch("apps.newsletter.management.commands.send_post_announcements.EmailService.send_email")
+    @patch(
+        "apps.newsletter.management.commands.send_post_announcements.EmailService.send_email"
+    )
     def test_partial_failure_retries_only_undelivered(self, mock_send):
         NewsletterSubscriber.objects.create(
             email="second@example.com", is_active=True, is_verified=True

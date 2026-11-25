@@ -4,6 +4,8 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 
+from config.permissions import IsStaffOrReadOnly
+
 from .models import Category, Project, Technology
 from .portfolio_seed import PORTFOLIO_PUBLIC_HOLD_SLUGS
 from .serializers import (
@@ -25,6 +27,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         .select_related("category")
         .prefetch_related("technologies", "images")
     )
+    permission_classes = [IsStaffOrReadOnly]
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,

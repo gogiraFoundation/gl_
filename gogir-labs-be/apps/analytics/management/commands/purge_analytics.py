@@ -28,12 +28,16 @@ class Command(BaseCommand):
         row_cutoff = now - timedelta(days=row_days)
 
         # Clear linkage fields on the short privacy window (IP/UA/session).
-        pv_null = PageView.objects.filter(created_at__lt=ip_cutoff).exclude(
-            ip_address__isnull=True, user_agent="", session_id=""
-        ).update(ip_address=None, user_agent="", session_id="")
-        ev_null = Event.objects.filter(created_at__lt=ip_cutoff).exclude(
-            ip_address__isnull=True, user_agent="", session_id=""
-        ).update(ip_address=None, user_agent="", session_id="")
+        pv_null = (
+            PageView.objects.filter(created_at__lt=ip_cutoff)
+            .exclude(ip_address__isnull=True, user_agent="", session_id="")
+            .update(ip_address=None, user_agent="", session_id="")
+        )
+        ev_null = (
+            Event.objects.filter(created_at__lt=ip_cutoff)
+            .exclude(ip_address__isnull=True, user_agent="", session_id="")
+            .update(ip_address=None, user_agent="", session_id="")
+        )
 
         pv_deleted, _ = PageView.objects.filter(created_at__lt=row_cutoff).delete()
         ev_deleted, _ = Event.objects.filter(created_at__lt=row_cutoff).delete()

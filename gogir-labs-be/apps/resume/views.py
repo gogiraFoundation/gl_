@@ -9,8 +9,10 @@ from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import inch
 from reportlab.platypus import PageBreak, Paragraph, SimpleDocTemplate, Spacer
 from rest_framework import status, viewsets
+from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.throttling import AnonRateThrottle
 from rest_framework.views import APIView
 
 from apps.site.models import SiteProfile
@@ -31,11 +33,7 @@ def _escape_pdf(text: str) -> str:
 
 def _bullet_lines(highlights, description: str) -> list[str]:
     if isinstance(highlights, list) and highlights:
-        return [
-            _escape_pdf(str(item))
-            for item in highlights
-            if str(item).strip()
-        ]
+        return [_escape_pdf(str(item)) for item in highlights if str(item).strip()]
     if description:
         return [
             _escape_pdf(line.strip())
@@ -109,11 +107,20 @@ class ResumeAggregateView(APIView):
         )
 
 
+class ResumeDownloadThrottle(AnonRateThrottle):
+    scope = "resume_download"
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+@throttle_classes([ResumeDownloadThrottle])
 def download_resume_pdf(request):
     """Generate and download resume as PDF."""
     profile = SiteProfile.load()
     full_name = profile.display_name
-    headline = profile.headline or "Software Engineer | Building Solutions with Data Insights"
+    headline = (
+        profile.headline or "Software Engineer | Building Solutions with Data Insights"
+    )
 
     experience = Experience.objects.all().order_by("-order", "-start_date")
     education = Education.objects.all().order_by("-order", "-start_date")
@@ -161,9 +168,7 @@ def download_resume_pdf(request):
     if experience.exists():
         story.append(Paragraph("EXPERIENCE", heading_style))
         for exp in experience:
-            title_text = (
-                f"<b>{_escape_pdf(exp.title)}</b> - {_escape_pdf(exp.company)}"
-            )
+            title_text = f"<b>{_escape_pdf(exp.title)}</b> - {_escape_pdf(exp.company)}"
             if exp.location:
                 title_text += f" | {_escape_pdf(exp.location)}"
             story.append(Paragraph(title_text, normal_style))
@@ -199,7 +204,9 @@ def download_resume_pdf(request):
             if edu.field_of_study:
                 story.append(Paragraph(_escape_pdf(edu.field_of_study), normal_style))
             if edu.gpa:
-                story.append(Paragraph(f"GPA: {_escape_pdf(str(edu.gpa))}", normal_style))
+                story.append(
+                    Paragraph(f"GPA: {_escape_pdf(str(edu.gpa))}", normal_style)
+                )
             for line in _bullet_lines(edu.highlights, edu.description):
                 story.append(Paragraph(f"• {line}", normal_style))
             story.append(Spacer(1, 0.2 * inch))
@@ -244,9 +251,7 @@ def download_resume_pdf(request):
             skill_names = []
             for s in category_skills:
                 if s.proficiency is not None:
-                    skill_names.append(
-                        f"{_escape_pdf(s.name)} ({s.proficiency}/10)"
-                    )
+                    skill_names.append(f"{_escape_pdf(s.name)} ({s.proficiency}/10)")
                 else:
                     skill_names.append(_escape_pdf(s.name))
             story.append(Paragraph(", ".join(skill_names), normal_style))

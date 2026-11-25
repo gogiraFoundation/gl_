@@ -31,9 +31,7 @@ class Command(BaseCommand):
         )
 
         for announcement_id in pending_ids:
-            self._process_announcement(
-                announcement_id, sign_off, frontend, from_email
-            )
+            self._process_announcement(announcement_id, sign_off, frontend, from_email)
 
     def _process_announcement(self, announcement_id, sign_off, frontend, from_email):
         with transaction.atomic():
@@ -114,9 +112,7 @@ class Command(BaseCommand):
                     delivered.append(email)
                     announcement.delivered_to = delivered
                     announcement.sent_count = len(delivered)
-                    announcement.save(
-                        update_fields=["delivered_to", "sent_count"]
-                    )
+                    announcement.save(update_fields=["delivered_to", "sent_count"])
                     sent_now += 1
                 delivered_set = set(delivered)
 

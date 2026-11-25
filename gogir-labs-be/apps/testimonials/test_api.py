@@ -66,9 +66,7 @@ class TestimonialAPITest(TestCase):
             self.client.patch(url, {"content": "Hacked"}).status_code,
             status.HTTP_403_FORBIDDEN,
         )
-        self.assertEqual(
-            self.client.delete(url).status_code, status.HTTP_403_FORBIDDEN
-        )
+        self.assertEqual(self.client.delete(url).status_code, status.HTTP_403_FORBIDDEN)
 
     def test_staff_can_create(self):
         self.client.force_authenticate(user=self.staff_user)

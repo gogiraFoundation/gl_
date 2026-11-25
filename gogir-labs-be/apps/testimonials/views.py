@@ -11,6 +11,7 @@ from rest_framework.throttling import ScopedRateThrottle
 
 from apps.notifications.services import EmailService
 from apps.site.models import SiteProfile
+from config.permissions import IsStaffOrReadOnly
 
 from .models import Testimonial, TestimonialInvite
 from .serializers import (
@@ -30,6 +31,7 @@ class TestimonialViewSet(viewsets.ModelViewSet):
     """
 
     queryset = Testimonial.objects.filter(published=True)
+    permission_classes = [IsStaffOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_fields = ["featured", "published", "rating"]
     ordering_fields = ["order", "created_at"]

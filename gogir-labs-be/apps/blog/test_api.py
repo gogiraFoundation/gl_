@@ -242,6 +242,19 @@ class BlogAPITest(TestCase):
         self.post.refresh_from_db()
         self.assertEqual(self.post.views, initial_views + 1)
 
+    def test_related_invalid_limit_is_safe(self):
+        """A non-numeric limit must not raise and 500."""
+        url = f"/api/v1/blog/posts/{self.post.id}/related/"
+        response = self.client.get(url, {"limit": "nope"})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_non_staff_cannot_delete_post(self):
+        self.client.force_authenticate(user=self.user)
+        url = f"/api/v1/blog/posts/{self.post.id}/"
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue(Post.objects.filter(pk=self.post.id).exists())
+
     def test_increment_views_not_found(self):
         """Test increment views with non-existent post."""
         url = "/api/v1/blog/posts/99999/increment_views/"
@@ -409,7 +422,9 @@ class BlogAPITest(TestCase):
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["author"], self.staff_user.id)
-        self.assertEqual(Post.objects.get(id=response.data["id"]).author, self.staff_user)
+        self.assertEqual(
+            Post.objects.get(id=response.data["id"]).author, self.staff_user
+        )
 
     @patch("apps.blog.views.NotificationService.send_template_to_address")
     def test_approve_comment_emails_guest(self, mock_send):

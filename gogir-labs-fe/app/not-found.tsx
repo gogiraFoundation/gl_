@@ -19,24 +19,15 @@ export default function NotFound() {
             The page you&apos;re looking for doesn&apos;t exist or has been moved.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Link
-              href="/"
-              className="btn-brutal btn-brutal-md gap-2"
-            >
+            <Link href="/" className="btn-brutal btn-brutal-md gap-2">
               <Home className="h-5 w-5" />
               Go home
             </Link>
-            <Link
-              href="/blog"
-              className="btn-brutal btn-brutal-md gap-2"
-            >
+            <Link href="/blog" className="btn-brutal btn-brutal-md gap-2">
               <Search className="h-5 w-5" />
               Browse blog
             </Link>
-            <Link
-              href="/portfolio"
-              className="btn-brutal btn-brutal-md gap-2"
-            >
+            <Link href="/portfolio" className="btn-brutal btn-brutal-md gap-2">
               <ArrowLeft className="h-5 w-5" />
               View portfolio
             </Link>

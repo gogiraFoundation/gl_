@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import BlogPostClient from './BlogPostClient'
-import { fetchPublicJson } from '@/lib/serverApi'
+import { cache } from 'react'
+import BlogPostClient, { type Post } from './BlogPostClient'
+import { ApiError, fetchApi, fetchPublicJson } from '@/lib/serverApi'
 
 export const dynamic = 'force-dynamic'
 
@@ -54,9 +55,20 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   }
 }
 
+const getBlogPost = cache(async (slug: string) => {
+  return fetchApi<Post>(`/blog/posts/by-slug/?slug=${encodeURIComponent(slug)}`)
+})
+
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params
   if (!slug) notFound()
 
-  return <BlogPostClient slug={slug} />
+  let initialPost: Post | null = null
+  try {
+    initialPost = await getBlogPost(slug)
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) notFound()
+  }
+
+  return <BlogPostClient slug={slug} initialPost={initialPost} />
 }

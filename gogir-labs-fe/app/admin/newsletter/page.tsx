@@ -51,7 +51,11 @@ export default function AdminNewsletterPage() {
     retry: false,
   })
 
-  const { data: subscribersData, isLoading, error: subscribersError } = useQuery({
+  const {
+    data: subscribersData,
+    isLoading,
+    error: subscribersError,
+  } = useQuery({
     queryKey: ['newsletter', 'subscribers', search],
     queryFn: async () => {
       const params = new URLSearchParams()

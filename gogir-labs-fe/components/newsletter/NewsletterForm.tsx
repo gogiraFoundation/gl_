@@ -202,11 +202,7 @@ export function NewsletterForm({
         <div className="border border-brutal-ink/20 p-4 text-red-700">{errorMessage}</div>
       )}
 
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="btn-brutal btn-brutal-md w-full"
-      >
+      <button type="submit" disabled={isSubmitting} className="btn-brutal btn-brutal-md w-full">
         {isSubmitting ? 'Subscribing...' : 'Subscribe to Newsletter'}
       </button>
     </form>

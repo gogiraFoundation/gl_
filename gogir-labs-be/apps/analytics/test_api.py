@@ -45,12 +45,16 @@ class AnalyticsAPITest(TestCase):
         response = self.client.get("/api/v1/analytics/pageviews/stats/", {"days": 30})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("top_referrers", response.data)
-        self.assertEqual(response.data["top_referrers"][0]["referer"], "https://example.com")
+        self.assertEqual(
+            response.data["top_referrers"][0]["referer"], "https://example.com"
+        )
         self.assertEqual(response.data["top_referrers"][0]["count"], 2)
 
     def test_stats_rejects_non_integer_days(self):
         self.client.force_authenticate(user=self.staff)
-        response = self.client.get("/api/v1/analytics/pageviews/stats/", {"days": "abc"})
+        response = self.client.get(
+            "/api/v1/analytics/pageviews/stats/", {"days": "abc"}
+        )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @override_settings(

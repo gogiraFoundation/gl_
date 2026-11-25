@@ -56,9 +56,7 @@ class PortfolioAPITest(TestCase):
             self.client.patch(url, {"title": "Hacked"}).status_code,
             status.HTTP_403_FORBIDDEN,
         )
-        self.assertEqual(
-            self.client.delete(url).status_code, status.HTTP_403_FORBIDDEN
-        )
+        self.assertEqual(self.client.delete(url).status_code, status.HTTP_403_FORBIDDEN)
 
     @patch("apps.notifications.services.NotificationService.notify_admins")
     def test_staff_can_create_project(self, mock_notify):

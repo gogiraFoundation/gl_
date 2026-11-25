@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import { FetchError, describeQueryError } from '@/components/ui/FetchError'
 import Link from 'next/link'
 import { EssayDesignScope } from '@/components/essays/EssayDesignScope'
 import { EssayNav } from '@/components/essays/EssayNav'
@@ -37,6 +38,7 @@ export default function BlogClient() {
     data: posts = [],
     isLoading,
     error,
+    refetch,
   } = useQuery<Post[]>({
     // Allow-list via essaysForIndex — do not filter by category id so a
     // miscategorized allow-listed post (e.g. Energy) still appears.
@@ -75,14 +77,14 @@ export default function BlogClient() {
             </header>
 
             {error && (
-              <div
-                role="alert"
-                className="mx-auto mt-10 max-w-prose border border-essay-ink/20 p-4 text-center"
-              >
-                <p className="font-semibold">Could not load essays</p>
-                <p className="mt-1 text-justify text-sm text-essay-muted">
-                  {error instanceof Error ? error.message : 'Something went wrong.'}
-                </p>
+              <div className="mx-auto mt-10 max-w-prose">
+                <FetchError
+                  title="Could not load essays"
+                  message={describeQueryError(error)}
+                  onRetry={() => {
+                    void refetch()
+                  }}
+                />
               </div>
             )}
 

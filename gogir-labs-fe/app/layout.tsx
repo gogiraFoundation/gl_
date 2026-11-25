@@ -8,6 +8,7 @@ import {
 } from 'next/font/google'
 import './globals.css'
 import { Providers } from './providers'
+import { SkipLink } from '@/components/a11y/SkipLink'
 import { AnalyticsTracker } from '@/components/analytics/AnalyticsTracker'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
@@ -107,6 +108,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
+        <SkipLink />
         <Providers>
           {children}
           <AnalyticsTracker />

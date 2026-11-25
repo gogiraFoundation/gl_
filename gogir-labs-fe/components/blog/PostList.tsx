@@ -81,11 +81,7 @@ export function PostList({ posts, isLoading }: PostListProps) {
             }
           >
             {featuredPosts.map((post, i) => (
-              <ScrollAnimation
-                key={post.id}
-                animationType="fade-in"
-                delay={Math.min(i, 3) * 50}
-              >
+              <ScrollAnimation key={post.id} animationType="fade-in" delay={Math.min(i, 3) * 50}>
                 <PostCard post={post} featured={true} />
               </ScrollAnimation>
             ))}
@@ -105,11 +101,7 @@ export function PostList({ posts, isLoading }: PostListProps) {
           )}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {regularPosts.map((post, i) => (
-              <ScrollAnimation
-                key={post.id}
-                animationType="fade-in"
-                delay={Math.min(i, 3) * 50}
-              >
+              <ScrollAnimation key={post.id} animationType="fade-in" delay={Math.min(i, 3) * 50}>
                 <PostCard post={post} featured={false} />
               </ScrollAnimation>
             ))}

@@ -119,9 +119,7 @@ class ContactMessageReplyView(views.APIView):
             contact.read = True
             contact.reply_body = reply_text
             contact.replied_at = timezone.now()
-            contact.save(
-                update_fields=["reply_body", "replied", "read", "replied_at"]
-            )
+            contact.save(update_fields=["reply_body", "replied", "read", "replied_at"])
             recipient = contact.email
             subject = f"Re: {contact.subject}"
             body = (

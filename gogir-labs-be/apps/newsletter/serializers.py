@@ -6,7 +6,6 @@ from rest_framework import serializers
 
 from .models import NewsletterSubscriber
 
-
 SUBSCRIBE_SUCCESS_MESSAGE = (
     "Successfully subscribed! Please check your email to verify your subscription."
 )

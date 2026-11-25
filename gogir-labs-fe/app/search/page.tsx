@@ -8,6 +8,7 @@ import { Footer } from '@/components/layout/Footer'
 import { PostCard } from '@/components/blog/PostCard'
 import { ProjectCard } from '@/components/portfolio/ProjectCard'
 import api from '@/lib/api'
+import { FetchError, describeQueryError } from '@/components/ui/FetchError'
 import Link from 'next/link'
 import { Search } from 'lucide-react'
 
@@ -61,7 +62,12 @@ function SearchPageContent() {
   const query = searchParams.get('q') || ''
   const [searchQuery, setSearchQuery] = useState(query)
 
-  const { data: results, isLoading } = useQuery<SearchResult>({
+  const {
+    data: results,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery<SearchResult>({
     queryKey: ['search', query],
     queryFn: async () => {
       if (!query.trim()) {
@@ -81,6 +87,7 @@ function SearchPageContent() {
     },
     enabled: query.length > 0,
     staleTime: 5 * 60 * 1000,
+    retry: 1,
   })
 
   useEffect(() => {
@@ -99,7 +106,7 @@ function SearchPageContent() {
   return (
     <div className="flex min-h-screen flex-col bg-brutal-bg text-brutal-ink">
       <Header />
-      <main className="flex-grow px-6 py-16 lg:px-8 md:py-24">
+      <main className="flex-grow px-6 py-16 md:py-24 lg:px-8">
         <div className="mx-auto max-w-shell">
           <header className="mb-10 text-left">
             <h1 className="mb-6 font-serif text-4xl font-semibold tracking-tight md:text-5xl">
@@ -129,17 +136,23 @@ function SearchPageContent() {
             </form>
           </header>
 
-          {isLoading && (
-            <p className="py-12 text-left text-brutal-muted">Searching…</p>
+          {isLoading && <p className="py-12 text-left text-brutal-muted">Searching…</p>}
+
+          {!isLoading && error && (
+            <FetchError
+              title="Search failed"
+              message={describeQueryError(error)}
+              onRetry={() => {
+                void refetch()
+              }}
+            />
           )}
 
-          {!isLoading && query && results && (
+          {!isLoading && !error && query && results && (
             <>
               {results.total === 0 ? (
                 <div className="py-12 text-left">
-                  <p className="mb-2 text-xl text-brutal-ink">
-                    No results for &quot;{query}&quot;
-                  </p>
+                  <p className="mb-2 text-xl text-brutal-ink">No results for &quot;{query}&quot;</p>
                   <p className="text-brutal-muted">Try different keywords, or browse instead.</p>
                 </div>
               ) : (
@@ -256,10 +269,7 @@ function SearchPageContent() {
                 >
                   Browse blog
                 </Link>
-                <Link
-                  href="/portfolio"
-                  className="btn-brutal btn-brutal-sm"
-                >
+                <Link href="/portfolio" className="btn-brutal btn-brutal-sm">
                   Browse portfolio
                 </Link>
               </div>

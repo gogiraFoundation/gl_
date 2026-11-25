@@ -198,7 +198,9 @@ REST_FRAMEWORK = {
         "search": "60/minute",
         "comments": "10/minute",
         "views": "30/minute",
+        "post_views": "30/minute",
         "testimonial_submit": "5/minute",
+        "resume_download": "10/minute",
     },
 }
 

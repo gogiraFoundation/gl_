@@ -48,11 +48,7 @@ export function ConsentBanner() {
                   your preference any time on the privacy page.
                 </p>
                 <div className="flex flex-wrap gap-3">
-                  <button
-                    type="button"
-                    onClick={handleAccept}
-                    className="btn-brutal btn-brutal-sm"
-                  >
+                  <button type="button" onClick={handleAccept} className="btn-brutal btn-brutal-sm">
                     Accept
                   </button>
                   <button

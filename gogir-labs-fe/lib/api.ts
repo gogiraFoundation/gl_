@@ -1,10 +1,13 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios'
+import { getApiBaseUrl } from '@/lib/apiBase'
 
-const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
+const baseURL = getApiBaseUrl()
 
 const api = axios.create({
   baseURL,
   withCredentials: true,
+  // Fail instead of leaving React Query in isLoading forever.
+  timeout: 12000,
 })
 
 type RequestConfigWithRetry = InternalAxiosRequestConfig & { _retry?: boolean }

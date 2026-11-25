@@ -81,7 +81,7 @@ function UnsubscribeContent() {
   return (
     <div className="flex min-h-screen flex-col bg-brutal-bg text-brutal-ink">
       <Header />
-      <main className="flex-grow px-6 py-16 lg:px-8 md:py-24">
+      <main className="flex-grow px-6 py-16 md:py-24 lg:px-8">
         <div className="mx-auto max-w-2xl">
           <header className="mb-10 text-left">
             <div className="mb-6 inline-flex h-14 w-14 items-center justify-center border border-brutal-ink">
@@ -91,8 +91,8 @@ function UnsubscribeContent() {
               Unsubscribe
             </h1>
             <p className="max-w-xl text-left text-base leading-relaxed text-brutal-muted md:text-lg">
-              Use the link from your email, or enter your address to receive a one-click
-              unsubscribe link.
+              Use the link from your email, or enter your address to receive a one-click unsubscribe
+              link.
             </p>
           </header>
 

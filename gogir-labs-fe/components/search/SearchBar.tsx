@@ -36,7 +36,12 @@ export function SearchBar() {
   const searchRef = useRef<HTMLDivElement>(null)
   const { trackClick } = useAnalyticsEvent()
 
-  const { data: results, isLoading } = useQuery<SearchResult>({
+  const {
+    data: results,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery<SearchResult>({
     queryKey: ['search', debouncedQuery],
     queryFn: async () => {
       if (!debouncedQuery.trim()) {
@@ -49,6 +54,7 @@ export function SearchBar() {
     },
     enabled: debouncedQuery.length > 0,
     staleTime: 5 * 60 * 1000,
+    retry: 1,
   })
 
   // Close on outside click
@@ -118,9 +124,10 @@ export function SearchBar() {
                 className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-brutal-muted"
               />
               <input
-                type="text"
+                type="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
+                aria-label="Search blog posts and projects"
                 placeholder="Search blog posts, projects..."
                 className="w-full rounded-sm border border-brutal-ink/20 bg-brutal-bg py-2 pl-10 pr-10 text-brutal-ink transition-[box-shadow,border-color] duration-300 placeholder:text-brutal-muted focus:border-[orangered] focus:outline-none focus:ring-1 focus:ring-[orangered]/40"
                 autoFocus
@@ -144,7 +151,22 @@ export function SearchBar() {
               <div className="p-4 text-center font-sans text-brutal-muted">Searching…</div>
             )}
 
-            {!isLoading && debouncedQuery && results && (
+            {!isLoading && error && (
+              <div className="p-4 text-center" role="alert">
+                <p className="mb-2 font-sans text-sm text-brutal-ink">Search is unavailable.</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    void refetch()
+                  }}
+                  className="text-sm font-semibold text-brutal-ink underline underline-offset-4"
+                >
+                  Try again
+                </button>
+              </div>
+            )}
+
+            {!isLoading && !error && debouncedQuery && results && (
               <>
                 {results.total === 0 ? (
                   <div className="p-4 text-center font-sans text-brutal-muted">

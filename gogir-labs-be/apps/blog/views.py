@@ -10,6 +10,7 @@ from rest_framework.throttling import ScopedRateThrottle
 
 from apps.notifications.models import NotificationType
 from apps.notifications.services import NotificationService
+from config.permissions import IsStaffOrReadOnly
 
 from .blog_seed import public_post_visibility_q
 from .models import Category, Comment, Post, Tag
@@ -42,6 +43,7 @@ class PostViewSet(viewsets.ModelViewSet):
         .select_related("author", "category")
         .prefetch_related("tags")
     )
+    permission_classes = [IsStaffOrReadOnly]
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,

@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import { FetchError, describeQueryError } from '@/components/ui/FetchError'
 import { useState } from 'react'
 import { EssayDesignScope } from '@/components/essays/EssayDesignScope'
 import { EssayNav } from '@/components/essays/EssayNav'
@@ -47,6 +48,7 @@ export default function PortfolioClient() {
     isLoading,
     error,
     isFetching,
+    refetch,
   } = useQuery<Project[]>({
     queryKey: ['projects', selectedCategory, selectedTechnology, searchQuery],
     queryFn: async () => {
@@ -140,16 +142,14 @@ export default function PortfolioClient() {
                 Loading projects…
               </p>
             ) : error ? (
-              <div
-                role="alert"
-                className="mx-auto mt-10 max-w-prose border border-essay-ink/20 p-4 text-center"
-              >
-                <p className="font-semibold">Could not load projects</p>
-                <p className="mt-1 text-justify text-sm text-essay-muted">
-                  {error instanceof Error
-                    ? error.message
-                    : 'Something went wrong. Refresh the page or try again later.'}
-                </p>
+              <div className="mx-auto mt-10 max-w-prose">
+                <FetchError
+                  title="Could not load projects"
+                  message={describeQueryError(error)}
+                  onRetry={() => {
+                    void refetch()
+                  }}
+                />
               </div>
             ) : (
               <ProjectGrid

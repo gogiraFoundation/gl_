@@ -403,4 +403,3 @@ class ContactAPITest(TestCase):
         mock_send.assert_not_called()
         msg.refresh_from_db()
         self.assertEqual(msg.reply_body, "Already sent")
-

@@ -53,4 +53,3 @@ class TestimonialSubmitSerializer(serializers.Serializer):
     company = serializers.CharField(max_length=100, required=False, allow_blank=True)
     content = serializers.CharField(max_length=5000)
     rating = serializers.IntegerField(min_value=1, max_value=5, default=5)
-

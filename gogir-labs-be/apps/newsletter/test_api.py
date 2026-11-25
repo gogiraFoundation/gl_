@@ -101,7 +101,9 @@ class NewsletterAPITest(TestCase):
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(
-            NewsletterSubscriber.objects.filter(email__iexact="test@example.com").count(),
+            NewsletterSubscriber.objects.filter(
+                email__iexact="test@example.com"
+            ).count(),
             1,
         )
 

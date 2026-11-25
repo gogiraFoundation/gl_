@@ -49,7 +49,11 @@ export default function AdminContactPage() {
     }
   }, [router])
 
-  const { data: listData, isLoading, error: listError } = useQuery({
+  const {
+    data: listData,
+    isLoading,
+    error: listError,
+  } = useQuery({
     queryKey: ['contact', 'messages', readFilter, repliedFilter],
     queryFn: async () => {
       const params = new URLSearchParams()
@@ -99,8 +103,7 @@ export default function AdminContactPage() {
     onError: (err: unknown) => {
       const status = (err as { response?: { status?: number; data?: { detail?: string } } })
         ?.response?.status
-      const detail = (err as { response?: { data?: { detail?: string } } })?.response?.data
-        ?.detail
+      const detail = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail
       if (status === 409) {
         setError(detail || 'This message has already been replied to.')
         queryClient.invalidateQueries({ queryKey: ['contact'] })
@@ -168,7 +171,9 @@ export default function AdminContactPage() {
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <span className={`font-medium ${msg.read ? '' : 'font-bold'}`}>{msg.subject}</span>
+                      <span className={`font-medium ${msg.read ? '' : 'font-bold'}`}>
+                        {msg.subject}
+                      </span>
                       <span className="text-xs text-gray-500">
                         {msg.replied ? 'Replied' : msg.read ? 'Read' : 'New'}
                       </span>
@@ -195,12 +200,16 @@ export default function AdminContactPage() {
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   From {detail.name} &lt;{detail.email}&gt;
                 </p>
-                <p className="mt-4 whitespace-pre-wrap text-gray-800 dark:text-gray-200">{detail.message}</p>
+                <p className="mt-4 whitespace-pre-wrap text-gray-800 dark:text-gray-200">
+                  {detail.message}
+                </p>
               </div>
 
               {detail.reply_body && (
                 <div className="rounded border border-green-200 bg-green-50 p-3 dark:border-green-800 dark:bg-green-950">
-                  <p className="mb-1 text-sm font-medium text-green-800 dark:text-green-300">Your reply</p>
+                  <p className="mb-1 text-sm font-medium text-green-800 dark:text-green-300">
+                    Your reply
+                  </p>
                   <p className="whitespace-pre-wrap text-sm">{detail.reply_body}</p>
                 </div>
               )}

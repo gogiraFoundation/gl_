@@ -58,8 +58,7 @@ export function Dashboard() {
   })
 
   const handleLogout = async () => {
-    const refresh =
-      sessionStorage.getItem('refresh_token') || localStorage.getItem('refresh_token')
+    const refresh = sessionStorage.getItem('refresh_token') || localStorage.getItem('refresh_token')
     if (refresh) {
       try {
         await api.post('/auth/token/blacklist/', { refresh })

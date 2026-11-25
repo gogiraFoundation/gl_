@@ -18,7 +18,11 @@ export default function AnalyticsPage() {
     }
   }, [router])
 
-  const { data: stats, isLoading, error } = useQuery({
+  const {
+    data: stats,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['analytics-stats'],
     queryFn: async () => {
       const [pageViews, events] = await Promise.all([

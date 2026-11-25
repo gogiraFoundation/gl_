@@ -134,9 +134,7 @@ class PostSerializer(serializers.ModelSerializer):
         cache = getattr(obj, "_prefetched_objects_cache", {})
         if "comments" in cache:
             return CommentSerializer(cache["comments"], many=True).data
-        return CommentSerializer(
-            obj.comments.filter(approved=True), many=True
-        ).data
+        return CommentSerializer(obj.comments.filter(approved=True), many=True).data
 
     def validate(self, attrs):
         attrs = super().validate(attrs)

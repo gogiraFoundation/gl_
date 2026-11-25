@@ -6,6 +6,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
+from django.http import JsonResponse
 from django.urls import include, path, re_path
 from django.views.static import serve
 from drf_spectacular.views import (
@@ -27,7 +28,20 @@ sitemaps = {
 # Docs stay public; DEFAULT_PERMISSION_CLASSES is IsAdminUser for API handlers.
 _schema_kwargs = {"permission_classes": [AllowAny]}
 
+
+def service_root(_request):
+    """JSON index for GET / so the API host is not a Django HTML 404."""
+    return JsonResponse(
+        {
+            "name": "Gogir Labs API",
+            "status": "ok",
+            "api": "/api/v1/",
+        }
+    )
+
+
 urlpatterns = [
+    path("", service_root, name="service-root"),
     path("admin/", admin.site.urls),
     path("ckeditor5/", include("django_ckeditor_5.urls")),
     path("api/v1/", include("config.api_urls")),

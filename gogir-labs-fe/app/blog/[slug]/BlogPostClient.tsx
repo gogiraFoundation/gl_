@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import { FetchError, describeQueryError } from '@/components/ui/FetchError'
 import Link from 'next/link'
 import { useEffect } from 'react'
 import { Header } from '@/components/layout/Header'
@@ -13,7 +14,7 @@ import { EssayPost } from '@/components/essays/EssayPost'
 import api from '@/lib/api'
 import { isAllowedEssaySlug } from '@/lib/essays'
 
-interface Post {
+export interface Post {
   id: number
   title: string
   slug: string
@@ -34,15 +35,18 @@ interface Post {
 
 interface BlogPostClientProps {
   slug: string
+  initialPost?: Post | null
 }
 
-export default function BlogPostClient({ slug }: BlogPostClientProps) {
+export default function BlogPostClient({ slug, initialPost }: BlogPostClientProps) {
   const {
     data: post,
     isLoading,
     error,
+    refetch,
   } = useQuery<Post>({
     queryKey: ['post', slug],
+    initialData: initialPost ?? undefined,
     queryFn: async () => {
       const response = await api.get(`/blog/posts/by-slug/`, {
         params: { slug },
@@ -91,7 +95,40 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
     )
   }
 
-  if (error || !post) {
+  if (error && !post) {
+    const essayChrome = isAllowedEssaySlug(slug)
+    const err = (
+      <div className="mx-auto max-w-prose">
+        <FetchError
+          title="Could not load essay"
+          message={describeQueryError(error)}
+          onRetry={() => {
+            void refetch()
+          }}
+        />
+      </div>
+    )
+    if (essayChrome) {
+      return (
+        <EssayDesignScope>
+          <div className="flex min-h-screen flex-col bg-essay-bg text-essay-ink">
+            <EssayNav active="essays" />
+            <main className="flex-grow px-6 py-12 lg:px-8">{err}</main>
+            <EssayFooter />
+          </div>
+        </EssayDesignScope>
+      )
+    }
+    return (
+      <div className="flex min-h-screen flex-col bg-brutal-bg">
+        <Header />
+        <main className="flex-grow px-6 py-12">{err}</main>
+        <Footer />
+      </div>
+    )
+  }
+
+  if (!post) {
     const essayChrome = isAllowedEssaySlug(slug)
     if (essayChrome) {
       return (

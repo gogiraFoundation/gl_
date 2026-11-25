@@ -114,7 +114,13 @@ SKILL_GROUPS = [
     ("cloud", ["AWS", "Azure", "GCP", "Kubernetes", "Docker", "Terraform", "Helm"]),
     (
         "database",
-        ["Redis", "ETL Pipelines", "Data Modelling", "SQL Server", "Analytics Engineering"],
+        [
+            "Redis",
+            "ETL Pipelines",
+            "Data Modelling",
+            "SQL Server",
+            "Analytics Engineering",
+        ],
     ),
     (
         "framework",
@@ -141,14 +147,18 @@ class Command(BaseCommand):
         if not Experience.objects.exists():
             for row in EXPERIENCE:
                 Experience.objects.create(**row)
-            self.stdout.write(self.style.SUCCESS(f"Created {len(EXPERIENCE)} experiences"))
+            self.stdout.write(
+                self.style.SUCCESS(f"Created {len(EXPERIENCE)} experiences")
+            )
         else:
             self.stdout.write("Experience already populated; skipped")
 
         if not Education.objects.exists():
             for row in EDUCATION:
                 Education.objects.create(**row)
-            self.stdout.write(self.style.SUCCESS(f"Created {len(EDUCATION)} education rows"))
+            self.stdout.write(
+                self.style.SUCCESS(f"Created {len(EDUCATION)} education rows")
+            )
         else:
             self.stdout.write("Education already populated; skipped")
 

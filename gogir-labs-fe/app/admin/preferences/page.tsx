@@ -74,7 +74,9 @@ export default function AdminPreferencesPage() {
         {isLoading ? (
           <p>Loading…</p>
         ) : preferences.length === 0 ? (
-          <p className="text-gray-500">No preferences yet. They are created when notifications fire.</p>
+          <p className="text-gray-500">
+            No preferences yet. They are created when notifications fire.
+          </p>
         ) : (
           <ul className="space-y-4">
             {preferences.map((pref) => (

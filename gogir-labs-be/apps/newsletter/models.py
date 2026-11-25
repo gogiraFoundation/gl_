@@ -115,4 +115,3 @@ class PostAnnouncement(models.Model):
 
     def __str__(self):
         return f"Announcement for {self.post_id} ({self.status})"
-

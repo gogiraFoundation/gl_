@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
+import { cache } from 'react'
 import { notFound } from 'next/navigation'
-import PortfolioProjectClient from './PortfolioProjectClient'
-import { fetchPublicJson } from '@/lib/serverApi'
+import PortfolioProjectClient, { type Project } from './PortfolioProjectClient'
+import { ApiError, fetchApi, fetchPublicJson } from '@/lib/serverApi'
 import { PORTFOLIO_PUBLIC_HOLD_SLUGS } from '@/lib/essays'
 
 export const dynamic = 'force-dynamic'
@@ -56,10 +57,21 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
   }
 }
 
+const getProject = cache(async (slug: string) => {
+  return fetchApi<Project>(`/portfolio/projects/by-slug/?slug=${encodeURIComponent(slug)}`)
+})
+
 export default async function ProjectPage({ params }: ProjectPageProps) {
   const { slug } = await params
   if (!slug) notFound()
   if (PORTFOLIO_PUBLIC_HOLD_SLUGS.has(slug)) notFound()
 
-  return <PortfolioProjectClient slug={slug} />
+  let initialProject: Project | null = null
+  try {
+    initialProject = await getProject(slug)
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) notFound()
+  }
+
+  return <PortfolioProjectClient slug={slug} initialProject={initialProject} />
 }

@@ -249,7 +249,10 @@ class NotificationServiceTest(TestCase):
 
     def setUp(self):
         self.staff = User.objects.create_user(
-            username="staff", password="testpass", is_staff=True, email="staff@example.com"
+            username="staff",
+            password="testpass",
+            is_staff=True,
+            email="staff@example.com",
         )
         self.other = User.objects.create_user(
             username="other", password="testpass", email="other@example.com"

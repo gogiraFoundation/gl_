@@ -109,9 +109,7 @@ class NotificationPreferenceViewSet(viewsets.ModelViewSet):
             self.perform_create(serializer)
         except IntegrityError:
             return Response(
-                {
-                    "detail": "A preference for this notification type already exists."
-                },
+                {"detail": "A preference for this notification type already exists."},
                 status=status.HTTP_409_CONFLICT,
             )
         headers = self.get_success_headers(serializer.data)

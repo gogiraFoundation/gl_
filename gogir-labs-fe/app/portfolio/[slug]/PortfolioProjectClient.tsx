@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import { FetchError, describeQueryError } from '@/components/ui/FetchError'
 import Link from 'next/link'
 import { EssayDesignScope } from '@/components/essays/EssayDesignScope'
 import { EssayNav } from '@/components/essays/EssayNav'
@@ -9,7 +10,7 @@ import { ProjectContent } from '@/components/portfolio/ProjectContent'
 import api from '@/lib/api'
 import { PORTFOLIO_PUBLIC_HOLD_SLUGS } from '@/lib/essays'
 
-interface Project {
+export interface Project {
   id: number
   title: string
   slug: string
@@ -34,6 +35,7 @@ interface Project {
 
 interface PortfolioProjectClientProps {
   slug: string
+  initialProject?: Project | null
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
@@ -56,15 +58,20 @@ function Shell({ children }: { children: React.ReactNode }) {
   )
 }
 
-export default function PortfolioProjectClient({ slug }: PortfolioProjectClientProps) {
+export default function PortfolioProjectClient({
+  slug,
+  initialProject,
+}: PortfolioProjectClientProps) {
   const onHold = PORTFOLIO_PUBLIC_HOLD_SLUGS.has(slug)
 
   const {
     data: project,
     isLoading,
     error,
+    refetch,
   } = useQuery<Project>({
     queryKey: ['project', slug],
+    initialData: initialProject ?? undefined,
     queryFn: async () => {
       const response = await api.get('/portfolio/projects/by-slug/', {
         params: { slug },
@@ -107,7 +114,23 @@ export default function PortfolioProjectClient({ slug }: PortfolioProjectClientP
     )
   }
 
-  if (error || !project) {
+  if (error && !project) {
+    return (
+      <Shell>
+        <div className="mx-auto max-w-prose">
+          <FetchError
+            title="Could not load project"
+            message={describeQueryError(error)}
+            onRetry={() => {
+              void refetch()
+            }}
+          />
+        </div>
+      </Shell>
+    )
+  }
+
+  if (!project) {
     return (
       <Shell>
         <div className="mx-auto max-w-prose text-left">
